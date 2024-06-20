@@ -56,7 +56,7 @@
 
 		virtual char test_filename(const char * fn,const char * ext) 
 		{
-			return !stricmp(ext,"GYM");
+			return !strcasecmp(ext,"GYM");
 		}
 		int open_file(CFILE *r, SONGINFO *info, unsigned int flags);
 

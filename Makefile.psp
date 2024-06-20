@@ -57,9 +57,9 @@ OBJS	+= error.o
 
 INCDIR = 
 
-BASECFLAGS = -G0 -S \
+BASECFLAGS = -G0 \
 	-I. -Icpu -Isound -Iunzip -Ipsp -DLSB_FIRST \
-	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-functions
+	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-functions -fcommon --std=gnu89
 #	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-loops -fno-align-jumps -fno-align-functions -fno-align-labels -fno-reorder-blocks -fno-reorder-blocks-and-partition -fno-prefetch-loop-arrays -fno-tree-vect-loop-version -fno-tree-loop-optimize -fno-strict-aliasing
 #-fno-reorder-blocks -fno-align-functions
 
@@ -71,7 +71,7 @@ ASFLAGS = -c $(CFLAGS)
 LIBDIR = 
 LDFLAGS = -Wl,-Map -Wl,MasterBoy.map
 #LDFLAGS =
-LIBS = -losl -lpng -lz \
+LIBS = -losl -lpng -ljpeg -lz \
 		-lpspsdk -lpsphprm -lpspctrl -lpspumd -lpsprtc -lpsppower -lpspusb -lpspusbstor -lpspgu -lpspaudiolib -lpspaudio -lstdc++ -lm
 
 #EXTRA_TARGETS = kxploit

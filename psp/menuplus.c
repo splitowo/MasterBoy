@@ -1009,11 +1009,11 @@ void FillExistingSlots(SUBMENU *menu, int couleur)		{
 			slotExist = (sceIoGetstat(name, &fileStatus) >= 0);
 			if (slotExist)
 				sprintf(tmpSlotTextMem[i], "Slot %i (%02i/%02i/%02i %02i:%02i)", i,
-					fileStatus.st_mtime.day,
-					fileStatus.st_mtime.month,
-					fileStatus.st_mtime.year % 100,
-					fileStatus.st_mtime.hour,
-					fileStatus.st_mtime.minute);
+					fileStatus.sce_st_mtime.day,
+					fileStatus.sce_st_mtime.month,
+					fileStatus.sce_st_mtime.year % 100,
+					fileStatus.sce_st_mtime.hour,
+					fileStatus.sce_st_mtime.minute);
 			else
 				sprintf(tmpSlotTextMem[i], "Slot %i", i);
 		}

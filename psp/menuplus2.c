@@ -257,7 +257,7 @@ int getExtId(const char *szFilePath)
 		pszExt++;
 		for (i = 0; stExtentions[i].nExtId != EXT_UNKNOWN; i++) 
 		{
-			if (!stricmp(stExtentions[i].szExt,pszExt)) 
+			if (!strcasecmp(stExtentions[i].szExt,pszExt)) 
 			{
 				return stExtentions[i].nExtId;
 			}

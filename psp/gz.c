@@ -12,7 +12,7 @@ int gzGetOrigName(const char *path, char *out, gzFile fd)
 	if (((gz_stream*)fd)->orig_name[0] == 0){
 		strcpy(out, strrchr(path,'/')+1);
 		char *p = strrchr(out, '.');
-		if (p && !stricmp(p, ".gz")){
+		if (p && !strcasecmp(p, ".gz")){
 			*p = 0;
 			return 1;
 		}

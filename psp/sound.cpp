@@ -335,7 +335,7 @@ int menuPlayZipSound(char *filename, int number)				{
 		menu_playlistcount = pglobal_info.number_entry;
 
 		if (number == -1)			{
-			struct timeval now;
+			struct SceKernelTimeval now;
 			sceKernelLibcGettimeofday( &now, 0 );
 			srand((now.tv_usec+now.tv_sec*1000000));
 			do		{

@@ -4,12 +4,10 @@
 
 #ifdef PSP
 #include <psptypes.h>
-#else
+#endif
 
 typedef signed short int int16;
 typedef signed int int32;
-
-#endif
 
 typedef unsigned char uint8;
 typedef unsigned short int uint16;
