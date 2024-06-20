@@ -390,11 +390,8 @@ void SmsTerm(void)
 }
 
 void gb_doFrame(int skip)		{
-	int tmp;
 	gbSkip = skip;
-	do		{
-		tmp = gb_run();
-	} while (!(tmp & 1));
+	gb_run_frame();
 }
 
 

@@ -167,7 +167,7 @@ void gb_unhook_extport();
 void gb_set_skip(int frame);
 char gb_load_rom(byte *buf,int size,byte *ram,int ram_size);
 void gb_refresh_pal();
-int gb_run();
+int gb_run_frame();
 void gb_fill_vframe(word color);
 void gb_invalidate_all_colors();
 
