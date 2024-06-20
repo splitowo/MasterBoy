@@ -3,7 +3,7 @@
 #include "pspcommon.h"
 #include "shared.h"
 #include "sound.h"
-#include "pspsound.h"
+#include "PspSound.h"
 
 typedef struct {
         short l, r;

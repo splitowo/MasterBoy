@@ -4,9 +4,9 @@
 #include <oslib/oslib.h>
 #include "shared.h"
 #include "menuplus.h"
-#include "sms.h"
+#include "SMS.h"
 #include "config.h"
-#include "videogu.h"
+#include "VideoGu.h"
 #include "sound.h"
 #include "gbcore/gb.h"
 #include "gz.h"

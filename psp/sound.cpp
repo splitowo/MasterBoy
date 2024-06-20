@@ -5,7 +5,7 @@
 #include "unzip.h"
 #include <pspaudio.h>
 #include "pspcommon.h"
-#include "psp/pspsound.h"
+#include "psp/PspSound.h"
 #include <psphprm.h>
 
 CODEC_GYM::input_gym *gymCodec = NULL;
