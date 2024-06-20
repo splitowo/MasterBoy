@@ -37,19 +37,14 @@ int exitCallback(int arg1, int arg2, void *common)
 //extern char game_name[MAX_PATH];
 
 /* Exit callback */
-/*int exit_callback(void)
+int exit_callback(int arg1, int arg2, void *common)
 {
-//	SmsTerm();
-
-//	adhocTerm();
-
-	sceKernelExitGame();
-
+    osl_quit = 1;
 	return 0;
-}*/
+}
 
 /* Callback thread */
-/*int CallbackThread(SceSize args, void *argp)
+int CallbackThread(SceSize args, void *argp)
 {
 	int cbid;
 
@@ -59,7 +54,7 @@ int exitCallback(int arg1, int arg2, void *common)
 	sceKernelSleepThreadCB();
 
 	return 0;
-}*/
+}
 
 #ifdef KERNEL_MODE
 // Copying the exception handler from SDLSMS as it gives a nice output to find the bug
@@ -87,7 +82,7 @@ void sdl_psp_exception_handler(PspDebugRegBlock *regs)
 #endif
 
 /* Sets up the callback thread and returns its thread id */
-/*int SetupCallbacks(void)
+int SetupCallbacks(void)
 {
 	int thid = 0;
 
@@ -98,7 +93,7 @@ void sdl_psp_exception_handler(PspDebugRegBlock *regs)
 	}
 
 	return thid;
-}*/
+}
 
 /*int (*oldPowerCallback)(int, int, void*)=NULL;
 
@@ -127,7 +122,7 @@ int main(void)
 /*	oldPowerCallback = osl_powerCallback;
 	osl_powerCallback = myPowerCallback;*/
 
-//	SetupCallbacks();
+	SetupCallbacks();
 #ifdef KERNEL_MODE
 	sceIoChdir(startPath);
 //	osl_exitCallback = exitCallback;
