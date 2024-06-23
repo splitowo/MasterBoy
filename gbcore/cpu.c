@@ -18,7 +18,7 @@
 */
 
 //------------------------------------------------
-// CPU ƒj[ƒ‚ƒjƒbƒNˆÈŠOŽÀ‘••” (I/O¤IRQ “™)
+// CPU ï¿½jï¿½[ï¿½ï¿½ï¿½jï¿½bï¿½Nï¿½ÈŠOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (I/Oï¿½IRQ ï¿½ï¿½)
 
 #include "gb.h"
 #include "../syscall.h"
@@ -33,11 +33,11 @@ extern unsigned int gblCpuCycles;
 
 /////////////////////////////////////////
 //
-// ƒƒ“ƒo•Ï”
+// ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½Ïï¿½
 //
 /////////////////////////////////////////
 
-//struct‚¾‚Ægp‘Š‘Î‚ªŽg‚¦‚È‚¢‚Ý‚½‚¢‚È‚Ì‚ÅA•’Ê‚Ì•Ï”‚É•ÏXBŠÖ˜A‚ÌC³‘½‚ß‚È‚Ì‚Å’ˆÓB - LCK
+//structï¿½ï¿½ï¿½ï¿½gpï¿½ï¿½ï¿½Î‚ï¿½ï¿½gï¿½ï¿½ï¿½È‚ï¿½ï¿½Ý‚ï¿½ï¿½ï¿½ï¿½È‚Ì‚ÅAï¿½ï¿½ï¿½Ê‚Ì•Ïï¿½ï¿½É•ÏXï¿½Bï¿½Ö˜Aï¿½ÌCï¿½ï¿½ï¿½ï¿½ï¿½ß‚È‚Ì‚Å’ï¿½ï¿½ÓB - LCK
 struct cpu_regs _c_regs;
 word c_regs_AF;
 word c_regs_BC;
@@ -83,7 +83,7 @@ byte rp_data;
 
 /////////////////////////////////////////
 //
-// ƒƒ“ƒoŠÖ”
+// ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½Öï¿½
 //
 /////////////////////////////////////////
 void cpu_init(void)
@@ -189,15 +189,15 @@ byte cpu_read_direct_ord(word adr)
 	switch(adr>>13){
 	case 0:
 	case 1:
-		return get_rom()[adr];//ROM—Ìˆæ
+		return get_rom()[adr];//ROMï¿½Ìˆï¿½
 	case 2:
 	case 3:
-		return mbc_get_rom()[adr];//ƒoƒ“ƒN‰Â”\ROM
+		return mbc_get_rom()[adr];//ï¿½oï¿½ï¿½ï¿½Nï¿½Â”\ROM
 	case 4:
 		return vram_bank[adr&0x1FFF];//8KBVRAM
 	case 5:
 		if (mbc_is_ext_ram())
-			return mbc_get_sram()[adr&0x1FFF];//ƒJ[ƒgƒŠƒbƒWRAM
+			return mbc_get_sram()[adr&0x1FFF];//ï¿½Jï¿½[ï¿½gï¿½ï¿½ï¿½bï¿½WRAM
 		else
 			return mbc_ext_read(adr);
 	case 6:
@@ -222,7 +222,7 @@ byte cpu_read_direct_ord(word adr)
 	return 0;
 }
 
-//’Z‚­‚µ‚ÄƒCƒ“ƒ‰ƒCƒ“‚É‚Ô‚¿‚±‚Þ - LCK
+//ï¿½Zï¿½ï¿½ï¿½ï¿½ï¿½ÄƒCï¿½ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½É‚Ô‚ï¿½ï¿½ï¿½ï¿½ï¿½ - LCK
 //inline byte cpu_read_direct(word adr)
 inline byte cpu_read(word adr)
 {
@@ -284,7 +284,7 @@ inline byte op_read()
 	return cpu_read(c_regs_PC++);
 }
 
-//‚±‚Á‚¿‚Ì‚Ù‚¤‚ª‘‚¢‚ÆŽv‚í‚ê - LCK
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚Ù‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÆŽvï¿½ï¿½ï¿½ - LCK
 inline word op_readw()
 {
 	word r=readw(c_regs_PC);
@@ -306,7 +306,7 @@ void cpu_write_direct_ord(word adr,byte dat)
 		break;
 	case 5:
 		if (mbc_is_ext_ram())
-			mbc_get_sram()[adr&0x1FFF]=dat;//ƒJ[ƒgƒŠƒbƒWRAM
+			mbc_get_sram()[adr&0x1FFF]=dat;//ï¿½Jï¿½[ï¿½gï¿½ï¿½ï¿½bï¿½WRAM
 		else
 			mbc_ext_write(adr,dat);
 		break;
@@ -333,7 +333,7 @@ void cpu_write_direct_ord(word adr,byte dat)
 	}
 }
 
-//’Z‚­‚µ‚ÄƒCƒ“ƒ‰ƒCƒ“‚É‚Ô‚¿‚±‚Þ - LCK
+//ï¿½Zï¿½ï¿½ï¿½ï¿½ï¿½ÄƒCï¿½ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½É‚Ô‚ï¿½ï¿½ï¿½ï¿½ï¿½ - LCK
 inline void cpu_write_direct(word adr,byte dat)
 {
 	if ((adr&0xe000)==0xc000) {
@@ -343,7 +343,7 @@ inline void cpu_write_direct(word adr,byte dat)
 			ram[adr&0x0fff]=dat;
 	} else if ((adr&0xe000)==0xa000) {
 		if (mbc_is_ext_ram())
-			mbc_get_sram()[adr&0x1FFF]=dat;//ƒJ[ƒgƒŠƒbƒWRAM
+			mbc_get_sram()[adr&0x1FFF]=dat;//ï¿½Jï¿½[ï¿½gï¿½ï¿½ï¿½bï¿½WRAM
 		else
 			mbc_ext_write(adr,dat);
 	} else {
@@ -489,7 +489,7 @@ static const byte ZTable[256] =
 
 
 //#define Z_FLAG 0x40
-//d==0‚ÌŽž‚É0x40‚ð•Ô‚·B‚»‚êˆÈŠO‚Í‚O‚ð•Ô‚·B
+//d==0ï¿½ÌŽï¿½ï¿½ï¿½0x40ï¿½ï¿½Ô‚ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½ÈŠOï¿½Í‚Oï¿½ï¿½Ô‚ï¿½ï¿½B
 static inline byte GenZF(byte d)
 {
 	byte ret;
@@ -530,13 +530,13 @@ void cpu_irq(int irq_type)
 	cpu_irq_check();
 }
 
-//g_regs.IF, g_regs.IE, c_regs_I, halt, int_disable_next ‚ª•ÏX‚³‚ê‚½Žž‚ÉŒÄ‚Ô‚±‚ÆB‚±‚ê‚Åƒtƒ‰ƒO‚ð‚Â‚­‚Á‚ÄAƒƒCƒ“ƒ‹[ƒv‚ÅŒ©‚é - LCK
+//g_regs.IF, g_regs.IE, c_regs_I, halt, int_disable_next ï¿½ï¿½ï¿½ÏXï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½ÉŒÄ‚Ô‚ï¿½ï¿½ÆBï¿½ï¿½ï¿½ï¿½Åƒtï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½ï¿½ÄAï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½vï¿½ÅŒï¿½ï¿½ï¿½ - LCK
 void cpu_irq_check()
 {
-	int_invoke_next=(((g_regs.IF&g_regs.IE)&&(c_regs_I||halt)) || int_disable_next);	//Š„‚è‚±‚Ý‚ª‚©‚©‚éŽž+disable_next
+	int_invoke_next=(((g_regs.IF&g_regs.IE)&&(c_regs_I||halt)) || int_disable_next);	//ï¿½ï¿½ï¿½è‚±ï¿½Ý‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½éŽž+disable_next
 }
 
-//Š„‚èž‚Ý‚ª‚©‚©‚Á‚½‚çÏŽZclock‚à‚¢‚¶‚é‚æ‚¤‚É•ÏX
+//ï¿½ï¿½ï¿½èžï¿½Ý‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏŽZclockï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É•ÏX
 void cpu_irq_process()
 {
 	if (int_disable_next){
@@ -590,9 +590,9 @@ void cpu_irq_process()
 
 	cpu_irq_check();
 	
-	//Š„‚èž‚Ý‚ª‚©‚©‚Á‚½‚Ì‚ÅƒXƒe[ƒg‚ð‘«‚·
-	//13state‚ÍŽb’è’lBGB‚Å‚Ç‚¤‚È‚Á‚Ä‚é‚©‚Í’m‚ç‚È‚¢B
-	//‚æ‚­‚í‚©‚ç‚ñ‚Ì‚Åsys_clock‚Í‘«‚µ‚Ä‚È‚¢‚ª“ü‚ê‚Ä‚à‚¢‚¢‚©‚à - LCK
+	//ï¿½ï¿½ï¿½èžï¿½Ý‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ÅƒXï¿½eï¿½[ï¿½gï¿½ð‘«‚ï¿½
+	//13stateï¿½ÍŽbï¿½ï¿½lï¿½BGBï¿½Å‚Ç‚ï¿½ï¿½È‚ï¿½ï¿½Ä‚é‚©ï¿½Í’mï¿½ï¿½È‚ï¿½ï¿½B
+	//ï¿½æ‚­ï¿½í‚©ï¿½ï¿½ï¿½Ì‚ï¿½sys_clockï¿½Í‘ï¿½ï¿½ï¿½ï¿½Ä‚È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - LCK
 //	rest_clock-=13;
 //	div_clock+=13;
 //	total_clock+=13;
@@ -644,7 +644,7 @@ void cpu_exec(unsigned short clocks)
 		div_clock+=tmp_clocks;
 		total_clock+=tmp_clocks;
 
-		if (g_regs.TAC&0x04){//ƒ^ƒCƒ}Š„‚è‚±‚Ý
+		if (g_regs.TAC&0x04){//ï¿½^ï¿½Cï¿½}ï¿½ï¿½ï¿½è‚±ï¿½ï¿½
 			sys_clock+=tmp_clocks;
 			if (sys_clock>timer_clocks[g_regs.TAC&0x03]){
 				sys_clock&=timer_clocks[g_regs.TAC&0x03]-1;
@@ -660,7 +660,6 @@ void cpu_exec(unsigned short clocks)
 			div_clock&=0xff;
 		}
 
-#if 0
 		if (total_clock>seri_occer){
 			seri_occer=0x7fffffff;
 /*			if (ref_gb->get_target()){
@@ -669,7 +668,7 @@ void cpu_exec(unsigned short clocks)
 				g_regs.SC&=3;
 			}
 			else*/{
-				if (hook_ext){ // ƒtƒbƒN‚µ‚Ü‚·
+				if (hook_ext){ // ï¿½tï¿½bï¿½Nï¿½ï¿½ï¿½Ü‚ï¿½
 					byte ret=hook_proc.send(g_regs.SB);
 					g_regs.SB=ret;
 					g_regs.SC&=3;
@@ -681,7 +680,6 @@ void cpu_exec(unsigned short clocks)
 			}
 			cpu_irq(INT_SERIAL);
 		}
-#endif
 	}
 }
 
