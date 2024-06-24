@@ -18,7 +18,7 @@
 */
 
 //-------------------------------------------------
-// GB ‚»‚Ì‘¼ƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“•”/ŠO•”‚Æ‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX
+// GB ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½Gï¿½~ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½Oï¿½ï¿½ï¿½Æ‚ÌƒCï¿½ï¿½ï¿½^ï¿½[ï¿½tï¿½Fï¿½[ï¿½X
 
 #include "../psp/pspcommon.h"
 #include "gb.h"
@@ -29,7 +29,7 @@ struct gb_regs g_regs;
 struct gbc_regs cg_regs;
 int gb_lastVramCrc = 0;
 
-word dmy[160*5]; // vframe ‚Í‚İo‚µ‚½—p
+word dmy[160*5]; // vframe ï¿½Í‚İoï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½p
 word vframe_mem[SIZE_LINE*(144+112)];
 #ifdef USE_GPU
 word *vframe = (word*)0x040CC000;
@@ -56,7 +56,7 @@ void gb_init(void)
 {
 	lcd_init();
 	rom_init();
-	apu_init();// ROM‚æ‚èŒã‚Éì‚ç‚ê‚½‚µ
+	apu_init();// ROMï¿½ï¿½ï¿½ï¿½Éï¿½ï¿½ê‚½ï¿½ï¿½
 	mbc_init();
 	cpu_init();
 	sgb_init();
@@ -169,7 +169,7 @@ void gb_set_skip(int frame)
 
 void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 {
-	const int tbl_ram[]={1,1,1,4,16,8}; // 0‚Æ1‚Í•ÛŒ¯
+	const int tbl_ram[]={1,1,1,4,16,8}; // 0ï¿½ï¿½1ï¿½Í•ÛŒï¿½
 
 #ifdef CHEAT_SUPPORT
 	if (buf || fd)
@@ -198,24 +198,24 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		write_state(fd, &g_regs,sizeof(struct gb_regs));//sys_reg
 		int halt=((*cpu_get_halt())?1:0);
 		write_state(fd, &halt,sizeof(int));
-		write_state(fd, &dmy,sizeof(int)); // Œ³‚Ì”Å‚Å‚ÍƒVƒŠƒAƒ‹’ÊM’ÊM–—¹‚Ü‚Å‚ÌƒNƒƒbƒN”
-		                                               // (’ÊM‚Ìd—l‚ª‘å•‚É•Ï‚í‚Á‚½‚½‚ßƒ_ƒ~[‚Å–„‚ß‚Ä‚¢‚é)
+		write_state(fd, &dmy,sizeof(int)); // ï¿½ï¿½ï¿½Ì”Å‚Å‚ÍƒVï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ÊMï¿½ÊMï¿½ï¿½ï¿½ï¿½ï¿½Ü‚Å‚ÌƒNï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½
+		                                               // (ï¿½ÊMï¿½Ìdï¿½lï¿½ï¿½ï¿½å•ï¿½É•Ï‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßƒ_ï¿½~ï¿½[ï¿½Å–ï¿½ï¿½ß‚Ä‚ï¿½ï¿½ï¿½)
 		int mbc_dat=mbc_get_state();
 		write_state(fd, &mbc_dat,sizeof(int));//MBC
 
 		int ext_is=mbc_is_ext_ram()?1:0;
 		write_state(fd, &ext_is,sizeof(int));
 
-		// ver 1.1 ’Ç‰Á
+		// ver 1.1 ï¿½Ç‰ï¿½
 		write_state(fd, apu_get_stat_cpu(),sizeof(struct apu_stat));
 		write_state(fd, apu_get_mem(),0x30);
 		write_state(fd, apu_get_stat_gen(),sizeof(struct apu_stat));
 
 		byte resurved[256];
 		memset(resurved,0,256);
-		write_state(fd, resurved,256);//«—ˆ‚Ì‚½‚ß‚ÉŠm•Û
+		write_state(fd, resurved,256);//ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ß‚ÉŠmï¿½ï¿½
 		
-		// RINŠg’£
+		// RINï¿½gï¿½ï¿½
 		if(now_gb_mode==2){
 			write_state(fd, &sgb_mode, sizeof(int));
 			write_state(fd, &bit_received, sizeof(int));
@@ -276,7 +276,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		write_state(fd, lcd_get_pal(0),sizeof(word)*(8*4*2));//palette	//color
 		int halt=((*cpu_get_halt())?1:0);
 		write_state(fd, &halt,sizeof(int));
-		write_state(fd, &dmy,sizeof(int)); // Œ³‚Ì”Å‚Å‚ÍƒVƒŠƒAƒ‹’ÊM’ÊM–—¹‚Ü‚Å‚ÌƒNƒƒbƒN”
+		write_state(fd, &dmy,sizeof(int)); // ï¿½ï¿½ï¿½Ì”Å‚Å‚ÍƒVï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ÊMï¿½ÊMï¿½ï¿½ï¿½ï¿½ï¿½Ü‚Å‚ÌƒNï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½
 
 		int mbc_dat=mbc_get_state();
 		write_state(fd, &mbc_dat,sizeof(int));//MBC
@@ -284,7 +284,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		int ext_is=mbc_is_ext_ram()?1:0;
 		write_state(fd, &ext_is,sizeof(int));
 
-		//‚»‚Ì‘¼”X
+		//ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½ï¿½X
 		write_state(fd, cpu_dat+2,sizeof(int));	//color
 		write_state(fd, cpu_dat+3,sizeof(int));	//color
 		write_state(fd, cpu_dat+4,sizeof(int));	//color
@@ -292,7 +292,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		write_state(fd, cpu_dat+6,sizeof(int));	//color
 		write_state(fd, cpu_dat+7,sizeof(int));	//color
 
-		// ver 1.1 ’Ç‰Á
+		// ver 1.1 ï¿½Ç‰ï¿½
 		write_state(fd, apu_get_stat_cpu(),sizeof(struct apu_stat));
 		write_state(fd, apu_get_mem(),0x30);
 		write_state(fd, apu_get_stat_gen(),sizeof(struct apu_stat));
@@ -301,7 +301,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		memset(resurved,0,256);
 //		resurved[0]=1;
 		write_state(fd, &reload,1);
-		write_state(fd, resurved,256);//«—ˆ‚Ì‚½‚ß‚ÉŠm•Û
+		write_state(fd, resurved,256);//ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ß‚ÉŠmï¿½ï¿½
 	}
 
 #ifdef CHEAT_SUPPORT
@@ -324,7 +324,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 
 void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 {
-	const int tbl_ram[]={1,1,1,4,16,8}; // 0‚Æ1‚Í•ÛŒ¯
+	const int tbl_ram[]={1,1,1,4,16,8}; // 0ï¿½ï¿½1ï¿½Í•ÛŒï¿½
 	int gb_type,dmy;
 	
 	read_state(fd, &gb_type, sizeof(int));
@@ -358,12 +358,12 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		read_state(fd, &ext_is,sizeof(int));
 		mbc_set_ext_is(ext_is?true:false);
 
-		// ver 1.1 ’Ç‰Á
+		// ver 1.1 ï¿½Ç‰ï¿½
 //		byte tmp[256],tester[100];
-//		read_state(fd, tmp, 100); // ‚Æ‚è‚ ‚¦‚¸’²‚×‚Ä‚İ‚é
+//		read_state(fd, tmp, 100); // ï¿½Æ‚è‚ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×‚Ä‚İ‚ï¿½
 //		_memset(tester,0,100);
 //		if (_memcmp(tmp,tester,100)!=0){
-			// apu •”•ª
+			// apu ï¿½ï¿½ï¿½ï¿½
 //			sceIoLseek(fd, -100, 1);
 			read_state(fd, apu_get_stat_cpu(),sizeof(struct apu_stat));
 			read_state(fd, apu_get_mem(),0x30);
@@ -371,9 +371,9 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 //		}
 
 		byte resurved[256];
-		read_state(fd, resurved, 256);//«—ˆ‚Ì‚½‚ß‚ÉŠm•Û
+		read_state(fd, resurved, 256);//ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ß‚ÉŠmï¿½ï¿½
 		
-		// RINŠg’£
+		// RINï¿½gï¿½ï¿½
 		if(gb_type==2 && sgb_mode){
 			int dmy;
 			read_state(fd, &dmy, sizeof(int));
@@ -436,7 +436,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		int halt;
 		read_state(fd, &halt,sizeof(int));
 		*cpu_get_halt()=(halt?true:false);
-		read_state(fd, &dmy,sizeof(int)); // Œ³‚Ì”Å‚Å‚ÍƒVƒŠƒAƒ‹’ÊM’ÊM–—¹‚Ü‚Å‚ÌƒNƒƒbƒN”
+		read_state(fd, &dmy,sizeof(int)); // ï¿½ï¿½ï¿½Ì”Å‚Å‚ÍƒVï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ÊMï¿½ÊMï¿½ï¿½ï¿½ï¿½ï¿½Ü‚Å‚ÌƒNï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½
 
 		int mbc_dat;
 		read_state(fd, &mbc_dat,sizeof(int)); // MBC
@@ -445,7 +445,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		read_state(fd, &ext_is,sizeof(int));
 		mbc_set_ext_is(ext_is?true:false);
 
-		//‚»‚Ì‘¼”X
+		//ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½ï¿½X
 		read_state(fd, cpu_dat+2,sizeof(int));
 		read_state(fd, cpu_dat+3,sizeof(int));
 		read_state(fd, cpu_dat+4,sizeof(int));
@@ -454,19 +454,19 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		read_state(fd, cpu_dat+7,sizeof(int));
 		cpu_restore_state(cpu_dat);
 
-		// ver 1.1 ’Ç‰Á
+		// ver 1.1 ï¿½Ç‰ï¿½
 //		byte tmp[256],tester[100];
-//		read_state(fd, tmp,100); // ‚Æ‚è‚ ‚¦‚¸’²‚×‚Ä‚İ‚é
+//		read_state(fd, tmp,100); // ï¿½Æ‚è‚ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×‚Ä‚İ‚ï¿½
 //		_memset(tester,0,100);
 //		if (_memcmp(tmp,tester,100)!=0){
-			// apu •”•ª
+			// apu ï¿½ï¿½ï¿½ï¿½
 //			sceIoLseek(fd, -100, 1);
 			read_state(fd, apu_get_stat_cpu(),sizeof(struct apu_stat));
 			read_state(fd, apu_get_mem(),0x30);
 			read_state(fd, apu_get_stat_gen(),sizeof(struct apu_stat));
 
 //			read_state(fd, tmp,1);
-			/* renderer_map_color‚©‚çlcd_get_mapped_pal‚Ö‚Ì•ÏX‚Í•s—v‚É‚È‚è‚Ü‚µ‚½B ruka
+			/* renderer_map_colorï¿½ï¿½ï¿½ï¿½lcd_get_mapped_palï¿½Ö‚Ì•ÏXï¿½Í•sï¿½vï¿½É‚È‚ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B ruka
 			int i;
 			if (tmp[0])
 				for (i=0;i<64;i++)
@@ -479,7 +479,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 			}*/
 //		}
 		byte resurved[256];
-		read_state(fd, resurved,256);//«—ˆ‚Ì‚½‚ß‚ÉŠm•Û
+		read_state(fd, resurved,256);//ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ß‚ÉŠmï¿½ï¿½
 	}
 
 #ifdef CHEAT_SUPPORT
@@ -490,7 +490,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 
 void gb_refresh_pal()
 {
-	/* renderer_map_color‚©‚çlcd_get_mapped_pal‚Ö‚Ì•ÏX‚Í•s—v‚É‚È‚è‚Ü‚µ‚½B ruka
+	/* renderer_map_colorï¿½ï¿½ï¿½ï¿½lcd_get_mapped_palï¿½Ö‚Ì•ÏXï¿½Í•sï¿½vï¿½É‚È‚ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B ruka
 	int i;
 	for (i=0;i<64;i++)
 		lcd_get_mapped_pal(i>>2)[i&3]=renderer_map_color(lcd_get_pal(i>>2)[i&3]);
@@ -502,7 +502,7 @@ int gb_run()
 {
 	int command = 0;
 	if (rom_get_loaded()){
-		if (g_regs.LCDC&0x80){ // LCDC ‹N“®
+		if (g_regs.LCDC&0x80){ // LCDC ï¿½Nï¿½ï¿½ï¿½ï¿½
 			g_regs.LY=(g_regs.LY+1)%154;
 
 			g_regs.STAT&=0xF8;
@@ -526,7 +526,7 @@ int gb_run()
 				lcd_clear_win_count();
 //				skip=skip_buf;
 			}
-			if (g_regs.LY>=144){ // VBlank ŠúŠÔ’†
+			if (g_regs.LY>=144){ // VBlank ï¿½ï¿½ï¿½Ô’ï¿½
 				g_regs.STAT|=1;
 				if (g_regs.LY==144){
 					cpu_exec(72);
@@ -538,13 +538,13 @@ int gb_run()
 				else if (g_regs.LY==153){
 					cpu_exec(80);
 					g_regs.LY=0;
-					cpu_exec(456-80); // ‘O‚Ìƒ‰ƒCƒ“‚Ì‚©‚È‚è‘–Ú‚©‚ç0‚É‚È‚é‚æ‚¤‚¾B
+					cpu_exec(456-80); // ï¿½Oï¿½Ìƒï¿½ï¿½Cï¿½ï¿½ï¿½Ì‚ï¿½ï¿½È‚è‘ï¿½Ú‚ï¿½ï¿½ï¿½0ï¿½É‚È‚ï¿½æ‚¤ï¿½ï¿½ï¿½B
 					g_regs.LY=153;
 				}
 				else
 					cpu_exec(456);
 			}
-			else{ // VBlank ŠúŠÔŠO
+			else{ // VBlank ï¿½ï¿½ï¿½ÔŠO
 				g_regs.STAT|=2;
 				if (g_regs.STAT&0x20)
 					cpu_irq(INT_LCDC);
@@ -624,7 +624,7 @@ int gb_run()
 				}
 			}
 		}
-		else{ // LCDC ’â~
+		else{ // LCDC ï¿½ï¿½~ï¿½ï¿½
 			g_regs.LY=0;
 //			g_regs.LY=(g_regs.LY+1)%154;
 			re_render++;
@@ -660,7 +660,7 @@ int gb_run_frame()
 	int cmd = 0;
 	do {
         if (rom_get_loaded()){
-            if (g_regs.LCDC&0x80){ // LCDC ‹N“®
+            if (g_regs.LCDC&0x80){ // LCDC ï¿½Nï¿½ï¿½ï¿½ï¿½
                 g_regs.LY=(g_regs.LY+1)%154;
 
                 g_regs.STAT&=0xF8;
@@ -669,7 +669,7 @@ int gb_run_frame()
                     if (g_regs.STAT&0x40)
                         cpu_irq(INT_LCDC);
                 }
-                if (g_regs.LY==0){
+                if (g_regs.LY==144){
 //    				renderer_refresh();
                     cmd |= 1;
 /*    				if (gbSkip){
@@ -681,7 +681,7 @@ int gb_run_frame()
                     lcd_clear_win_count();
 //		    		skip=skip_buf;
                 }
-                if (g_regs.LY>=144){ // VBlank ŠúŠÔ’†
+                if (g_regs.LY>=144){ // VBlank ï¿½ï¿½ï¿½Ô’ï¿½
                     g_regs.STAT|=1;
                     if (g_regs.LY==144){
                         cpu_exec(72);
@@ -693,13 +693,13 @@ int gb_run_frame()
                     else if (g_regs.LY==153){
                         cpu_exec(80);
                         g_regs.LY=0;
-                        cpu_exec(456-80); // ‘O‚Ìƒ‰ƒCƒ“‚Ì‚©‚È‚è‘–Ú‚©‚ç0‚É‚È‚é‚æ‚¤‚¾B
+                        cpu_exec(456-80); // ï¿½Oï¿½Ìƒï¿½ï¿½Cï¿½ï¿½ï¿½Ì‚ï¿½ï¿½È‚è‘ï¿½Ú‚ï¿½ï¿½ï¿½0ï¿½É‚È‚ï¿½æ‚¤ï¿½ï¿½ï¿½B
                         g_regs.LY=153;
                     }
                     else
                         cpu_exec(456);
                 }
-                else{ // VBlank ŠúŠÔŠO
+                else{ // VBlank ï¿½ï¿½ï¿½ÔŠO
                     g_regs.STAT|=2;
                     if (g_regs.STAT&0x20)
                         cpu_irq(INT_LCDC);
@@ -777,7 +777,7 @@ int gb_run_frame()
                     }
                 }
             }
-            else{ // LCDC ’â~
+            else{ // LCDC ï¿½ï¿½~ï¿½ï¿½
                 g_regs.LY=0;
 //	    		g_regs.LY=(g_regs.LY+1)%154;
                 re_render++;
