@@ -81,7 +81,6 @@ void gb_reset()
 	set_gb_type();
 	
 	g_regs.SC=0;
-	g_regs.DIV=0;
 	g_regs.TIMA=0;
 	g_regs.TMA=0;
 	g_regs.TAC=0;

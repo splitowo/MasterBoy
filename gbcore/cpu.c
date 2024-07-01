@@ -59,7 +59,9 @@ byte *ram_bank;
 
 byte z802gb[256],gb2z80[256];
 //	word org_pal[16][4];
-int total_clock,rest_clock,sys_clock,seri_occer,div_clock;
+int total_clock,rest_clock,sys_clock,seri_occer;
+word div_clock;
+
 char halt,speed,speed_change,dma_executing;
 char b_trace;
 int dma_src;
@@ -653,11 +655,6 @@ void cpu_exec(unsigned short clocks)
 					g_regs.TIMA=g_regs.TMA;
 				}
 			}
-		}
-
-		if (div_clock&0x100){
-			g_regs.DIV-=div_clock>>8;
-			div_clock&=0xff;
 		}
 
 		if (total_clock>seri_occer){
