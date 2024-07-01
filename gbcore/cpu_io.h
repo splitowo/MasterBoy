@@ -1,4 +1,4 @@
-//long”z—ñ‚ðƒRƒs[B”z—ñ‹«ŠE‚Í4ƒoƒCƒgƒAƒ‰ƒCƒ“‚³‚ê‚Ä‚¢‚é•K—v‚ ‚è
+//longï¿½zï¿½ï¿½ï¿½ï¿½Rï¿½sï¿½[ï¿½Bï¿½zï¿½ñ‹«ŠEï¿½ï¿½4ï¿½oï¿½Cï¿½gï¿½Aï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Kï¿½vï¿½ï¿½ï¿½ï¿½
 inline void _memcpy4x(void *d, void *s, unsigned long c)
 {
 	//for (; c>0; --c) *(((unsigned long *)d)++)=*(((unsigned long *)s)++);
@@ -160,7 +160,7 @@ static byte cpu_io_read_54( word adr ){ return dma_dest&0xff; }
 static byte cpu_io_read_55( word adr ){ return (dma_executing?((dma_rest-1)&0x7f):0xFF); }
 static byte cpu_io_read_56( word adr )
 { 
-	// ÔŠOü
+	// ï¿½ÔŠOï¿½ï¿½
 	int bit, size;
 	unsigned long cur_time;
 	if ((cg_regs.RP&0xC0)==0xC0){
@@ -215,7 +215,7 @@ static byte cpu_io_read_69( word adr )
 			ret=renderer_unmap_color(lcd_get_pal((cg_regs.BCPS>>3)&7)[(cg_regs.BCPS>>1)&3])>>8;
 		else
 			ret=renderer_unmap_color(lcd_get_pal((cg_regs.BCPS>>3)&7)[(cg_regs.BCPS>>1)&3])&0xff;
-*/		//ƒ|ƒCƒ“ƒ^‚ÍƒCƒ“ƒNƒŠƒƒ“ƒg‚³‚ê‚È‚¢(‚¨‚¶‚á‚éŠÛ)
+*/		//ï¿½|ï¿½Cï¿½ï¿½ï¿½^ï¿½ÍƒCï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½È‚ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 		return ret;
 }
 static byte cpu_io_read_6A( word adr ){ return cg_regs.OCPS; }
@@ -528,14 +528,14 @@ static void cpu_io_write_02( word adr,byte dat )
 { 
 		if (rom_get_info()->gb_type<=2){
 			g_regs.SC=dat&0x81;
-			if ((dat&0x80)&&(dat&1)) // ‘—MŠJŽn
+			if ((dat&0x80)&&(dat&1)) // ï¿½ï¿½ï¿½Mï¿½Jï¿½n
 				seri_occer=total_clock+512;
 		}
-		else{ // GBC‚Å‚ÌŠg’£
+		else{ // GBCï¿½Å‚ÌŠgï¿½ï¿½
 			g_regs.SC=dat&0x83;
-			if ((dat&0x80)&&(dat&1)){ // ‘—MŠJŽn
+			if ((dat&0x80)&&(dat&1)){ // ï¿½ï¿½ï¿½Mï¿½Jï¿½n
 				if (dat&2)
-					seri_occer=total_clock+512*8/32; // “]‘—‘¬“x’Êí‚Ì32”{
+					seri_occer=total_clock+512*8/32; // ï¿½]ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Êï¿½ï¿½32ï¿½{
 				else
 					seri_occer=total_clock+512*8;
 			}
@@ -622,7 +622,7 @@ static void cpu_io_write_40( word adr,byte dat )
 }
 static void cpu_io_write_41( word adr,byte dat )
 { 
-//		if (rom_get_info()->gb_type==1) // ƒIƒŠƒWƒiƒ‹GB‚É‚¨‚¢‚Ä‚±‚Ì‚æ‚¤‚ÈŒ»Û‚ª‹N‚±‚é‚ç‚µ‚¢
+//		if (rom_get_info()->gb_type==1) // ï¿½Iï¿½ï¿½ï¿½Wï¿½iï¿½ï¿½GBï¿½É‚ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ì‚æ‚¤ï¿½ÈŒï¿½ï¿½Û‚ï¿½ï¿½Nï¿½ï¿½ï¿½ï¿½ç‚µï¿½ï¿½
 		if (rom_get_info()->gb_type<=2)
 			if (!(g_regs.STAT&0x02))
 				g_regs.IF|=INT_LCDC;
@@ -684,9 +684,7 @@ static void cpu_io_write_4C( word adr,byte dat ){ ; }
 static void cpu_io_write_4D( word adr,byte dat ){ cg_regs.KEY1=dat&1; speed_change=dat&1; }
 static void cpu_io_write_4E( word adr,byte dat ){ ; }
 static void cpu_io_write_4F( word adr,byte dat )
-{ 
-		if (dma_executing)
-			return;
+{
 		vram_bank=vram+0x2000*(dat&0x01);
 		cg_regs.VBK=dat;//&0x01;
 }
@@ -703,7 +701,7 @@ static void cpu_io_write_55( word adr,byte dat )
 			cg_regs.HDMA5=0;
 			return;
 		}
-		if (dat&0x80){ //HBlank–ˆ
+		if (dat&0x80){ //HBlankï¿½ï¿½
 			if (dma_executing){
 				dma_executing=false;
 				dma_rest=0;
@@ -727,7 +725,7 @@ static void cpu_io_write_55( word adr,byte dat )
 				dma_src_bank=ram_bank-0xD000;
 			else dma_src_bank=NULL;
 */			}
-		else{ //’ÊíDMA
+		else{ //ï¿½Êï¿½DMA
 			if (dma_executing){
 				dma_executing=false;
 				dma_rest=0;
@@ -735,7 +733,7 @@ static void cpu_io_write_55( word adr,byte dat )
 //					fprintf(file,"dma stopped\n");
 				return;
 			}
-			// ‚Ç‚¤‚â‚ç¤HBlankˆÈŠO‚È‚ç‚¢‚Â‚Å‚àOK‚Ý‚½‚¢‚¾
+			// ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½HBlankï¿½ÈŠOï¿½È‚ç‚¢ï¿½Â‚Å‚ï¿½OKï¿½Ý‚ï¿½ï¿½ï¿½ï¿½ï¿½
 //				if (!(((g_regs.STAT&3)==1)||(!(g_regs.LCDC&0x80)))){
 //					cg_regs.HDMA5=0;
 //					return;
@@ -776,12 +774,12 @@ static void cpu_io_write_55( word adr,byte dat )
 			dma_src+=((dat&0x7F)+1)*16;
 			dma_dest+=((dat&0x7F)+1)*16;
 
-			gdma_rest=456*2+((dat&0x7f)+1)*32*(speed?2:1); // CPU ƒpƒ[‚ðè—Ì
+			gdma_rest=456*2+((dat&0x7f)+1)*32*(speed?2:1); // CPU ï¿½pï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½
 		}
 }
 static void cpu_io_write_56( word adr,byte dat )
 {
-	// ÔŠOü
+	// ï¿½ÔŠOï¿½ï¿½
 	cg_regs.RP=dat;
 	if ((cg_regs.RP&0xC0)==0xC0){
 		if (rp_fd<0){
