@@ -23,7 +23,7 @@
 // GB orginal op_code
 
 inline void op_code_normal_case0x08(void) { writew(op_readw(),REG_SP);} //LD (mn),SP
-inline void op_code_normal_case0x10(void) { if (speed_change) { speed_change=false;speed^=1;REG_PC++;/* 1ƒoƒCƒg“Ç‚Ý”ò‚Î‚· */ } else { halt=true;REG_PC--; cpu_irq_check(); }} //STOP(HALT?)
+inline void op_code_normal_case0x10(void) { if (speed_change) { speed_change=false;speed^=1;REG_PC++;pc_ptr++;/* 1ï¿½oï¿½Cï¿½gï¿½Ç‚Ý”ï¿½Î‚ï¿½ */ } else { halt=true;REG_PC--;pc_ptr--; cpu_irq_check(); }} //STOP(HALT?)
 
 //0x2A LD A,(mn) -> LD A,(HLI) Load A from (HL) and decrement HL
 inline void op_code_normal_case0x2A(void) { REG_A=cpu_read(REG_HL);REG_HL++;} // LD A,(HLI) : 00 111 010 :state 13
@@ -37,7 +37,7 @@ inline void op_code_normal_case0x3A(void) { REG_A=cpu_read(REG_HL);REG_HL--;} //
 //0x32 LD (mn),A -> LD (HLD),A Save A at (HL) and decrement HL
 inline void op_code_normal_case0x32(void) { cpu_write(REG_HL,REG_A);REG_HL--;} // LD (HLD),A : 00 110 010 :state 13
 
-inline void op_code_normal_case0xD9(void) { /*Log("Return Interrupts.\n");*/c_regs_I=1;REG_PC=readw(REG_SP);REG_SP+=2;int_disable_next=true;/*;g_regs.IF=0*/;/*res->system_reg.IF&=~Int_hist[(Int_depth>0)?--Int_depth:Int_depth]*//*Int_depth=((Int_depth>0)?--Int_depth:Int_depth);*//*res->system_reg.IF=0;*//*Log("RETI %d\n",Int_depth);*/ cpu_irq_check(); }//RETI state 16
+inline void op_code_normal_case0xD9(void) { /*Log("Return Interrupts.\n");*/c_regs_I=1;REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;int_disable_next=true;/*;g_regs.IF=0*/;/*res->system_reg.IF&=~Int_hist[(Int_depth>0)?--Int_depth:Int_depth]*//*Int_depth=((Int_depth>0)?--Int_depth:Int_depth);*//*res->system_reg.IF=0;*//*Log("RETI %d\n",Int_depth);*/ cpu_irq_check(); }//RETI state 16
 inline void op_code_normal_case0xE0(void) { cpu_write(0xFF00+op_read(),REG_A);}//LDH (n),A
 inline void op_code_normal_case0xE2(void) { cpu_write(0xFF00+REG_C,REG_A);}//LDH (C),A
 inline void op_code_normal_case0xE8(void) { REG_SP+=(signed char)op_read();}//ADD SP,n
@@ -160,7 +160,7 @@ inline void op_code_normal_case0xF9(void) { REG_SP=REG_HL;} //LD SP,HL : 11 111 
 inline void op_code_normal_case0xC5(void) { REG_SP-=2;writew(REG_SP,REG_BC);} //PUSH BC
 inline void op_code_normal_case0xD5(void) { REG_SP-=2;writew(REG_SP,REG_DE);} //PUSH DE
 inline void op_code_normal_case0xE5(void) { REG_SP-=2;writew(REG_SP,REG_HL);} //PUSH HL
-inline void op_code_normal_case0xF5(void) { cpu_write(REG_SP-2,z802gb[REG_F]|0xe);cpu_write(REG_SP-1,REG_A);REG_SP-=2;} //PUSH AF // –¢Žg—pƒrƒbƒg‚Í1‚É‚È‚é‚Ý‚½‚¢(ƒƒ^ƒ‹ƒMƒA‚æ‚è)
+inline void op_code_normal_case0xF5(void) { cpu_write(REG_SP-2,z802gb[REG_F]|0xe);cpu_write(REG_SP-1,REG_A);REG_SP-=2;} //PUSH AF // ï¿½ï¿½ï¿½gï¿½pï¿½rï¿½bï¿½gï¿½ï¿½1ï¿½É‚È‚ï¿½Ý‚ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½Mï¿½Aï¿½ï¿½ï¿½)
 
 //POP rq : 11 rq0 001 : state 10 (12?)
 inline void op_code_normal_case0xC1(void) { REG_B=cpu_read(REG_SP+1);REG_C=cpu_read(REG_SP);REG_SP+=2;} //POP BC
@@ -308,7 +308,7 @@ inline void op_code_normal_case0x1B(void) { REG_DE--;} //DEC DE
 inline void op_code_normal_case0x2B(void) { REG_HL--;} //DEC HL
 inline void op_code_normal_case0x3B(void) { REG_SP--;} //DEC SP
 
-//”Ä—pFCPU§Œä opcode
+//ï¿½Ä—pï¿½FCPUï¿½ï¿½ï¿½ï¿½ opcode
 
 /*case 0x27://DAA :state 4
 	tmp.b.h=REG_A&0x0F;
@@ -350,7 +350,7 @@ inline void op_code_normal_case0x27(void) {//DAA :state 4
 //  FLAGS(REG_A,tmp.b.l|(REG_F&N_FLAG));
 }
 
-inline void op_code_normal_case0x2F(void) { //CPL(1‚Ì•â”) :state4
+inline void op_code_normal_case0x2F(void) { //CPL(1ï¿½Ì•â”) :state4
 	REG_A=~REG_A;
 	REG_F|=(N_FLAG|H_FLAG);
 }
@@ -371,17 +371,18 @@ inline void op_code_normal_case0xFB(void) { c_regs_I=1;int_disable_next=true; cp
 
 inline void op_code_normal_case0x76(void) {
 #ifndef EXSACT_CORE
-	if (g_regs.TAC&0x04){//ƒ^ƒCƒ}Š„‚è‚±‚Ý
+	if (g_regs.TAC&0x04){//ï¿½^ï¿½Cï¿½}ï¿½ï¿½ï¿½è‚±ï¿½ï¿½
 		static const int timer_clocks[]={1024,16,64,256};
 		word tmp;
 		tmp=g_regs.TIMA+(sys_clock+rest_clock)/timer_clocks[g_regs.TAC&0x03];
 
-		if (tmp&0xFF00){//HALT’†‚ÉŠ„‚è‚±‚Ý‚ª‚©‚©‚éê‡
+		if (tmp&0xFF00){//HALTï¿½ï¿½ï¿½ÉŠï¿½ï¿½è‚±ï¿½Ý‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡
 			total_clock+=(256-g_regs.TIMA)*timer_clocks[g_regs.TAC&0x03]-sys_clock;
 			rest_clock-=(256-g_regs.TIMA)*timer_clocks[g_regs.TAC&0x03]-sys_clock;
 			g_regs.TIMA=g_regs.TMA;
 			halt=true;
 			REG_PC--;
+			pc_ptr--;
 			cpu_irq(INT_TIMER);
 			sys_clock=(sys_clock+rest_clock)&(timer_clocks[g_regs.TAC&0x03]-1);
 		}
@@ -392,6 +393,7 @@ inline void op_code_normal_case0x76(void) {
 			total_clock+=rest_clock;
 			rest_clock=0;
 			REG_PC--;
+			pc_ptr--;
 		}
 	}
 	else{
@@ -400,6 +402,7 @@ inline void op_code_normal_case0x76(void) {
 		div_clock+=rest_clock;
 		rest_clock=0;
 		REG_PC--;
+		pc_ptr--;
 	}
 	tmp_clocks=0;
 	cpu_irq_check(); 
@@ -418,51 +421,51 @@ inline void op_code_normal_case0x1F(void) { union pare_reg tmp;tmp.b.l=REG_A&1;R
 
 //jump opcode
 
-//cc ðŒ 000 NZ non zero 001 Z zero 010 NC non carry 011 C carry
-inline void op_code_normal_case0xC3(void) { REG_PC=op_readw();}//JP mn : state 10 (16?)
+//cc ï¿½ï¿½ï¿½ï¿½ 000 NZ non zero 001 Z zero 010 NC non carry 011 C carry
+inline void op_code_normal_case0xC3(void) { REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);}//JP mn : state 10 (16?)
 
 //JP cc,mn : 11 cc 010 : state 16 or 12
-inline void op_code_normal_case0xC2(void) { if (REG_F&Z_FLAG) REG_PC+=2; else { REG_PC=op_readw();tmp_clocks=16; };} // JPNZ mn
-inline void op_code_normal_case0xCA(void) { if (REG_F&Z_FLAG) { REG_PC=op_readw();tmp_clocks=16; } else REG_PC+=2;;} // JPZ mn
-inline void op_code_normal_case0xD2(void) { if (REG_F&C_FLAG) REG_PC+=2; else { REG_PC=op_readw();tmp_clocks=16; };} // JPNC mn
-inline void op_code_normal_case0xDA(void) { if (REG_F&C_FLAG) { REG_PC=op_readw();tmp_clocks=16; } else REG_PC+=2;;} // JPC mn
+inline void op_code_normal_case0xC2(void) { if (REG_F&Z_FLAG) {REG_PC+=2;pc_ptr+=2;} else { REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=16; };} // JPNZ mn
+inline void op_code_normal_case0xCA(void) { if (REG_F&Z_FLAG) { REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=16; } else {REG_PC+=2;pc_ptr+=2;};} // JPZ mn
+inline void op_code_normal_case0xD2(void) { if (REG_F&C_FLAG) {REG_PC+=2;pc_ptr+=2;} else { REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=16; };} // JPNC mn
+inline void op_code_normal_case0xDA(void) { if (REG_F&C_FLAG) { REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=16; } else {REG_PC+=2;pc_ptr+=2;};} // JPC mn
 
-inline void op_code_normal_case0xE9(void) { REG_PC=REG_HL;} //JP HL : state 4 
-inline void op_code_normal_case0x18(void) { REG_PC+=(signed char)op_read();}//JR e : state 12
+inline void op_code_normal_case0xE9(void) { REG_PC=REG_HL;pc_ptr=cpu_get_memory_ref(REG_PC);} //JP HL : state 4
+inline void op_code_normal_case0x18(void) { REG_PC+=(signed char)op_read();pc_ptr=cpu_get_memory_ref(REG_PC);}//JR e : state 12
 
 //JR cc,e : 00 1cc 000 : state 12(not jumped ->8)
-inline void op_code_normal_case0x20(void) { if (REG_F&Z_FLAG) REG_PC+=1; else {REG_PC+=(signed char)op_read();tmp_clocks=12;} }// JRNZ
-inline void op_code_normal_case0x28(void) { if (REG_F&Z_FLAG) {REG_PC+=(signed char)op_read();tmp_clocks=12;} else REG_PC+=1; }// JRZ
-inline void op_code_normal_case0x30(void) { if (REG_F&C_FLAG) REG_PC+=1; else {REG_PC+=(signed char)op_read();tmp_clocks=12;} }// JRNC
-inline void op_code_normal_case0x38(void) { if (REG_F&C_FLAG) {REG_PC+=(signed char)op_read();tmp_clocks=12;} else REG_PC+=1; }// JRC
+inline void op_code_normal_case0x20(void) { if (REG_F&Z_FLAG) {REG_PC+=1;pc_ptr+=1;} else {REG_PC+=(signed char)op_read();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=12;} }// JRNZ
+inline void op_code_normal_case0x28(void) { if (REG_F&Z_FLAG) {REG_PC+=(signed char)op_read();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=12;} else {REG_PC+=1;pc_ptr+=1;} }// JRZ
+inline void op_code_normal_case0x30(void) { if (REG_F&C_FLAG) {REG_PC+=1;pc_ptr+=1;} else {REG_PC+=(signed char)op_read();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=12;} }// JRNC
+inline void op_code_normal_case0x38(void) { if (REG_F&C_FLAG) {REG_PC+=(signed char)op_read();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=12;} else {REG_PC+=1;pc_ptr+=1;} }// JRC
 
 //call/ret opcode
 
-inline void op_code_normal_case0xCD(void) { REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();} //CALL mn :state 24
+inline void op_code_normal_case0xCD(void) { REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);} //CALL mn :state 24
 
 //CALL cc,mn : 11 0cc 100 : state 24 or 12
-inline void op_code_normal_case0xC4(void) { if (REG_F&Z_FLAG) REG_PC+=2; else {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();tmp_clocks=24;} } //CALLNZ mn
-inline void op_code_normal_case0xCC(void) { if (REG_F&Z_FLAG) {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();tmp_clocks=24;} else REG_PC+=2; } //CALLZ mn
-inline void op_code_normal_case0xD4(void) { if (REG_F&C_FLAG) REG_PC+=2; else {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();tmp_clocks=24;} } //CALLNC mn
-inline void op_code_normal_case0xDC(void) { if (REG_F&C_FLAG) {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();tmp_clocks=24;} else REG_PC+=2; } //CALLC mn
+inline void op_code_normal_case0xC4(void) { if (REG_F&Z_FLAG) {REG_PC+=2;pc_ptr+=2;} else {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} } //CALLNZ mn
+inline void op_code_normal_case0xCC(void) { if (REG_F&Z_FLAG) {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} else {REG_PC+=2;pc_ptr+=2;} } //CALLZ mn
+inline void op_code_normal_case0xD4(void) { if (REG_F&C_FLAG) {REG_PC+=2;pc_ptr+=2;} else {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} } //CALLNC mn
+inline void op_code_normal_case0xDC(void) { if (REG_F&C_FLAG) {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} else {REG_PC+=2;pc_ptr+=2;} } //CALLC mn
 
 //RST p : 11 t 111 (p=t<<3) : state 16
-inline void op_code_normal_case0xC7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x00;} //RST 0x00
-inline void op_code_normal_case0xCF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x08;} //RST 0x08
-inline void op_code_normal_case0xD7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x10;} //RST 0x10
-inline void op_code_normal_case0xDF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x18;} //RST 0x18
-inline void op_code_normal_case0xE7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x20;} //RST 0x20
-inline void op_code_normal_case0xEF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x28;} //RST 0x28
-inline void op_code_normal_case0xF7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x30;} //RST 0x30
-inline void op_code_normal_case0xFF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x38;} //RST 0x38
+inline void op_code_normal_case0xC7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x00;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x00
+inline void op_code_normal_case0xCF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x08;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x08
+inline void op_code_normal_case0xD7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x10;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x10
+inline void op_code_normal_case0xDF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x18;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x18
+inline void op_code_normal_case0xE7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x20;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x20
+inline void op_code_normal_case0xEF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x28;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x28
+inline void op_code_normal_case0xF7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x30;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x30
+inline void op_code_normal_case0xFF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x38;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x38
 
-inline void op_code_normal_case0xC9(void) { REG_PC=readw(REG_SP);REG_SP+=2;} //RET state 16
+inline void op_code_normal_case0xC9(void) { REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;} //RET state 16
 
 //RET cc : 11 0cc 000 : state 20 or 8
-inline void op_code_normal_case0xC0(void) { if (!(REG_F&Z_FLAG)) {REG_PC=readw(REG_SP);REG_SP+=2;tmp_clocks=20;} } //RETNZ
-inline void op_code_normal_case0xC8(void) { if (REG_F&Z_FLAG) {REG_PC=readw(REG_SP);REG_SP+=2;tmp_clocks=20;} } //RETZ
-inline void op_code_normal_case0xD0(void) { if (!(REG_F&C_FLAG)) {REG_PC=readw(REG_SP);REG_SP+=2;tmp_clocks=20;} } //RETNC
-inline void op_code_normal_case0xD8(void) { if (REG_F&C_FLAG) {REG_PC=readw(REG_SP);REG_SP+=2;tmp_clocks=20;} } //RETC
+inline void op_code_normal_case0xC0(void) { if (!(REG_F&Z_FLAG)) {REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;tmp_clocks=20;} } //RETNZ
+inline void op_code_normal_case0xC8(void) { if (REG_F&Z_FLAG) {REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;tmp_clocks=20;} } //RETZ
+inline void op_code_normal_case0xD0(void) { if (!(REG_F&C_FLAG)) {REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;tmp_clocks=20;} } //RETNC
+inline void op_code_normal_case0xD8(void) { if (REG_F&C_FLAG) {REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;tmp_clocks=20;} } //RETC
 
 inline void op_code_normal_case0xCB(void) {
 	int op_code=op_read();

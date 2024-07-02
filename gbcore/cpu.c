@@ -57,6 +57,8 @@ byte ext_mem[16];
 byte *vram_bank;
 byte *ram_bank;
 
+byte *pc_ptr;
+
 byte z802gb[256],gb2z80[256];
 //	word org_pal[16][4];
 int total_clock,rest_clock,sys_clock,seri_occer;
@@ -111,6 +113,11 @@ void cpu_reset(void)
 	c_regs_I=0;
 	c_regs_SP=0xFFFE;
 	c_regs_PC=0x100;
+
+	if(rom_get_loaded())
+	{
+		pc_ptr = first_page + 0x100;
+	}
 
 	vram_bank=vram;
 	ram_bank=ram+0x1000;
@@ -224,6 +231,46 @@ byte cpu_read_direct_ord(word adr)
 	return 0;
 }
 
+inline byte* cpu_get_direct_ref_ord(const word adr)
+{
+	switch(adr>>13){
+	case 0:
+	case 1:
+		return get_rom() + adr;//ROM�̈�
+	case 2:
+	case 3:
+		return mbc_get_rom() + adr;//�o���N�\ROM
+	case 4:
+		return vram_bank + (adr&0x1FFF);//8KBVRAM
+	case 5:
+		if (mbc_is_ext_ram())
+			return mbc_get_sram() + (adr&0x1FFF);//�J�[�g���b�WRAM
+		else
+			return 0;
+	case 6:
+		if (adr&0x1000)
+			return ram_bank + (adr&0x0fff);
+		else
+			return ram + (adr&0x0fff);
+	case 7:
+		if (adr<0xFE00){
+			if (adr&0x1000)
+				return ram_bank + (adr&0x0fff);
+			else
+				return ram + (adr&0x0fff);
+		}
+		else if (adr<0xFEA0)
+			return oam + (adr-0xFE00);//object attribute memory
+		else if (adr<0xFF00)
+			return spare_oam + ((((adr-0xFFA0)>>5)<<3)|(adr&7));
+		else if (adr<0xFFFF && adr >= 0xFF80)
+			return stack + (adr-0xFF80);
+		else if (adr == 0xFFFF)
+			return &g_regs.IE;
+	}
+	return 0;
+}
+
 //�Z�����ăC�����C���ɂԂ����� - LCK
 //inline byte cpu_read_direct(word adr)
 inline byte cpu_read(word adr)
@@ -236,6 +283,18 @@ inline byte cpu_read(word adr)
 //		return (mbc_is_ext_ram())?mbc_get_sram()[adr&0x1FFF]:mbc_ext_read(adr);
 	}
 	return cpu_read_direct_ord(adr);
+}
+
+inline byte* cpu_get_memory_ref(const word adr)
+{
+	if ((adr&0x8000)==0) {
+		return ((adr&0x4000)==0)?get_rom() + adr:mbc_get_rom() + adr;
+	} else if ((adr&0xe000)==0xc000) {
+		return ((adr&0x1000)==0)?ram + (adr&0xfff):ram_bank + (adr&0xfff);
+		//	} else if ((adr&0xe000)==0xa000) {
+		//		return (mbc_is_ext_ram())?mbc_get_sram()[adr&0x1FFF]:mbc_ext_read(adr);
+	}
+	return cpu_get_direct_ref_ord(adr);
 }
 
 /*inline byte cpu_read(word adr)
@@ -283,7 +342,8 @@ inline void writew(word adr,word dat)
 
 inline byte op_read()
 {
-	return cpu_read(c_regs_PC++);
+	c_regs_PC++;
+	return *pc_ptr++;
 }
 
 //�������̂ق��������Ǝv��� - LCK
@@ -291,6 +351,7 @@ inline word op_readw()
 {
 	word r=readw(c_regs_PC);
 	c_regs_PC+=2;
+	pc_ptr+=2;
 	return r;
 }
 
@@ -553,7 +614,10 @@ void cpu_irq_process()
 	}
 
 	if (halt)
+	{
 		c_regs_PC++;
+		pc_ptr++;
+	}
 
 	cpu_write(c_regs_SP-2,c_regs_PC&0xFF);
 	cpu_write(c_regs_SP-1,(c_regs_PC>>8));
@@ -561,26 +625,31 @@ void cpu_irq_process()
 	
 	if (g_regs.IF&g_regs.IE&INT_VBLANK){//VBlank
 		c_regs_PC=0x40;
+		pc_ptr=get_rom()+0x40;
 		g_regs.IF&=0xFE;
 		last_int=INT_VBLANK;
 	}
 	else if (g_regs.IF&g_regs.IE&INT_LCDC){//LCDC
 		c_regs_PC=0x48;
+		pc_ptr=get_rom()+0x48;
 		g_regs.IF&=0xFD;
 		last_int=INT_LCDC;
 	}
 	else if (g_regs.IF&g_regs.IE&INT_TIMER){//Timer
 		c_regs_PC=0x50;
+		pc_ptr=get_rom()+0x50;
 		g_regs.IF&=0xFB;
 		last_int=INT_TIMER;
 	}
 	else if (g_regs.IF&g_regs.IE&INT_SERIAL){//Serial
 		c_regs_PC=0x58;
+		pc_ptr=get_rom()+0x58;
 		g_regs.IF&=0xF7;
 		last_int=INT_SERIAL;
 	}
 	else if (g_regs.IF&g_regs.IE&INT_PAD){//Pad
 		c_regs_PC=0x60;
+		pc_ptr=get_rom()+0x60;
 		g_regs.IF&=0xEF;
 		last_int=INT_PAD;
 	}
@@ -713,7 +782,7 @@ struct cpu_regs *cpu_set_c_regs()
 	c_regs_SP=_c_regs.SP  ;
 	c_regs_PC=_c_regs.PC  ;
 	c_regs_I =_c_regs.I   ;
-	cpu_irq_check(); 
+	cpu_irq_check();
+	pc_ptr = cpu_get_memory_ref(c_regs_PC);
 	return &_c_regs; 
 }
-
