@@ -6,22 +6,14 @@ inline void _memcpy4x(void *d, void *s, unsigned long c)
 	for (; c>0; --c) *dd++ = *ss++;
 }
 
-inline void _memcpy40(void *d, void *s, unsigned long c)
+static uint32_t space_to_vram_bound(const uint32_t adr)
 {
-	unsigned long *dd=d,*ss=s;
-	int i;
-	for(i=0; i<5; i++){
-		dd[0] = ss[0];
-		dd[1] = ss[1];
-		dd[2] = ss[2];
-		dd[3] = ss[3];
-		dd[4] = ss[4];
-		dd[5] = ss[5];
-		dd[6] = ss[6];
-		dd[7] = ss[7];
-		dd+=8;
-		ss+=8;
-	}
+	return 0xA000 - adr;
+}
+
+static uint32_t min(const uint32_t x, const uint32_t y)
+{
+	return x < y ? x : y;
 }
 
 static byte cpu_io_read_00( word adr )
@@ -743,29 +735,30 @@ static void cpu_io_write_55( word adr,byte dat )
 			dma_rest=0;
 			cg_regs.HDMA5=0xFF;
 
+			const unsigned long memcpy_length = min(space_to_vram_bound(dma_dest), 16*(dat&0x7F)+16) / 4;
 			switch(dma_src>>13){
 			case 0:
 			case 1:
-				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(get_rom()+(dma_src)),4*(dat&0x7F)+4);
+				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(get_rom()+(dma_src)),memcpy_length);
 				//_memcpy(vram_bank+(dma_dest&0x1ff0),get_rom()+(dma_src),16*(dat&0x7F)+16);
 				break;
 			case 2:
 			case 3:
-				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(mbc_get_rom()+(dma_src)),4*(dat&0x7F)+4);
+				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(mbc_get_rom()+(dma_src)),memcpy_length);
 				//_memcpy(vram_bank+(dma_dest&0x1ff0),mbc_get_rom()+(dma_src),16*(dat&0x7F)+16);
 				break;
 			case 4:
 				break;
 			case 5:
-				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(mbc_get_sram()+(dma_src&0x1FFF)),4*(dat&0x7F)+4);
+				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(mbc_get_sram()+(dma_src&0x1FFF)),memcpy_length);
 				//_memcpy(vram_bank+(dma_dest&0x1ff0),mbc_get_sram()+(dma_src&0x1FFF),16*(dat&0x7F)+16);
 				break;
 			case 6:
 				if (dma_src&0x1000)
-					_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(ram_bank+(dma_src&0x0FFF)),4*(dat&0x7F)+4);
+					_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(ram_bank+(dma_src&0x0FFF)), memcpy_length);
 					//_memcpy(vram_bank+(dma_dest&0x1ff0),ram_bank+(dma_src&0x0FFF),16*(dat&0x7F)+16);
 				else
-					_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(ram+(dma_src&0x0FFF)),4*(dat&0x7F)+4);
+					_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(ram+(dma_src&0x0FFF)),memcpy_length);
 					//_memcpy(vram_bank+(dma_dest&0x1ff0),ram+(dma_src&0x0FFF),16*(dat&0x7F)+16);
 				break;
 			case 7:
