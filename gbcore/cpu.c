@@ -331,13 +331,15 @@ inline byte cpu_read(word adr)
 
 inline word readw(word adr)
 {
-	return cpu_read(adr)|(cpu_read(adr+1)<<8);
+	const byte *ref = cpu_get_memory_ref(adr);
+	return *ref | *(ref + 1) << 8;
 }
 
 inline void writew(word adr,word dat)
 {
-	cpu_write(adr,(byte)dat);
-	cpu_write(adr+1,dat>>8);
+	byte *ref = cpu_get_memory_ref(adr);
+	*ref = (byte)dat;
+	*(ref + 1) = dat>>8;
 }
 
 inline byte op_read()
@@ -349,7 +351,7 @@ inline byte op_read()
 //こっちのほうが早いと思われ - LCK
 inline word op_readw()
 {
-	word r=readw(c_regs_PC);
+	word r = *pc_ptr | *(pc_ptr + 1) << 8;
 	c_regs_PC+=2;
 	pc_ptr+=2;
 	return r;
