@@ -23,7 +23,7 @@
 // GB orginal op_code
 
 inline void op_code_normal_case0x08(void) { writew(op_readw(),REG_SP);} //LD (mn),SP
-inline void op_code_normal_case0x10(void) { if (speed_change) { speed_change=false;speed^=1;REG_PC++;pc_ptr++;/* 1�o�C�g�ǂݔ�΂� */ } else { halt=true;REG_PC--;pc_ptr--; cpu_irq_check(); }} //STOP(HALT?)
+inline void op_code_normal_case0x10(void) { if (speed_change) { speed_change=false;speed^=1;REG_PC++;pc_ptr++;/* 1バイト読み飛ばす */ } else { halt=true;REG_PC--;pc_ptr--; cpu_irq_check(); }} //STOP(HALT?)
 
 //0x2A LD A,(mn) -> LD A,(HLI) Load A from (HL) and decrement HL
 inline void op_code_normal_case0x2A(void) { REG_A=cpu_read(REG_HL);REG_HL++;} // LD A,(HLI) : 00 111 010 :state 13
@@ -160,7 +160,7 @@ inline void op_code_normal_case0xF9(void) { REG_SP=REG_HL;} //LD SP,HL : 11 111 
 inline void op_code_normal_case0xC5(void) { REG_SP-=2;writew(REG_SP,REG_BC);} //PUSH BC
 inline void op_code_normal_case0xD5(void) { REG_SP-=2;writew(REG_SP,REG_DE);} //PUSH DE
 inline void op_code_normal_case0xE5(void) { REG_SP-=2;writew(REG_SP,REG_HL);} //PUSH HL
-inline void op_code_normal_case0xF5(void) { cpu_write(REG_SP-2,z802gb[REG_F]|0xe);cpu_write(REG_SP-1,REG_A);REG_SP-=2;} //PUSH AF // ���g�p�r�b�g��1�ɂȂ�݂���(���^���M�A���)
+inline void op_code_normal_case0xF5(void) { cpu_write(REG_SP-2,z802gb[REG_F]|0xe);cpu_write(REG_SP-1,REG_A);REG_SP-=2;} //PUSH AF // 未使用ビットは1になるみたい(メタルギアよ
 
 //POP rq : 11 rq0 001 : state 10 (12?)
 inline void op_code_normal_case0xC1(void) { REG_B=cpu_read(REG_SP+1);REG_C=cpu_read(REG_SP);REG_SP+=2;} //POP BC
@@ -308,7 +308,7 @@ inline void op_code_normal_case0x1B(void) { REG_DE--;} //DEC DE
 inline void op_code_normal_case0x2B(void) { REG_HL--;} //DEC HL
 inline void op_code_normal_case0x3B(void) { REG_SP--;} //DEC SP
 
-//�ėp�FCPU���� opcode
+//汎用：CPU制御 opcode
 
 /*case 0x27://DAA :state 4
 	tmp.b.h=REG_A&0x0F;
@@ -350,7 +350,7 @@ inline void op_code_normal_case0x27(void) {//DAA :state 4
 //  FLAGS(REG_A,tmp.b.l|(REG_F&N_FLAG));
 }
 
-inline void op_code_normal_case0x2F(void) { //CPL(1�̕␔) :state4
+inline void op_code_normal_case0x2F(void) { //CPL(1の補数) :state4
 	REG_A=~REG_A;
 	REG_F|=(N_FLAG|H_FLAG);
 }
@@ -371,12 +371,12 @@ inline void op_code_normal_case0xFB(void) { c_regs_I=1;int_disable_next=true; cp
 
 inline void op_code_normal_case0x76(void) {
 #ifndef EXSACT_CORE
-	if (g_regs.TAC&0x04){//�^�C�}���肱��
+	if (g_regs.TAC&0x04){//タイマ割りこみ
 		static const int timer_clocks[]={1024,16,64,256};
 		word tmp;
 		tmp=g_regs.TIMA+(sys_clock+rest_clock)/timer_clocks[g_regs.TAC&0x03];
 
-		if (tmp&0xFF00){//HALT���Ɋ��肱�݂�������ꍇ
+		if (tmp&0xFF00){//HALT中に割りこみがかかる場合
 			total_clock+=(256-g_regs.TIMA)*timer_clocks[g_regs.TAC&0x03]-sys_clock;
 			rest_clock-=(256-g_regs.TIMA)*timer_clocks[g_regs.TAC&0x03]-sys_clock;
 			g_regs.TIMA=g_regs.TMA;
@@ -405,11 +405,11 @@ inline void op_code_normal_case0x76(void) {
 		pc_ptr--;
 	}
 	tmp_clocks=0;
-	cpu_irq_check(); 
+	cpu_irq_check();
 #else
 	halt=true;
 	REG_PC--;
-	cpu_irq_check(); 
+	cpu_irq_check();
 #endif
 } //HALT : state 4
 
@@ -421,7 +421,7 @@ inline void op_code_normal_case0x1F(void) { union pare_reg tmp;tmp.b.l=REG_A&1;R
 
 //jump opcode
 
-//cc ���� 000 NZ non zero 001 Z zero 010 NC non carry 011 C carry
+//cc 条件 000 NZ non zero 001 Z zero 010 NC non carry 011 C carry
 inline void op_code_normal_case0xC3(void) { REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);}//JP mn : state 10 (16?)
 
 //JP cc,mn : 11 cc 010 : state 16 or 12

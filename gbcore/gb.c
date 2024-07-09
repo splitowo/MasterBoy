@@ -18,7 +18,7 @@
 */
 
 //-------------------------------------------------
-// GB ���̑��G�~�����[�V������/�O���Ƃ̃C���^�[�t�F�[�X
+// GB その他エミュレーション部/外部とのインターフェース
 
 #include "../psp/pspcommon.h"
 #include "gb.h"
@@ -29,7 +29,7 @@ struct gb_regs g_regs;
 struct gbc_regs cg_regs;
 int gb_lastVramCrc = 0;
 
-word dmy[160*5]; // vframe �͂ݏo�������p
+word dmy[160*5]; // vframe はみ出した時用
 word vframe_mem[SIZE_LINE*(144+112)];
 #ifdef USE_GPU
 word *vframe = (word*)0x040CC000;
@@ -56,7 +56,7 @@ void gb_init(void)
 {
 	lcd_init();
 	rom_init();
-	apu_init();// ROM����ɍ��ꂽ��
+	apu_init();// ROMより後に作られたし
 	mbc_init();
 	cpu_init();
 	sgb_init();
@@ -168,7 +168,7 @@ void gb_set_skip(int frame)
 
 void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 {
-	const int tbl_ram[]={1,1,1,4,16,8}; // 0��1�͕ی�
+	const int tbl_ram[]={1,1,1,4,16,8}; // 0と1は保険
 
 #ifdef CHEAT_SUPPORT
 	if (buf || fd)
@@ -197,24 +197,24 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		write_state(fd, &g_regs,sizeof(struct gb_regs));//sys_reg
 		int halt=((*cpu_get_halt())?1:0);
 		write_state(fd, &halt,sizeof(int));
-		write_state(fd, &dmy,sizeof(int)); // ���̔łł̓V���A���ʐM�ʐM�����܂ł̃N���b�N��
-		                                               // (�ʐM�̎d�l���啝�ɕς�������߃_�~�[�Ŗ��߂Ă���)
+		write_state(fd, &dmy,sizeof(int)); // 元の版ではシリアル通信通信満了までのクロック数
+		                                               // (通信の仕様が大幅に変わったためダミーで埋めている)
 		int mbc_dat=mbc_get_state();
 		write_state(fd, &mbc_dat,sizeof(int));//MBC
 
 		int ext_is=mbc_is_ext_ram()?1:0;
 		write_state(fd, &ext_is,sizeof(int));
 
-		// ver 1.1 �ǉ�
+		// ver 1.1 追加
 		write_state(fd, apu_get_stat_cpu(),sizeof(struct apu_stat));
 		write_state(fd, apu_get_mem(),0x30);
 		write_state(fd, apu_get_stat_gen(),sizeof(struct apu_stat));
 
 		byte resurved[256];
 		memset(resurved,0,256);
-		write_state(fd, resurved,256);//�����̂��߂Ɋm��
+		write_state(fd, resurved,256);//将来のために確保
 		
-		// RIN�g��
+		// RIN拡張
 		if(now_gb_mode==2){
 			write_state(fd, &sgb_mode, sizeof(int));
 			write_state(fd, &bit_received, sizeof(int));
@@ -275,7 +275,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		write_state(fd, lcd_get_pal(0),sizeof(word)*(8*4*2));//palette	//color
 		int halt=((*cpu_get_halt())?1:0);
 		write_state(fd, &halt,sizeof(int));
-		write_state(fd, &dmy,sizeof(int)); // ���̔łł̓V���A���ʐM�ʐM�����܂ł̃N���b�N��
+		write_state(fd, &dmy,sizeof(int)); // 元の版ではシリアル通信通信満了までのクロック数
 
 		int mbc_dat=mbc_get_state();
 		write_state(fd, &mbc_dat,sizeof(int));//MBC
@@ -283,7 +283,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		int ext_is=mbc_is_ext_ram()?1:0;
 		write_state(fd, &ext_is,sizeof(int));
 
-		//���̑����X
+		//その他諸々
 		write_state(fd, cpu_dat+2,sizeof(int));	//color
 		write_state(fd, cpu_dat+3,sizeof(int));	//color
 		write_state(fd, cpu_dat+4,sizeof(int));	//color
@@ -291,7 +291,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		write_state(fd, cpu_dat+6,sizeof(int));	//color
 		write_state(fd, cpu_dat+7,sizeof(int));	//color
 
-		// ver 1.1 �ǉ�
+		// ver 1.1 追加
 		write_state(fd, apu_get_stat_cpu(),sizeof(struct apu_stat));
 		write_state(fd, apu_get_mem(),0x30);
 		write_state(fd, apu_get_stat_gen(),sizeof(struct apu_stat));
@@ -300,7 +300,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 		memset(resurved,0,256);
 //		resurved[0]=1;
 		write_state(fd, &reload,1);
-		write_state(fd, resurved,256);//�����̂��߂Ɋm��
+		write_state(fd, resurved,256);//将来のために確保
 	}
 
 #ifdef CHEAT_SUPPORT
@@ -323,7 +323,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 
 void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 {
-	const int tbl_ram[]={1,1,1,4,16,8}; // 0��1�͕ی�
+	const int tbl_ram[]={1,1,1,4,16,8}; // 0と1は保険
 	int gb_type,dmy;
 	
 	read_state(fd, &gb_type, sizeof(int));
@@ -357,12 +357,12 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		read_state(fd, &ext_is,sizeof(int));
 		mbc_set_ext_is(ext_is?true:false);
 
-		// ver 1.1 �ǉ�
+		// ver 1.1 追加
 //		byte tmp[256],tester[100];
-//		read_state(fd, tmp, 100); // �Ƃ肠�������ׂĂ݂�
+//		read_state(fd, tmp, 100); // とりあえず調べてみる
 //		_memset(tester,0,100);
 //		if (_memcmp(tmp,tester,100)!=0){
-			// apu ����
+			// apu 部分
 //			sceIoLseek(fd, -100, 1);
 			read_state(fd, apu_get_stat_cpu(),sizeof(struct apu_stat));
 			read_state(fd, apu_get_mem(),0x30);
@@ -370,9 +370,9 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 //		}
 
 		byte resurved[256];
-		read_state(fd, resurved, 256);//�����̂��߂Ɋm��
+		read_state(fd, resurved, 256);//将来のために確保
 		
-		// RIN�g��
+		// RIN拡張
 		if(gb_type==2 && sgb_mode){
 			int dmy;
 			read_state(fd, &dmy, sizeof(int));
@@ -435,7 +435,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		int halt;
 		read_state(fd, &halt,sizeof(int));
 		*cpu_get_halt()=(halt?true:false);
-		read_state(fd, &dmy,sizeof(int)); // ���̔łł̓V���A���ʐM�ʐM�����܂ł̃N���b�N��
+		read_state(fd, &dmy,sizeof(int)); // 元の版ではシリアル通信通信満了までのクロック数
 
 		int mbc_dat;
 		read_state(fd, &mbc_dat,sizeof(int)); // MBC
@@ -444,7 +444,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		read_state(fd, &ext_is,sizeof(int));
 		mbc_set_ext_is(ext_is?true:false);
 
-		//���̑����X
+		//その他諸々
 		read_state(fd, cpu_dat+2,sizeof(int));
 		read_state(fd, cpu_dat+3,sizeof(int));
 		read_state(fd, cpu_dat+4,sizeof(int));
@@ -453,19 +453,19 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		read_state(fd, cpu_dat+7,sizeof(int));
 		cpu_restore_state(cpu_dat);
 
-		// ver 1.1 �ǉ�
+		// ver 1.1 追加
 //		byte tmp[256],tester[100];
-//		read_state(fd, tmp,100); // �Ƃ肠�������ׂĂ݂�
+//		read_state(fd, tmp,100); // とりあえず調べてみる
 //		_memset(tester,0,100);
 //		if (_memcmp(tmp,tester,100)!=0){
-			// apu ����
+			// apu 部分
 //			sceIoLseek(fd, -100, 1);
 			read_state(fd, apu_get_stat_cpu(),sizeof(struct apu_stat));
 			read_state(fd, apu_get_mem(),0x30);
 			read_state(fd, apu_get_stat_gen(),sizeof(struct apu_stat));
 
 //			read_state(fd, tmp,1);
-			/* renderer_map_color����lcd_get_mapped_pal�ւ̕ύX�͕s�v�ɂȂ�܂����B ruka
+			/* renderer_map_colorからlcd_get_mapped_palへの変更は不要になりました。 ruka
 			int i;
 			if (tmp[0])
 				for (i=0;i<64;i++)
@@ -478,7 +478,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 			}*/
 //		}
 		byte resurved[256];
-		read_state(fd, resurved,256);//�����̂��߂Ɋm��
+		read_state(fd, resurved,256);//将来のために確保
 	}
 
 #ifdef CHEAT_SUPPORT
@@ -489,7 +489,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 
 void gb_refresh_pal()
 {
-	/* renderer_map_color����lcd_get_mapped_pal�ւ̕ύX�͕s�v�ɂȂ�܂����B ruka
+	/* renderer_map_colorからlcd_get_mapped_palへの変更は不要になりました。 ruka
 	int i;
 	for (i=0;i<64;i++)
 		lcd_get_mapped_pal(i>>2)[i&3]=renderer_map_color(lcd_get_pal(i>>2)[i&3]);
@@ -501,7 +501,7 @@ int gb_run()
 {
 	int command = 0;
 	if (rom_get_loaded()){
-		if (g_regs.LCDC&0x80){ // LCDC �N����
+		if (g_regs.LCDC&0x80){ // LCDC 起動時
 			g_regs.LY=(g_regs.LY+1)%154;
 
 			g_regs.STAT&=0xF8;
@@ -525,7 +525,7 @@ int gb_run()
 				lcd_clear_win_count();
 //				skip=skip_buf;
 			}
-			if (g_regs.LY>=144){ // VBlank ���Ԓ�
+			if (g_regs.LY>=144){ // VBlank 期間中
 				g_regs.STAT|=1;
 				if (g_regs.LY==144){
 					cpu_exec(72);
@@ -537,13 +537,13 @@ int gb_run()
 				else if (g_regs.LY==153){
 					cpu_exec(80);
 					g_regs.LY=0;
-					cpu_exec(456-80); // �O�̃��C���̂��Ȃ葁�ڂ���0�ɂȂ�悤���B
+					cpu_exec(456-80); // 前のラインのかなり早目から0になるようだ。
 					g_regs.LY=153;
 				}
 				else
 					cpu_exec(456);
 			}
-			else{ // VBlank ���ԊO
+			else{ // VBlank 期間外
 				g_regs.STAT|=2;
 				if (g_regs.STAT&0x20)
 					cpu_irq(INT_LCDC);
@@ -623,7 +623,7 @@ int gb_run()
 				}
 			}
 		}
-		else{ // LCDC ��~��
+		else{ // LCDC 停止時
 			g_regs.LY=0;
 //			g_regs.LY=(g_regs.LY+1)%154;
 			re_render++;
@@ -659,7 +659,7 @@ int gb_run_frame()
 	int cmd = 0;
 	do {
         if (rom_get_loaded()){
-            if (g_regs.LCDC&0x80){ // LCDC �N����
+            if (g_regs.LCDC&0x80){ // LCDC 起動時
                 g_regs.LY=(g_regs.LY+1)%154;
 
                 g_regs.STAT&=0xF8;
@@ -680,7 +680,7 @@ int gb_run_frame()
                     lcd_clear_win_count();
 //		    		skip=skip_buf;
                 }
-                if (g_regs.LY>=144){ // VBlank ���Ԓ�
+                if (g_regs.LY>=144){ // VBlank 期間中
                     g_regs.STAT|=1;
                     if (g_regs.LY==144){
                         cpu_exec(72);
@@ -692,13 +692,13 @@ int gb_run_frame()
                     else if (g_regs.LY==153){
                         cpu_exec(80);
                         g_regs.LY=0;
-                        cpu_exec(456-80); // �O�̃��C���̂��Ȃ葁�ڂ���0�ɂȂ�悤���B
+                        cpu_exec(456-80); // 前のラインのかなり早目から0になるようだ。
                         g_regs.LY=153;
                     }
                     else
                         cpu_exec(456);
                 }
-                else{ // VBlank ���ԊO
+                else{ // VBlank 期間外
                     g_regs.STAT|=2;
                     if (g_regs.STAT&0x20)
                         cpu_irq(INT_LCDC);
@@ -776,7 +776,7 @@ int gb_run_frame()
                     }
                 }
             }
-            else{ // LCDC ��~��
+            else{ // LCDC 停止時
                 g_regs.LY=0;
 //	    		g_regs.LY=(g_regs.LY+1)%154;
                 re_render++;

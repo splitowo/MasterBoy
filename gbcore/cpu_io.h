@@ -1,4 +1,4 @@
-//long�z����R�s�[�B�z�񋫊E��4�o�C�g�A���C������Ă���K�v����
+//long配列をコピー。配列境界は4バイトアラインされている必要あり
 inline void _memcpy4x(void *d, void *s, unsigned long c)
 {
 	//for (; c>0; --c) *(((unsigned long *)d)++)=*(((unsigned long *)s)++);
@@ -152,7 +152,7 @@ static byte cpu_io_read_54( word adr ){ return dma_dest&0xff; }
 static byte cpu_io_read_55( word adr ){ return (dma_executing?((dma_rest-1)&0x7f):0xFF); }
 static byte cpu_io_read_56( word adr )
 { 
-	// �ԊO��
+	// 赤外線
 	int bit, size;
 	unsigned long cur_time;
 	if ((cg_regs.RP&0xC0)==0xC0){
@@ -207,7 +207,7 @@ static byte cpu_io_read_69( word adr )
 			ret=renderer_unmap_color(lcd_get_pal((cg_regs.BCPS>>3)&7)[(cg_regs.BCPS>>1)&3])>>8;
 		else
 			ret=renderer_unmap_color(lcd_get_pal((cg_regs.BCPS>>3)&7)[(cg_regs.BCPS>>1)&3])&0xff;
-*/		//�|�C���^�̓C���N�������g����Ȃ�(��������)
+*/		//ポインタはインクリメントされない(おじゃる丸)
 		return ret;
 }
 static byte cpu_io_read_6A( word adr ){ return cg_regs.OCPS; }
@@ -520,14 +520,14 @@ static void cpu_io_write_02( word adr,byte dat )
 { 
 		if (rom_get_info()->gb_type<=2){
 			g_regs.SC=dat&0x81;
-			if ((dat&0x80)&&(dat&1)) // ���M�J�n
+			if ((dat&0x80)&&(dat&1)) // 送信開始
 				seri_occer=total_clock+512;
 		}
-		else{ // GBC�ł̊g��
+		else{ // GBCでの拡張
 			g_regs.SC=dat&0x83;
-			if ((dat&0x80)&&(dat&1)){ // ���M�J�n
+			if ((dat&0x80)&&(dat&1)){ // 送信開始
 				if (dat&2)
-					seri_occer=total_clock+512*8/32; // �]�����x�ʏ��32�{
+					seri_occer=total_clock+512*8/32; // 転送速度通常の32倍
 				else
 					seri_occer=total_clock+512*8;
 			}
@@ -614,7 +614,7 @@ static void cpu_io_write_40( word adr,byte dat )
 }
 static void cpu_io_write_41( word adr,byte dat )
 { 
-//		if (rom_get_info()->gb_type==1) // �I���W�i��GB�ɂ����Ă��̂悤�Ȍ��ۂ��N����炵��
+//		if (rom_get_info()->gb_type==1) // オリジナルGBにおいてこのような現象が起こるらしい
 		if (rom_get_info()->gb_type<=2)
 			if (!(g_regs.STAT&0x02))
 				g_regs.IF|=INT_LCDC;
@@ -693,7 +693,7 @@ static void cpu_io_write_55( word adr,byte dat )
 			cg_regs.HDMA5=0;
 			return;
 		}
-		if (dat&0x80){ //HBlank��
+		if (dat&0x80){ //HBlank毎
 			if (dma_executing){
 				dma_executing=false;
 				dma_rest=0;
@@ -717,7 +717,7 @@ static void cpu_io_write_55( word adr,byte dat )
 				dma_src_bank=ram_bank-0xD000;
 			else dma_src_bank=NULL;
 */			}
-		else{ //�ʏ�DMA
+		else{ //通常DMA
 			if (dma_executing){
 				dma_executing=false;
 				dma_rest=0;
@@ -725,7 +725,7 @@ static void cpu_io_write_55( word adr,byte dat )
 //					fprintf(file,"dma stopped\n");
 				return;
 			}
-			// �ǂ����HBlank�ȊO�Ȃ炢�ł�OK�݂�����
+			// どうやら､HBlank以外ならいつでもOKみたいだ
 //				if (!(((g_regs.STAT&3)==1)||(!(g_regs.LCDC&0x80)))){
 //					cg_regs.HDMA5=0;
 //					return;
@@ -767,12 +767,12 @@ static void cpu_io_write_55( word adr,byte dat )
 			dma_src+=((dat&0x7F)+1)*16;
 			dma_dest+=((dat&0x7F)+1)*16;
 
-			gdma_rest=456*2+((dat&0x7f)+1)*32*(speed?2:1); // CPU �p���[����
+			gdma_rest=456*2+((dat&0x7f)+1)*32*(speed?2:1); // CPU パワーを占領
 		}
 }
 static void cpu_io_write_56( word adr,byte dat )
 {
-	// �ԊO��
+	// 赤外線
 	cg_regs.RP=dat;
 	if ((cg_regs.RP&0xC0)==0xC0){
 		if (rp_fd<0){
