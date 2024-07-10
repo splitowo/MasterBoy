@@ -52,7 +52,7 @@ extern int menuStatusActive;
 extern int menuStatusPosition, menuStatusDrawn;
 extern int menuStickMessageDisplayed;
 extern int gblMenuAlpha, menuFrameNb;
-extern int menuTimeZone, menuDayLightSaving, menuIsInGame, menuUpdateRender;
+extern int menuIsInGame, menuUpdateRender;
 extern char *menuStatusBarMessage;
 extern char menuStatusBarMessageInd[256];
 extern int gblFlagLoadParams;

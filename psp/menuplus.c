@@ -2,6 +2,7 @@
 #include "specialtext.h"
 #include "sound.h"
 #include "menuplusint.h"
+#include <psprtc.h>
 
 //Defined here, also in SMS.C
 #define DEBUG_MODE
@@ -57,7 +58,7 @@ int menuStatusActive;
 int menuStatusPosition = 0, menuStatusDrawn = 0;
 int menuStickMessageDisplayed = 0;
 int gblMenuAlpha, menuFrameNb;
-int menuTimeZone, menuDayLightSaving, menuIsInGame, menuUpdateRender;
+int menuIsInGame, menuUpdateRender;
 char *menuStatusBarMessage = NULL;
 char menuStatusBarMessageInd[256];
 int gblFlagLoadParams;
@@ -3251,15 +3252,11 @@ void DrawBackground()		{
 	MyDrawLine(0, 259, 480, 259, RGBA(255, 255, 255, 192));
 
 	//Batterie
-	struct tm *tsys;
-	time_t cur_time;
+	pspTime local_time;
 	char menuInfoBattery[128];
 	int batteryPercentage = -1;
 	//L'heure
-	sceKernelLibcTime(&cur_time);
-	//Région
-	cur_time += 60 * menuTimeZone + 3600 * menuDayLightSaving;
-	tsys = localtime(&cur_time);
+	sceRtcGetCurrentClockLocalTime(&local_time);
 	//Batterie présente?
 	if (scePowerIsBatteryExist()) {
 		char batteryTime[128];
@@ -3279,7 +3276,7 @@ void DrawBackground()		{
 			test--;
 		batteryPercentage = test;*/
 		sprintf(menuInfoBattery, "%02i:%02i | Batt: %i%%%s, %i°C",
-			tsys->tm_hour,tsys->tm_min,
+			local_time.hour, local_time.minutes,
 			batteryPercentage,
 			batteryTime,
 			scePowerGetBatteryTemp());
@@ -3293,7 +3290,7 @@ void DrawBackground()		{
 			scePowerGetBatteryTemp());*/
 	}
 	else
-		sprintf(menuInfoBattery, "%02i:%02i", tsys->tm_hour, tsys->tm_min);
+		sprintf(menuInfoBattery, "%02i:%02i", local_time.hour, local_time.minutes);
 	if (scePowerIsLowBattery())		{
 		oslSetTextColor(RGB(255, 0, 0));
 		//Draw a second time for a "bold" effect
@@ -3682,10 +3679,10 @@ void InitConfig()
 		menuRamStateFileName[0] = 0;
 	}
 
-	//Système
+/*	//Système
 	char sValue[256];
 	int iValue;
-	
+
 	menuTimeZone=0;
 	menuDayLightSaving=0;
 
@@ -3693,7 +3690,7 @@ void InitConfig()
 		menuTimeZone = iValue;
 	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_DAYLIGHTSAVINGS, &iValue) != PSP_SYSTEMPARAM_RETVAL_FAIL)
 		menuDayLightSaving = iValue;
-/*	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &iValue)!=PSP_SYSTEMPARAM_RETVAL_FAIL)
+	if (sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &iValue)!=PSP_SYSTEMPARAM_RETVAL_FAIL)
 		menuLanguage = iValue;					//Défaut: PSP_SYSTEMPARAM_LANGUAGE_ENGLISH
 	if (sceUtilityGetSystemParamString(PSP_SYSTEMPARAM_ID_STRING_NICKNAME, sValue, 256) != PSP_SYSTEMPARAM_RETVAL_FAIL)
 	{
