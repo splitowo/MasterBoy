@@ -625,7 +625,15 @@ static void cpu_io_write_41( word adr,byte dat )
 static void cpu_io_write_42( word adr,byte dat ){ g_regs.SCY=dat; }
 static void cpu_io_write_43( word adr,byte dat ){ g_regs.SCX=dat; }
 static void cpu_io_write_44( word adr,byte dat ){ lcd_clear_win_count(); }
-static void cpu_io_write_45( word adr,byte dat ){ g_regs.LYC=dat; }
+static void cpu_io_write_45( word adr,byte dat )
+{
+	if (g_regs.LYC != g_regs.LY && dat == g_regs.LY)
+	{
+		cpu_irq(INT_LCDC);
+	}
+	g_regs.LYC=dat;
+}
+
 static void cpu_io_write_46( word adr,byte dat )
 { 
 		switch(dat>>5){
