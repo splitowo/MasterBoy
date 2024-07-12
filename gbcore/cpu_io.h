@@ -811,7 +811,9 @@ static void cpu_io_write_67( word adr,byte dat ){ ; }
 
 static void cpu_io_write_68( word adr,byte dat ){ cg_regs.BCPS=dat; }
 static void cpu_io_write_69( word adr,byte dat )
-{ 
+{
+	if ((g_regs.STAT & 0x3) != 0x3)
+	{
 		if (cg_regs.BCPS&1){
 			lcd_get_pal((cg_regs.BCPS>>3)&7)[(cg_regs.BCPS>>1)&3]=
 			(lcd_get_pal((cg_regs.BCPS>>3)&7)[(cg_regs.BCPS>>1)&3]&0xff)|(dat<<8);
@@ -829,14 +831,17 @@ static void cpu_io_write_69( word adr,byte dat )
 			lcd_get_pal((cg_regs.BCPS>>3)&7)[(cg_regs.BCPS>>1)&3]=
 				renderer_map_color(((renderer_unmap_color(lcd_get_pal((cg_regs.BCPS>>3)&7)[(cg_regs.BCPS>>1)&3])&0xff00)|(dat)));
 		}*/
-		cg_regs.BCPD=dat;
-		if (cg_regs.BCPS&0x80)
-			cg_regs.BCPS=0x80|((cg_regs.BCPS+1)&0x3f);
-//			fprintf(file,"%d :BCPS = %02X\n",g_regs.LY,dat);
+	}
+	cg_regs.BCPD=dat;
+	if (cg_regs.BCPS&0x80)
+		cg_regs.BCPS=0x80|((cg_regs.BCPS+1)&0x3f);
+//	fprintf(file,"%d :BCPS = %02X\n",g_regs.LY,dat);
 }
 static void cpu_io_write_6A( word adr,byte dat ){ cg_regs.OCPS=dat; }
 static void cpu_io_write_6B( word adr,byte dat )
-{ 
+{
+	if ((g_regs.STAT & 0x3) != 0x3)
+	{
 		if (cg_regs.OCPS&1){
 			lcd_get_pal(((cg_regs.OCPS>>3)&7)+8)[(cg_regs.OCPS>>1)&3]=
 			(lcd_get_pal(((cg_regs.OCPS>>3)&7)+8)[(cg_regs.OCPS>>1)&3]&0xff)|(dat<<8);
@@ -854,9 +859,10 @@ static void cpu_io_write_6B( word adr,byte dat )
 			lcd_get_pal(((cg_regs.OCPS>>3)&7)+8)[(cg_regs.OCPS>>1)&3]=
 				renderer_map_color(((renderer_unmap_color(lcd_get_pal(((cg_regs.OCPS>>3)&7)+8)[(cg_regs.OCPS>>1)&3])&0xff00)|(dat)));
 		}*/
-		cg_regs.OCPD=dat;
-		if (cg_regs.OCPS&0x80)
-			cg_regs.OCPS=0x80|((cg_regs.OCPS+1)&0x3f);
+	}
+	cg_regs.OCPD=dat;
+	if (cg_regs.OCPS&0x80)
+		cg_regs.OCPS=0x80|((cg_regs.OCPS+1)&0x3f);
 }
 static void cpu_io_write_6C( word adr,byte dat ){ _ff6c=dat&1 ; }
 static void cpu_io_write_6D( word adr,byte dat ){ ; }

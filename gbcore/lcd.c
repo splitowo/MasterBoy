@@ -126,6 +126,7 @@ void lcd_reset()
 	layer_enable[0]=layer_enable[1]=layer_enable[2]=true;
 	sprite_count=0;
 	gb_invalidate_all_colors();
+	memset(col_pal, 0, sizeof(col_pal));
 }
 
 
