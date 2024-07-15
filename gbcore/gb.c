@@ -690,9 +690,9 @@ int gb_run_frame()
                         cpu_exec(456-80);
                     }
                     else if (g_regs.LY==153){
-                        cpu_exec(80);
+                        cpu_exec(4);
                         g_regs.LY=0;
-                        cpu_exec(456-80); // 前のラインのかなり早目から0になるようだ。
+                        cpu_exec(456-4); // 前のラインのかなり早目から0になるようだ。
                         g_regs.LY=153;
                     }
                     else
@@ -704,7 +704,7 @@ int gb_run_frame()
                         cpu_irq(INT_LCDC);
                     cpu_exec(80); // state=2
                     g_regs.STAT|=3;
-                    cpu_exec(169); // state=3
+                    cpu_exec(172); // state=3
 
                     if (dma_executing){ // HBlank DMA
                         if (b_dma_first){
@@ -742,7 +742,7 @@ int gb_run_frame()
                             lcd_render(vframe,g_regs.LY);
 
                         g_regs.STAT&=0xfc;
-                        cpu_exec(207); // state=3
+                        cpu_exec(204); // state=3
                     }
                     else{
 /*	    				if (lcd_get_sprite_count()){
@@ -771,7 +771,7 @@ int gb_run_frame()
                                 lcd_render(vframe,g_regs.LY);
                             if ((g_regs.STAT&0x08))
                                 cpu_irq(INT_LCDC);
-                            cpu_exec(207); // state=0
+                            cpu_exec(204); // state=0
 //	    				}
                     }
                 }
