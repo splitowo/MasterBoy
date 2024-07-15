@@ -37,7 +37,7 @@ inline void op_code_normal_case0x3A(void) { REG_A=cpu_read(REG_HL);REG_HL--;} //
 //0x32 LD (mn),A -> LD (HLD),A Save A at (HL) and decrement HL
 inline void op_code_normal_case0x32(void) { cpu_write(REG_HL,REG_A);REG_HL--;} // LD (HLD),A : 00 110 010 :state 13
 
-inline void op_code_normal_case0xD9(void) { /*Log("Return Interrupts.\n");*/c_regs_I=1;REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;int_disable_next=true;/*;g_regs.IF=0*/;/*res->system_reg.IF&=~Int_hist[(Int_depth>0)?--Int_depth:Int_depth]*//*Int_depth=((Int_depth>0)?--Int_depth:Int_depth);*//*res->system_reg.IF=0;*//*Log("RETI %d\n",Int_depth);*/ cpu_irq_check(); }//RETI state 16
+inline void op_code_normal_case0xD9(void) { /*Log("Return Interrupts.\n");*/c_regs_I=1;REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;/*;g_regs.IF=0*/;/*res->system_reg.IF&=~Int_hist[(Int_depth>0)?--Int_depth:Int_depth]*//*Int_depth=((Int_depth>0)?--Int_depth:Int_depth);*//*res->system_reg.IF=0;*//*Log("RETI %d\n",Int_depth);*/ cpu_irq_check(); }//RETI state 16
 inline void op_code_normal_case0xE0(void) { cpu_write(0xFF00+op_read(),REG_A);}//LDH (n),A
 inline void op_code_normal_case0xE2(void) { cpu_write(0xFF00+REG_C,REG_A);}//LDH (C),A
 inline void op_code_normal_case0xE8(void) { REG_SP+=(signed char)op_read();}//ADD SP,n
