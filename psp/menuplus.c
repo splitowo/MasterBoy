@@ -79,14 +79,14 @@ static char tmpSlotTextMem[10][32];
 */
 
 //Strcpy mais avec une taille max ^^
-void safe_strcpy(char *dst, char *src, u32 maxlen)		{
+void safe_strcpy(char *dst, const char *src, u32 maxlen)		{
 	while (--maxlen && *src)
 		*dst++ = *src++;
 	*dst++ = 0;
 }
 
 //Strcat mais avec une taille max
-void safe_strcat(char *dst, char *src, u32 maxlen)		{
+void safe_strcat(char *dst, const char *src, u32 maxlen)		{
 	while (maxlen && *dst)
 		dst++, maxlen--;
 	while (--maxlen && *src)

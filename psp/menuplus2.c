@@ -4,7 +4,6 @@
 #include "menuplusint.h"
 
 int menuFileSelectCurrentMenu = 0, menuFileSelectSwap;
-SUBMENU *menuFileSelectSubMenu;
 //-1: menu currently running, 0: user cancelled, >= 1: choice selected
 static int gblMsgBoxChoiceValue;
 static SUBMENU choiceMsgBoxMenu;
@@ -266,24 +265,38 @@ int getExtId(const char *szFilePath)
 	return EXT_UNKNOWN;
 }
 
+static void freeSubMenuItems(SUBMENU *s)
+{
+	int i;
+	for(i = 0; i < s->nbItems; i++)
+	{
+		free(s->items[i].name);
+	}
+	if(s->items) free(s->items);
+	s->items = NULL;
+}
+
 int menuFileSelectFillFiles(SUBMENU *s)		{
 	int fd, ext_id, nbFiles = 0;
+
+	freeSubMenuItems(s);
 
 	fd = sceIoDopen(menuFileSelectPath);
 	if (fd < 0)		{
 		s->nbItems = 0;
 		return 0;
 	}
-	while (nbFiles < MAX_FILES)
+	while (sceIoDread(fd, &dirEntry) > 0)
 	{
-		if (sceIoDread(fd, &dirEntry) <= 0)
-			break;
 		if (dirEntry.d_name[0] == '.')
 			continue;
 		if (dirEntry.d_stat.st_attr & PSP_FILE_TYPE_DIR)
 		{
-			safe_strcpy(s->items[nbFiles].name, dirEntry.d_name, MAX_CAR_FILE);
-			safe_strcat(s->items[nbFiles].name, "/", MAX_CAR_FILE);
+			s->items = realloc(s->items, sizeof(SUBMENUITEM) * (nbFiles + 1));
+			memset(&s->items[nbFiles], 0, sizeof(SUBMENUITEM));
+			s->items[nbFiles].name = malloc(strlen(dirEntry.d_name) + 2);
+			strcpy(s->items[nbFiles].name, dirEntry.d_name);
+			strcat(s->items[nbFiles].name, "/");
 			s->items[nbFiles].prop1 = dirEntry.d_stat.st_attr;
 			s->items[nbFiles].prop2 = EXT_DIR;
 			nbFiles++;
@@ -294,7 +307,10 @@ int menuFileSelectFillFiles(SUBMENU *s)		{
 
 		if (ext_id != EXT_UNKNOWN)
 		{
-			safe_strcpy(s->items[nbFiles].name, dirEntry.d_name, MAX_CAR_FILE);
+			s->items = realloc(s->items, sizeof(SUBMENUITEM) * (nbFiles + 1));
+			memset(&s->items[nbFiles], 0, sizeof(SUBMENUITEM));
+			s->items[nbFiles].name = malloc(strlen(dirEntry.d_name) + 1);
+			strcpy(s->items[nbFiles].name, dirEntry.d_name);
 			s->items[nbFiles].prop1 = dirEntry.d_stat.st_attr;
 			s->items[nbFiles].prop2 = ext_id;
 			nbFiles++;
@@ -318,8 +334,9 @@ char *getSmallFileName(char *src)		{
 
 int menuFileSelectFillMyPlace(SUBMENU *s, int pathSlot)		{
 	int i, j, nbFiles = 0, no_recent = 0;
+	freeSubMenuItems(s);
 
-	for (i=0;i<nbPlaces && i<MAX_FILES;i++)		{
+	for (i=0;i<nbPlaces;i++)		{
 		j = (i + PATHSLOT_BASE) % nbPlaces;
 		//Don't add empty entries
 		if (!cPlaces[j][0])
@@ -333,11 +350,22 @@ int menuFileSelectFillMyPlace(SUBMENU *s, int pathSlot)		{
 		if (j < PATHSLOT_BASE)		{
 			if (j != pathSlot)
 				continue;
-			strcpy(s->items[nbFiles].name, "Recent: ");
-			safe_strcat(s->items[nbFiles].name, getSmallFileName(cPlaces[j]), MAX_CAR_FILE);
+			const char* recent = "Recent: ";
+			const char* smallFileName = getSmallFileName(cPlaces[j]);
+			s->items = realloc(s->items, sizeof(SUBMENUITEM) * (nbFiles + 1));
+			memset(&s->items[nbFiles], 0, sizeof(SUBMENUITEM));
+			s->items[nbFiles].name = malloc(strlen(recent) + strlen(smallFileName) + 1);
+			strcpy(s->items[nbFiles].name, recent);
+			strcat(s->items[nbFiles].name, smallFileName);
 		}
 		else
-			safe_strcpy(s->items[nbFiles].name, getSmallFileName(cPlaces[j]), MAX_CAR_FILE);
+		{
+			const char* smallFileName = getSmallFileName(cPlaces[j]);
+			s->items = realloc(s->items, sizeof(SUBMENUITEM) * (nbFiles + 1));
+			memset(&s->items[nbFiles], 0, sizeof(SUBMENUITEM));
+			s->items[nbFiles].name = malloc(strlen(smallFileName) + 1);
+			strcpy(s->items[nbFiles].name, smallFileName);
+		}
 		s->items[nbFiles].prop1 = j;
 		if (nPlacesTypes[j] == 1)
 			s->items[nbFiles].prop2 = EXT_DIR;
@@ -354,10 +382,7 @@ void ShowMenuFileSelect(char *savepath, int pathSlot)			{
 //	char menuFileSelectPath[256] = "ms0:/PSP/GAME/SMSPlus1.2/ROMS/";
 
 	int i, j, skip = 0, fade, myPlacesFolder = 0;
-	SUBMENUITEM *smi = (SUBMENUITEM*)malloc(sizeof(SUBMENUITEM) * MAX_FILES * 2);
-	char *textes = (char*)malloc(MAX_CAR_FILE * 2 * MAX_FILES);
-
-	menuFileSelectSubMenu = (SUBMENU*)malloc(sizeof(SUBMENU) * 2);
+	SUBMENU *menuFileSelectSubMenu = malloc(sizeof(SUBMENU) * 2);
 	menuFileSelectSwap = 0;
 	menuFileSelectCurrentMenu = 0;
 	
@@ -379,7 +404,7 @@ void ShowMenuFileSelect(char *savepath, int pathSlot)			{
 		SUBMENU *sm = &menuFileSelectSubMenu[j];
 		memset(sm, 0, sizeof(SUBMENU));
 		sm->titre = NULL;
-		sm->nbItems = 200;
+		sm->nbItems = 0;
 		sm->type = 1;
 		//Sélectionné
 		if (j == 0)			{
@@ -392,12 +417,7 @@ void ShowMenuFileSelect(char *savepath, int pathSlot)			{
 		}
 		else
 			sm->active = -1;
-		sm->items = smi + j * MAX_FILES;
 		sm->fctGestion = fctMenuFileSelect;
-		for (i=0;i<MAX_FILES;i++)		{
-			memset(smi + j * MAX_FILES + i, 0, sizeof(SUBMENUITEM));
-			smi[j * MAX_FILES + i].name = textes + (j * MAX_FILES + i) * MAX_CAR_FILE;
-		}
 	}
 
 	if (myPlacesFolder)
@@ -668,9 +688,9 @@ redo:
 		skip = oslSyncFrame();
 	}
 
+	freeSubMenuItems(&menuFileSelectSubMenu[0]);
+	freeSubMenuItems(&menuFileSelectSubMenu[1]);
 	free(menuFileSelectSubMenu);
-	free(smi);
-	free(textes);
 	menuSetStatusBarMessageDirect(NULL);
 }
 

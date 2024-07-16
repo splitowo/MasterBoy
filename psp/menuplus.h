@@ -14,8 +14,6 @@ extern "C" {
 #define LARGEUR_DIGIT 16
 //Valeur de l'option par défaut des menus
 #define MASK_DEFAULT_MENU_VALUE 0x8000
-#define MAX_FILES 1024
-#define MAX_CAR_FILE 80
 #define CHOICE_MAX_POS 170
 #define RAM_STATE_SIZE (128 << 10)
 
@@ -138,8 +136,8 @@ extern u32 ControlsMenuUpdate(u32 buttons);
 extern void menuKeysAnalogApply(u32 *keys, int aX, int aY);
 extern OSL_CONTROLLER *MyReadKeys();
 extern int MessageBoxEx(const char *texte, const char *titre, int type, int width);
-extern void safe_strcpy(char *dst, char *src, u32 maxlen);
-extern void safe_strcat(char *dst, char *src, u32 maxlen);
+extern void safe_strcpy(char *dst, const char *src, u32 maxlen);
+extern void safe_strcat(char *dst, const char *src, u32 maxlen);
 extern int BatteryWarning(const char *message);
 #define MessageBox(texte, titre, type)		MessageBoxEx(texte, titre, type, 200)
 extern void MessageBoxTemp(char *text, char *title, int type, int width, int time);
