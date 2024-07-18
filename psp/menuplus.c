@@ -54,10 +54,12 @@ int menuPlusTerminated, menuMainSelectedOption = 0;
 MENUPRESSEDKEYS menuPressedKeys;
 int menuPressedKeysAutorepeatInit, menuPressedKeysAutorepeatDelay, menuPressedKeysAutorepeatMask;
 char menuStatusMessage[200];
+char menuInfoBattery[64];
+int batteryPercentage;
 int menuStatusActive;
 int menuStatusPosition = 0, menuStatusDrawn = 0;
 int menuStickMessageDisplayed = 0;
-int gblMenuAlpha, menuFrameNb;
+int gblMenuAlpha, menuFrameNb, frameCount;
 int menuIsInGame, menuUpdateRender;
 char *menuStatusBarMessage = NULL;
 char menuStatusBarMessageInd[256];
@@ -3251,46 +3253,6 @@ void DrawBackground()		{
 		oslDrawString(0, 259, menuStatusBarMessage);
 	MyDrawLine(0, 259, 480, 259, RGBA(255, 255, 255, 192));
 
-	//Batterie
-	pspTime local_time;
-	char menuInfoBattery[128];
-	int batteryPercentage = -1;
-	//L'heure
-	sceRtcGetCurrentClockLocalTime(&local_time);
-	//Batterie présente?
-	if (scePowerIsBatteryExist()) {
-		char batteryTime[128];
-		int batteryLifeTime;
-		batteryLifeTime = scePowerGetBatteryLifeTime();
-		if (scePowerIsPowerOnline())
-			strcpy(batteryTime, " (AC)");
-		else if (batteryLifeTime >= 0)
-			sprintf(batteryTime, " (%ih%02i)", batteryLifeTime / 60, batteryLifeTime % 60);
-		else
-			batteryTime[0] = 0;
-		batteryPercentage = scePowerGetBatteryLifePercent();
-/*		static int test = 100;
-		if (osl_pad.pressed.circle)
-			test++;
-		if (osl_pad.pressed.square)
-			test--;
-		batteryPercentage = test;*/
-		sprintf(menuInfoBattery, "%02i:%02i | Batt: %i%%%s, %i°C",
-			local_time.hour, local_time.minutes,
-			batteryPercentage,
-			batteryTime,
-			scePowerGetBatteryTemp());
-	/*		sprintf(batteryInfo, "%02d%c%02d Bat.:%s%s%s%02d%%%s Tmp.%dC",
-			tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min,
-			(scePowerIsPowerOnline()?"Plg.":""),
-			(scePowerIsBatteryCharging()?"Chrg.":""),
-			(scePowerIsLowBattery()?"Low!":""),
-			scePowerGetBatteryLifePercent(),
-			bat_time,
-			scePowerGetBatteryTemp());*/
-	}
-	else
-		sprintf(menuInfoBattery, "%02i:%02i", local_time.hour, local_time.minutes);
 	if (scePowerIsLowBattery())		{
 		oslSetTextColor(RGB(255, 0, 0));
 		//Draw a second time for a "bold" effect
@@ -3439,6 +3401,8 @@ void HandleBackground()		{
 		fadeDirection = fadeLevel = 0;
 	}
 	menuFrameNb++;
+	frameCount++;
+	if(frameCount >= 60) frameCount = 0;
 }
 
 void menuLoadFilesMin()			{
@@ -4443,6 +4407,43 @@ void menuUsbUpdate()		{
 
 }
 
+static void menuOnSecondPassed()
+{
+	//Batterie
+	pspTime local_time;
+	batteryPercentage = -1;
+	//L'heure
+	sceRtcGetCurrentClockLocalTime(&local_time);
+	//Batterie présente?
+	if (scePowerIsBatteryExist()) {
+		char batteryTime[64];
+		int batteryLifeTime;
+		batteryLifeTime = scePowerGetBatteryLifeTime();
+		if (scePowerIsPowerOnline())
+			strcpy(batteryTime, " (AC)");
+		else if (batteryLifeTime >= 0)
+			sprintf(batteryTime, " (%ih%02i)", batteryLifeTime / 60, batteryLifeTime % 60);
+		else
+			batteryTime[0] = 0;
+		batteryPercentage = scePowerGetBatteryLifePercent();
+		sprintf(menuInfoBattery, "%02i:%02i | Batt: %i%%%s, %i°C",
+			local_time.hour, local_time.minutes,
+			batteryPercentage,
+			batteryTime,
+			scePowerGetBatteryTemp());
+		/*		sprintf(batteryInfo, "%02d%c%02d Bat.:%s%s%s%02d%%%s Tmp.%dC",
+				tsys->tm_hour,(tsys->tm_sec&1?':':' '),tsys->tm_min,
+				(scePowerIsPowerOnline()?"Plg.":""),
+				(scePowerIsBatteryCharging()?"Chrg.":""),
+				(scePowerIsLowBattery()?"Low!":""),
+				scePowerGetBatteryLifePercent(),
+				bat_time,
+				scePowerGetBatteryTemp());*/
+	}
+	else
+		sprintf(menuInfoBattery, "%02i:%02i", local_time.hour, local_time.minutes);
+}
+
 void menuPlusShowMenu()
 {
 	float menuAngle, menuDesiredAngle;
@@ -4459,6 +4460,7 @@ void menuPlusShowMenu()
 		menuIsInGame = 1;
 
 	menuFrameNb = 0;
+	frameCount = 0;
 	menuMusicLocked = 0;
 	fadeLevel = 0;
 	fadeReason = 0;
@@ -4535,6 +4537,11 @@ void menuPlusShowMenu()
 			osl_keys->pressed.value = 0;
 		if (menuFrameNb == 0)
 			osl_keys->pressed.value = 0;
+
+		if(frameCount == 0) // every 60 frames
+		{
+			menuOnSecondPassed();
+		}
 		HandleBackground();
 
 		//Gestion de la sauvegarde des paramètres

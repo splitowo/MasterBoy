@@ -806,6 +806,7 @@ int ShowChoiceMsgBoxEx(char *msg, char *title, int buttons, int width, SUBMENU *
 			}
 			skip = oslSyncFrame();
 			menuFrameNb++;
+			frameCount++;
 		}
 		oslDeleteImage(imgFond);
 		if (menuIsInGame == 2)

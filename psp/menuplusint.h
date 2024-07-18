@@ -51,7 +51,7 @@ extern char menuStatusMessage[200];
 extern int menuStatusActive;
 extern int menuStatusPosition, menuStatusDrawn;
 extern int menuStickMessageDisplayed;
-extern int gblMenuAlpha, menuFrameNb;
+extern int gblMenuAlpha, menuFrameNb, frameCount;
 extern int menuIsInGame, menuUpdateRender;
 extern char *menuStatusBarMessage;
 extern char menuStatusBarMessageInd[256];
