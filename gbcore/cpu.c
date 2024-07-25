@@ -50,8 +50,7 @@ byte c_regs_I;
 byte ram[0x2000*4];
 byte vram[0x2000*2];
 byte stack[0x80];
-byte oam[0xA0];
-byte spare_oam[0x18];
+byte oam[0x100]; // contains the prohibited FEA0-FEFF range
 byte ext_mem[16];
 
 byte *vram_bank;
@@ -140,7 +139,6 @@ void cpu_reset(void)
 	memset(vram,0,sizeof(vram));
 	memset(stack,0,sizeof(stack));
 	memset(oam,0,sizeof(oam));
-	memset(spare_oam,0,sizeof(spare_oam));
 	
 	if(rp_fd >= 0){
 		sceIoClose(rp_fd);
@@ -221,10 +219,8 @@ byte cpu_read_direct_ord(word adr)
 			else
 				return ram[adr&0x0fff];
 		}
-		else if (adr<0xFEA0)
-			return oam[adr-0xFE00];//object attribute memory
 		else if (adr<0xFF00)
-			return spare_oam[(((adr-0xFFA0)>>5)<<3)|(adr&7)];
+			return oam[adr-0xFE00];//object attribute memory
 		else
 			return cpu_io_read_JmpTbl[ adr & 0x00FF ]( adr ) ;
 	}
@@ -259,10 +255,8 @@ inline byte* cpu_get_direct_ref_ord(const word adr)
 			else
 				return ram + (adr&0x0fff);
 		}
-		else if (adr<0xFEA0)
-			return oam + (adr-0xFE00);//object attribute memory
 		else if (adr<0xFF00)
-			return spare_oam + ((((adr-0xFFA0)>>5)<<3)|(adr&7));
+			return oam + (adr-0xFE00);//object attribute memory
 		else if (adr<0xFFFF && adr >= 0xFF80)
 			return stack + (adr-0xFF80);
 		else if (adr == 0xFFFF)
@@ -388,10 +382,8 @@ void cpu_write_direct_ord(word adr,byte dat)
 			else
 				ram[adr&0x0fff]=dat;
 		}
-		else if (adr<0xFEA0)
-			oam[adr-0xFE00]=dat;
 		else if (adr<0xFF00)
-			spare_oam[(((adr-0xFFA0)>>5)<<3)|(adr&7)]=dat;
+			oam[adr-0xFE00]=dat;
 		else
 			cpu_io_write_JmpTbl[ adr & 0x00FF ]( adr, dat ) ;
 		break;
