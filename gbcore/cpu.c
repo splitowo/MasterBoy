@@ -621,8 +621,7 @@ void cpu_irq_process()
 		pc_ptr++;
 	}
 
-	cpu_write(c_regs_SP-2,c_regs_PC&0xFF);
-	cpu_write(c_regs_SP-1,(c_regs_PC>>8));
+	writew(c_regs_SP - 2, c_regs_PC);
 	c_regs_SP-=2;
 	
 	if (g_regs.IF&g_regs.IE&INT_VBLANK){//VBlank
