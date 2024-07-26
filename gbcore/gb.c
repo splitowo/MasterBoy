@@ -668,21 +668,11 @@ int gb_run_frame()
                     if (g_regs.STAT&0x40)
                         cpu_irq(INT_LCDC);
                 }
-                if (g_regs.LY==144){
-//    				renderer_refresh();
-                    cmd |= 1;
-/*    				if (gbSkip){
-                        render_screen(vframe);
-//	    				now_frame=0;
-                    }
-                    else
-                        now_frame++;*/
-                    lcd_clear_win_count();
-//		    		skip=skip_buf;
-                }
                 if (g_regs.LY>=144){ // VBlank 期間中
                     g_regs.STAT|=1;
                     if (g_regs.LY==144){
+						cmd |= 1;
+						lcd_clear_win_count();
                         cpu_exec(72);
                         cpu_irq(INT_VBLANK);
                         if (g_regs.STAT&0x10)
