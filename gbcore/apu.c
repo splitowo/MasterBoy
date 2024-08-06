@@ -354,11 +354,6 @@ void snd_process(word adr,byte dat)
 		break;
 	case 0xFF26:
 		snd_stat.master_enable=dat&0x80;
-
-		snd_stat.ch_on[0]=dat&1;
-		snd_stat.ch_on[1]=dat&2;
-		snd_stat.ch_on[2]=dat&4;
-		snd_stat.ch_on[3]=dat&8;
 		break;
 	}
 
