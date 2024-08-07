@@ -18,10 +18,10 @@
 */
 
 //--------------------------------------------------
-// APU(PSG?)ƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“•” (ƒŒƒWƒXƒ^/”gŒ`¶¬)
+// APU(PSG?)ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³éƒ¨ (ãƒ¬ã‚¸ã‚¹ã‚¿/æ³¢å½¢ç”Ÿæˆ)
 
-#define UPDATE_INTERVAL 172 // 1/256•b‚ ‚½‚è‚ÌƒTƒ“ƒvƒ‹”
-#define CLOKS_PER_INTERVAL 16384 // 1/256•b‚ ‚½‚è‚ÌƒNƒƒbƒN” (4MHz)
+#define UPDATE_INTERVAL 172 // 1/256ç§’ã‚ãŸã‚Šã®ã‚µãƒ³ãƒ—ãƒ«æ•°
+#define CLOKS_PER_INTERVAL 16384 // 1/256ç§’ã‚ãŸã‚Šã®ã‚¯ãƒ­ãƒƒã‚¯æ•° (4MHzæ™‚)
 
 #include "../psp/pspcommon.h"
 #include "gb.h"
@@ -144,7 +144,7 @@ void snd_reset()
 	byte gb_init_wav[]={0x06,0xFE,0x0E,0x7F,0x00,0xFF,0x58,0xDF,0x00,0xEC,0x00,0xBF,0x0C,0xED,0x03,0xF7};
 	byte gbc_init_wav[]={0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF};
 
-	if (rom_get_info()->gb_type<=2) // ‰ŠúŒ^GB & SGB
+	if (rom_get_info()->gb_type<=2) // åˆæœŸå‹GB & SGB
 		memcpy(snd_mem+20,gb_init_wav,16);
 	else if (rom_get_info()->gb_type>=3) // GBC
 		memcpy(snd_mem+20,gbc_init_wav,16);
@@ -391,7 +391,7 @@ inline short snd_sq1_produce(int freq)
 			cur_sample=(cur_sample+(sq1_cur_pos>>16))&7;
 			sq1_cur_pos&=0xffff;
 		}*/
-		sq1_cur_pos+=(freq<<16)/44100;		//ˆµ‚¢‚ğáŠ±•ÏX‚µ‚½‚Ì‚ÅAŠÖ˜A‚Å•ÏX‚ª•K—v‚É‚È‚Á‚Ä‚é‚©‚àBÚ×–¢Šm”F - LCK
+		sq1_cur_pos+=(freq<<16)/44100;		//æ‰±ã„ã‚’è‹¥å¹²å¤‰æ›´ã—ãŸã®ã§ã€é–¢é€£ã§å¤‰æ›´ãŒå¿…è¦ã«ãªã£ã¦ã‚‹ã‹ã‚‚ã€‚è©³ç´°æœªç¢ºèª - LCK
 		if (sq1_cur_pos&0xffffe000){
 			cur_sample=(cur_sample+(sq1_cur_pos>>13))&7;
 			sq1_cur_pos&=0x1fff;
@@ -505,7 +505,7 @@ inline short snd_noi_produce(int freq)
 
 void snd_update()
 {
-	//‚±‚Ìƒ‹[ƒ`ƒ“‚Ícpu‘¤‚ÆƒTƒEƒ“ƒh¶¬‘¤‚Å‹¤—p‚µ‚Ä‚¢‚é‚Ì‚ÅA‚±‚Ìcounter‚ğ‹¤—p‚·‚é‚Ì‚Í‘½•ª‚æ‚­‚È‚¢‚Æv‚í‚êB•K—v‚ÉC³‚Ì‚±‚Æ  - LCK
+	//ã“ã®ãƒ«ãƒ¼ãƒãƒ³ã¯cpuå´ã¨ã‚µã‚¦ãƒ³ãƒ‰ç”Ÿæˆå´ã§å…±ç”¨ã—ã¦ã„ã‚‹ã®ã§ã€ã“ã®counterã‚’å…±ç”¨ã™ã‚‹ã®ã¯å¤šåˆ†ã‚ˆããªã„ã¨æ€ã‚ã‚Œã€‚å¿…è¦æ™‚ã«ä¿®æ­£ã®ã“ã¨  - LCK
 	static int counter=0;
 
 //	if( snd_stat.master_enable ){
@@ -544,7 +544,7 @@ void snd_update()
 		}
 
 		if (snd_stat.wav_playing){//&&snd_stat.master_enable){
-			if (snd_stat.wav_hold&&snd_stat.wav_len&&(counter%128==0)){
+			if (snd_stat.wav_hold&&snd_stat.wav_len){
 				snd_stat.wav_len--;
 				if (snd_stat.wav_len<=0){
 					snd_stat.wav_playing=false;
@@ -645,7 +645,7 @@ void snd_render(short *buf1, short *buf2, int sample)
 			
 			/*
 			if (snd_b_lowpass){
-				// o—Í‚ğƒtƒBƒ‹ƒ^ƒŠƒ“ƒO
+				// å‡ºåŠ›ã‚’ãƒ•ã‚£ãƒ«ã‚¿ãƒªãƒ³ã‚°
 				bef_sample_l[4]=bef_sample_l[3];
 				bef_sample_l[3]=bef_sample_l[2];
 				bef_sample_l[2]=bef_sample_l[1];
@@ -679,7 +679,7 @@ void snd_render(short *buf1, short *buf2, int sample)
 		now_time += time_inc;
 	}
 
-	while (snd_que_count>cur){ // æ‚è‚±‚Ú‚µ
+	while (snd_que_count>cur){ // å–ã‚Šã“ã¼ã—
 		snd_process(snd_write_que[cur].adr,snd_write_que[cur].dat);
 		cur++;
 	}
@@ -769,7 +769,7 @@ void snd_render_orig(short *buf,int sample)
 			
 			/*
 			if (snd_b_lowpass){
-				// o—Í‚ğƒtƒBƒ‹ƒ^ƒŠƒ“ƒO
+				// å‡ºåŠ›ã‚’ãƒ•ã‚£ãƒ«ã‚¿ãƒªãƒ³ã‚°
 				bef_sample_l[4]=bef_sample_l[3];
 				bef_sample_l[3]=bef_sample_l[2];
 				bef_sample_l[2]=bef_sample_l[1];
@@ -798,7 +798,7 @@ void snd_render_orig(short *buf,int sample)
 		now_time += time_inc;
 	}
 
-	while (snd_que_count>cur){ // æ‚è‚±‚Ú‚µ
+	while (snd_que_count>cur){ // å–ã‚Šã“ã¼ã—
 		snd_process(snd_write_que[cur].adr,snd_write_que[cur].dat);
 		cur++;
 	}
