@@ -134,7 +134,6 @@ void snd_reset()
 	snd_stat.noi_playing=false;
 	snd_stat.ch_enable[0][0]=snd_stat.ch_enable[0][1]=snd_stat.ch_enable[1][0]=snd_stat.ch_enable[1][1]=
 		snd_stat.ch_enable[2][0]=snd_stat.ch_enable[2][1]=snd_stat.ch_enable[3][0]=snd_stat.ch_enable[3][1]=1;
-	snd_stat.ch_on[0]=snd_stat.ch_on[1]=snd_stat.ch_on[2]=snd_stat.ch_on[3]=1;
 	snd_stat.master_enable=1;
 	snd_stat.master_vol[0]=snd_stat.master_vol[1]= 7;
 	snd_stat_upd = 1;
@@ -515,11 +514,15 @@ void snd_update()
 				if (snd_stat.sq1_vol<0) snd_stat.sq1_vol=0;
 				if (snd_stat.sq1_vol>15) snd_stat.sq1_vol=15;
 			}
-			if (snd_stat.sq1_sw_time&&snd_stat.sq1_sw_shift&&(counter%(2*snd_stat.sq1_sw_time)==0)){
+			if (snd_stat.sq1_sw_time&&(counter%(2*snd_stat.sq1_sw_time)==0)){
 				if (snd_stat.sq1_sw_dir)
 					snd_stat.sq1_freq=snd_stat.sq1_freq-(snd_stat.sq1_freq>>snd_stat.sq1_sw_shift);
-				else
+				else {
 					snd_stat.sq1_freq=snd_stat.sq1_freq+(snd_stat.sq1_freq>>snd_stat.sq1_sw_shift);
+					if (snd_stat.sq1_freq > 0x7FF) {
+						snd_stat.sq1_playing = false;
+					}
+				}
 			}
 			if (snd_stat.sq1_hold&&snd_stat.sq1_len){
 				snd_stat.sq1_len--;
