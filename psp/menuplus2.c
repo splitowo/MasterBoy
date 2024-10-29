@@ -180,6 +180,18 @@ int fctMenuFileSelect(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
 	return 1;
 }
 
+int fctMenuCheatSelect(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
+{
+	if (event == EVENT_SELECT)			{
+		cheat_decreate_cheat_map();
+		cheats[sub->prop1].enable = !cheats[sub->prop1].enable;
+		sub->prop2 = cheats[sub->prop1].enable ? RGB(255, 255, 255) : RGB(192, 192, 192);
+		cheat_create_cheat_map();
+		return 0;
+	}
+	return 1;
+}
+
 //Thanks to DGEN author ;)
 void SJISCopy(SUBMENUITEM *a, unsigned char *file)
 {
@@ -429,11 +441,10 @@ void ShowMenuFileSelect(char *savepath, int pathSlot)			{
 	strcpy(menuFileSelectFileName, "");
 	menuSetStatusBarMessageDirect(NULL);
 
+	//Configure le menu
+	LARGEUR_MENU = 480;
+	MENU_MAX_DISPLAYED_OPTIONS = 13;
 	while(!osl_quit)			{
-		//Configure le menu
-		LARGEUR_MENU = 480;
-		MENU_MAX_DISPLAYED_OPTIONS = 13;
-
 redo:
 		MyReadKeys();
 		menuStandardVblank();
@@ -651,7 +662,7 @@ redo:
 					s->active = 2;
 					s = s->child;
 				}
-				s->active = 2;
+				s->active = 2; // 2 becomes -1 in HandleSubMenu
 				s->moving = menuFileSelectSwap;
 				s->movingDist = 0;
 				s->movingAlpha = 255;
@@ -694,6 +705,86 @@ redo:
 	menuSetStatusBarMessageDirect(NULL);
 }
 
+void ShowMenuCheatManager() {
+	int fade = 0;
+	SUBMENU *cheatManagerSubMenu = malloc(sizeof(SUBMENU));
+	memset(cheatManagerSubMenu, 0, sizeof(SUBMENU));
+	cheatManagerSubMenu->titre = NULL;
+	cheatManagerSubMenu->nbItems = nCheats;
+	cheatManagerSubMenu->type = 1;
+	cheatManagerSubMenu->active = 1;
+	cheatManagerSubMenu->moving = 1;
+	cheatManagerSubMenu->movingDist = 0;
+	cheatManagerSubMenu->movingAlpha = 255;
+	cheatManagerSubMenu->movingArrive = 140 * 1;
+	cheatManagerSubMenu->close = 0;
+	cheatManagerSubMenu->fctGestion = fctMenuCheatSelect;
+
+	cheatManagerSubMenu->items = malloc(sizeof(SUBMENUITEM) * nCheats);
+	memset(cheatManagerSubMenu->items, 0, sizeof(SUBMENUITEM) * nCheats);
+	
+	int i;
+	for(i = 0; i < nCheats; i++) {
+	 	cheatManagerSubMenu->items[i].name = malloc(strlen(cheats[i].name) + 1);
+	 	strcpy(cheatManagerSubMenu->items[i].name, cheats[i].name);
+		cheatManagerSubMenu->items[i].prop1 = i;
+		cheatManagerSubMenu->items[i].prop2 = cheats[i].enable ? RGB(255, 255, 255) : RGB(192, 192, 192);
+		cheatManagerSubMenu->items[i].disabled = 2; // 2 = use custom color in prop2
+	}
+
+	menuSetStatusBarMessageDirect(NULL);
+	LARGEUR_MENU = 480;
+	MENU_MAX_DISPLAYED_OPTIONS = 13;
+	int skip = 0;
+	while(!osl_quit) {
+		MyReadKeys();
+		menuStandardVblank();
+		if (osl_keys->pressed.circle)			{
+			osl_keys->pressed.circle = 0;
+			break;
+		}
+		if (osl_keys->pressed.triangle)			{
+			osl_keys->pressed.triangle = 0;
+		
+			int i;
+			for(i = 0; i < nCheats; i++) {
+				cheats[i].enable = 0;
+				cheatManagerSubMenu->items[i].prop2 = RGB(192, 192, 192);
+			}
+			cheat_decreate_cheat_map();
+			cheat_create_cheat_map();
+		}
+		fade = min(fade + 16, 255);
+
+		HandleSubMenu(cheatManagerSubMenu);
+		HandleBackground();
+		if(!skip) {
+			menuSetStatusBarMessageDirect("\x13: Enable/disable  \x11: Disable all  \x12: Exit");
+
+			oslStartDrawing();
+			DrawBackground();
+
+			oslSetFont(ftGlow);
+			MySetTextColor((menuColorSubmenuTitle & 0xffffff) | (fade << 24));
+			oslDrawString(30, 27, "Loaded cheats");
+			oslSetTextColor(RGB(255, 255, 255));
+			oslSetFont(ftStandard);
+			DrawSubMenu(cheatManagerSubMenu, 30, 55, TRUE);
+
+			DrawBackgroundAfter();
+			oslEndDrawing();
+		}
+		skip = oslSyncFrame();
+	}
+	
+	for(i = 0; i < nCheats; i++) {
+		free(cheatManagerSubMenu->items[i].name);
+	}
+	free(cheatManagerSubMenu->items);
+	free(cheatManagerSubMenu);
+	menuSetStatusBarMessageDirect(NULL);
+}
+
 STEXTENSIONLIST *stExtentions;
 
 STEXTENSIONLIST stRomExtentions[] = 
@@ -717,6 +808,11 @@ STEXTENSIONLIST stMusicExtentions[] =
 	// "pce", EXT_PCE ,
 	"zip", EXT_ZIP ,
 	NULL , EXT_UNKNOWN
+};
+
+STEXTENSIONLIST stCheatExtensions[] =
+{
+	"cheats", EXT_CHEATS
 };
 
 int fctMsgBoxChoice(SUBMENU *menu, SUBMENUITEM *sub, u32 event)

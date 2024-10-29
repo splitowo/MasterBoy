@@ -190,7 +190,7 @@ typedef struct SUBMENUITEM 		{
 typedef struct SUBMENU		{
 	const char *titre;
 	u16 nbItems;
-	u8 type;						// 1 = sous-menu normal, 2 = choix
+	u8 type;						// 1 = sous-menu normal, 2 = choix, 3 = number selection
 	SUBMENUITEM *items;
 	//Menu, item, event. EVENT_SELECT => retourner 1 pour fermer, 0 sinon
 	int (*fctGestion)(struct SUBMENU*, SUBMENUITEM*, u32);
@@ -262,7 +262,7 @@ enum {
     PSP_FILE_TYPE_DIR=0x10, 
     PSP_FILE_TYPE_FILE=0x20 
 }; 
-enum {EXT_UNKNOWN, EXT_DIR, EXT_ZIP, EXT_SMS, EXT_GG, EXT_GB};
+enum {EXT_UNKNOWN, EXT_DIR, EXT_ZIP, EXT_SMS, EXT_GG, EXT_GB, EXT_CHEATS};
 
 extern int ShowChoiceMsgBox(char *msg, char *title, int buttons, int width, char *elements[], int nbElements, int blocking);
 extern int ShowChoiceMsgBoxEx(char *msg, char *title, int buttons, int width, SUBMENU *sm, int blocking);

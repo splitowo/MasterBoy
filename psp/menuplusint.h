@@ -27,6 +27,7 @@ void menuStandardVblank();
 void menuGetMenuKeys(u32 *pad);
 void LoadDefaultMachineConfig();
 void ShowMenuFileSelect(char *savepath, int pathSlot);
+void ShowMenuCheatManager();
 
 
 extern int LARGEUR_MENU;
@@ -66,6 +67,6 @@ typedef struct		{
 	int nExtId;
 } STEXTENSIONLIST;
 extern STEXTENSIONLIST *stExtentions;
-extern STEXTENSIONLIST stRomExtentions[], stMusicExtentions[];
+extern STEXTENSIONLIST stRomExtentions[], stMusicExtentions[], stCheatExtensions[];
 
 #define MSGBOX_MAX_MULTIPLY 256

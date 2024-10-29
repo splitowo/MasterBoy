@@ -1899,7 +1899,9 @@ SUBMENU menuMainFileMusic=		{
 SUBMENUITEM menuMainFileItems[]=		{
 	{"Load ROM", "Load and start a new game", "", NULL, 1},
 	{"Reset game", NULL, "", NULL, 2},
-	{"Screenshot", "Take a screenshot, and places it into Psp/Game/Photo/MasterBoy/GameName_xx.png.", "", NULL, 5},
+	{"Load cheats", "Load Gameshark cheats in .cheats file", "", NULL, 6},
+	{"Cheat manager", NULL, "", NULL, 7},
+	{"Screenshot", "Take a screenshot and place it into /PICTURE/MasterBoy/GameName_xx.png.", "", NULL, 5},
 	{"About MasterBoy", "About MasterBoy", "", NULL, 4},
 	{"Exit", "Return to the PSP menu", "", NULL, 3},
 };
@@ -2396,11 +2398,11 @@ void menuTakeScreenshot()		{
 			finalptr = ptr + 1;
 		ptr++;
 	}
-	GetJustFileName(gamename, finalptr);	
+	GetJustFileName(gamename, finalptr);
 
-	sceIoMkdir("ms0:/PSP/PHOTO/MasterBoy", 0);
+	sceIoMkdir("ms0:/PICTURE/MasterBoy", 0);
 	for (imageNumber=1;imageNumber<100;imageNumber++)			{
-		sprintf(path, "ms0:/PSP/PHOTO/MasterBoy/%s_%02i.png", gamename, imageNumber);
+		sprintf(path, "ms0:/PICTURE/MasterBoy/%s_%02i.png", gamename, imageNumber);
 		f = sceIoOpen(path, PSP_O_RDONLY, 0777);
 		if (f >= 0)
 			sceIoClose(f);
@@ -2483,6 +2485,12 @@ int fctMenuMainFile(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
 		if (sub->prop1 == 5)		{
 			if (menuIsInGame)
 				menuTakeScreenshot();
+		}
+		if (sub->prop1 == 6) {
+			fadeInit(24, 6);
+		}
+		if (sub->prop1 == 7) {
+			fadeInit(24, 7);
 		}
 	}
 	return 1;
@@ -3375,6 +3383,7 @@ void HandleBackground()		{
 					gb_reset();
 					machine_manage_sram(SRAM_LOAD, 0);
 				}
+				menuMainFileItems[2].disabled = !menuIsInGame || gblMachineType != EM_GBC;
 			}
 			fadeInit(-24, 0);
 		}
@@ -3393,6 +3402,27 @@ void HandleBackground()		{
 				menuStartSound(menuFileSelectFileName);
 				CloseWindow(menuCurrentWindow, 0);
 			}
+			fadeInit(-24, 0);
+		}
+		// Load cheat file
+		else if (fadeReason == 6) {
+			stExtentions = stCheatExtensions;
+			ShowMenuFileSelect(gblRomPath, 0);
+			if (menuFileSelectFileName[0]) {
+				FILE *fd = NULL;
+
+				fd = fopen(menuFileSelectFileName, "r");
+				if(fd) {
+					cheat_load(fd);
+
+					fclose(fd);
+					menuMainFileItems[3].disabled = !menuIsInGame || nCheats == 0 ;
+				}
+			}
+			fadeInit(-24, 0);
+		}
+		else if (fadeReason == 7) {
+			ShowMenuCheatManager();
 			fadeInit(-24, 0);
 		}
 	}
@@ -4191,7 +4221,9 @@ void InitMenus()		{
 	menuMainSoundStereoItems[1].disabled = 1;
 	//Désactive les options inutiles (reset SMS et Screenshot)
 	menuMainFileItems[1].disabled = !menuIsInGame;
-	menuMainFileItems[2].disabled = !menuIsInGame;
+	menuMainFileItems[2].disabled = !menuIsInGame || gblMachineType != EM_GBC;
+	menuMainFileItems[3].disabled = !menuIsInGame || nCheats == 0;
+	menuMainFileItems[4].disabled = !menuIsInGame;
 
 //	menuMainMiscUIBackgroundItems[0].disabled = 1;
 //	menuMainVideoCountryItems[1].disabled = 1;
