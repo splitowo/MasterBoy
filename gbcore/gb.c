@@ -24,7 +24,6 @@
 #include "gb.h"
 //#include "../menu.h"
 
-int now_gb_mode;
 struct gb_regs g_regs;
 struct gbc_regs cg_regs;
 int gb_lastVramCrc = 0;

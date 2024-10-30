@@ -20,8 +20,8 @@ extern "C" {
 #define NBRE_TOUCHES 10
 #define NBRE_CUTS 10
 
-char gblRomPath[MAX_PATH];
-char gblMusicPath[MAX_PATH];
+extern char gblRomPath[MAX_PATH];
+extern char gblMusicPath[MAX_PATH];
 
 typedef struct		{
 	struct			{
@@ -293,7 +293,7 @@ extern void SoundResume();
 extern int menuDisplaySpecialMessage;
 extern unsigned char snd_stat_upd;
 
-MENUPARAMS *menuConfigDefault, *menuConfigUserDefault, *menuConfigUserMachineDefault;
+extern MENUPARAMS *menuConfigDefault;
 
 //For game boy ColorIt.
 #define NB_PALETTES 48

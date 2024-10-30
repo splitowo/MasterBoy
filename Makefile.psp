@@ -59,7 +59,7 @@ INCDIR =
 
 BASECFLAGS = -G0 \
 	-I. -Icpu -Isound -Iunzip -Ipsp -DLSB_FIRST \
-	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-functions -fcommon --std=gnu89
+	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-functions --std=gnu89
 #	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-loops -fno-align-jumps -fno-align-functions -fno-align-labels -fno-reorder-blocks -fno-reorder-blocks-and-partition -fno-prefetch-loop-arrays -fno-tree-vect-loop-version -fno-tree-loop-optimize -fno-strict-aliasing
 #-fno-reorder-blocks -fno-align-functions
 

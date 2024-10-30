@@ -24,7 +24,6 @@
 
 int LARGEUR_MENU = 200;
 int MENU_MAX_DISPLAYED_OPTIONS=5;
-screen_t Screen __attribute__((aligned(64)));
 
 /*
 	Variables globales
@@ -74,6 +73,10 @@ MENUPARAMS *menuConfigDefault, *menuConfigUserDefault, *menuConfigUserMachineDef
 char gblColorItPaletteFileName[MAX_PATH];
 int menuDisplaySpecialMessage = 0;
 static char tmpSlotTextMem[10][32];
+char gblRomPath[MAX_PATH];
+char gblMusicPath[MAX_PATH];
+void *menuRamStateMemory, *menuTempStateMemory;
+char menuRamStateFileName[MAX_PATH];
 
 
 /*

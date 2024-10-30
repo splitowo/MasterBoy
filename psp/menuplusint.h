@@ -19,8 +19,6 @@ void DrawBackground();
 void DrawBackgroundAfter();
 void menuSetStatusBarMessageDirect(char *message);
 void menuSetStatusBarMessageIndirect(char *message);
-void *menuRamStateMemory, *menuTempStateMemory;
-char menuRamStateFileName[MAX_PATH];
 void DrawWindow(WINDOW *w);
 void HandleWindow(WINDOW *w);
 void menuStandardVblank();
@@ -32,7 +30,6 @@ void ShowMenuCheatManager();
 
 extern int LARGEUR_MENU;
 extern int MENU_MAX_DISPLAYED_OPTIONS;
-extern screen_t Screen __attribute__((aligned(64)));
 
 extern OSL_IMAGE *imgIcons, *imgNumbers, *imgBord, *imgBack;
 extern OSL_FONT *ftStandard, *ftGlow;
