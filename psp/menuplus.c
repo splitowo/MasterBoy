@@ -3251,7 +3251,7 @@ void DrawBackground()		{
 	//Haut
 	oslSetTextColor(RGB(255,255,255));
 	MyDrawFillRect(0, 0, 480, 12, RGBA(0,0,0,128));
-	oslDrawString(0, -1, "MasterBoy v2.02.4 by Brunni");
+	oslDrawString(0, -1, "MasterBoy v2.02.5 by Brunni");
 	MyDrawLine(0, 12, 480, 12, RGBA(255, 255, 255, 192));
 	//Bas
 	oslSetFont(ftStandard);
