@@ -1153,7 +1153,7 @@ char *menuGetKeyName(char *dest, u32 maxLen, char *separator, u32 key)		{
 #define STDKEYMASK		0xf80f3f9
 
 int menuRedefineGetNewKey(SUBMENUITEM *sub)		{
-	int key, lastValue = 0, counter;
+	int lastValue = 0, counter;
 	sprintf(menuTempMessageText, "Please press the new key for \'%s\'. Current is '%s'.", sub->name, sub->value);
 	MessageBoxEx(menuTempMessageText, "Key redefinition", MB_NONE, 220);
 	//Attend une ou plusieurs touche
@@ -4484,7 +4484,6 @@ void menuPlusShowMenu()
 	float menuAngle, menuDesiredAngle;
 	int nRayon, skip=0, lastOption, i, menuEndingFade = 0;
 	static int bFirstTime = 1;
-	char temp[200];
 	
 	//The menu runs at 60 fps, unlike PAL emulation
 	oslSetFramerate(60);
@@ -4957,7 +4956,6 @@ float menuSoundBoxPosition = 0;
 
 void menuStandardVblank()			{
 	if (musicEnabled)			{
-		int pressed, next;
 		soundStandardVblank();
 
 		if (menuGetMenuKey((u32*)&osl_keys->held.value, MENUKEY_MUSICPLAYER))		{

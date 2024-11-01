@@ -22,10 +22,11 @@
 	PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER|THREAD_ATTR_VFPU);
 #endif
 
-static char startPath[1024];
 int gbUsbAvailable = 0;
 
 #ifdef KERNEL_MODE
+static char startPath[1024];
+
 int exitCallback(int arg1, int arg2, void *common)
 {
 	oslQuit();
