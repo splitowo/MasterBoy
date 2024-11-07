@@ -319,7 +319,7 @@ public:
 			offset++;
 			return c;
 		}
-		else if (file)
+		else
 			return fgetc(file);
 	}
 
@@ -339,6 +339,7 @@ public:
 		}
 		else if (file)
 			return fseek(file, _offset, location);
+		return 0;
 	}
 
 	int unreadc(int car)		{
@@ -349,6 +350,7 @@ public:
 //				oslDebug("BUG");
 			offset--;
 		}
+		return car;
 	}
 
 	char tomemory()		{
