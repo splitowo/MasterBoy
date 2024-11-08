@@ -66,7 +66,7 @@ void ControlsUpdate(void)
 	count = 0;
 
 	sceCtrlPeekBufferPositive(pad1, 1);
-	menuKeysAnalogApply(&pad1->Buttons, (signed)pad1->Lx-128, (signed)pad1->Ly-128);
+	menuKeysAnalogApply((u32*)&pad1->Buttons, (signed)pad1->Lx-128, (signed)pad1->Ly-128);
 	//SUPPRIMER
 //	MyReadKeys();
 

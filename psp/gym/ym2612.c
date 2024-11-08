@@ -130,7 +130,7 @@ int LFO_INC_TAB[8];							// LFO step table
 int in0, in1, in2, in3;						// current phase calculation
 int en0, en1, en2, en3;						// current enveloppe calculation
 
-const void (*UPDATE_CHAN[8 * 8])(channel_ *CH, int **buf, int lenght) =		// Update Channel functions pointer table
+void (*const UPDATE_CHAN[8 * 8])(channel_ *CH, int **buf, int lenght) =		// Update Channel functions pointer table
 {
 	Update_Chan_Algo0,
 	Update_Chan_Algo1,
@@ -169,7 +169,7 @@ const void (*UPDATE_CHAN[8 * 8])(channel_ *CH, int **buf, int lenght) =		// Upda
 	Update_Chan_Algo7_LFO_Int
 };
 
-const void (*ENV_NEXT_EVENT[8])(slot_ *SL) =		// Next Enveloppe phase functions pointer table
+void (*const ENV_NEXT_EVENT[8])(slot_ *SL) =		// Next Enveloppe phase functions pointer table
 {
 	Env_Attack_Next,
 	Env_Decay_Next,

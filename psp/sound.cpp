@@ -200,7 +200,7 @@ end:
 /*	musicThread = musicThreadFinalValue;
 	musicThreadFinalValue = 0;*/
 	musicThread = -1;
-	sceKernelExitDeleteThread(0);
+	return sceKernelExitDeleteThread(0);
 }
 
 /*int menuPlaySound()		{
@@ -257,7 +257,7 @@ int menuPlaySoundEx(CFILE *f)		{
 	}*/
 	if (f)			{
 		int filetype;
-		char *extension = strstr(f->name, ".");
+		const char *extension = strstr(f->name, ".");
 		if (!extension)
 			extension = "";
 		

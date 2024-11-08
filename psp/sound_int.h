@@ -75,11 +75,11 @@ public:
 		return fname;
 	}
 
-	void set_filename(char *_file)		{
+	void set_filename(const char *_file)		{
 		strcpy(fname, _file);
 	}
 
-	void meta_add_ansi(char *str1, char *str2)		{
+	void meta_add_ansi(const char *str1, const char *str2)		{
 		if (!strcmp(str1, "TITLE"))
 			strcpy(menuSoundTitle, str2);
 		if (!strcmp(str1, "PUBLISHER"))
@@ -88,7 +88,7 @@ public:
 			strcpy(menuSoundArtist, str2);
 	}
 
-	void info_set(char *str1, char *str2)		{
+	void info_set(const char *str1, const char *str2)		{
 	}
 };
 
@@ -370,7 +370,7 @@ public:
 		return false;
 	}
 
-	void set_name(char *filename)		{
+	void set_name(const char *filename)		{
 		strcpy(name, filename);
 	}
 };
