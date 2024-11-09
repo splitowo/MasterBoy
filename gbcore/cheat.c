@@ -25,7 +25,6 @@
 #define MAX_CHEATS 128
 
 byte cheat_map[0x10000];
-int cheat_map_n[0x10000];
 cheat_dat cheats[MAX_CHEATS];
 int nCheats;
 int cheat_enable = 0;
@@ -87,8 +86,7 @@ void cheat_create_cheat_map()
 		if (!tmp->enable)
 			continue;
 
-		cheat_map[tmp->adr] = 1;
-		cheat_map_n[tmp->adr] = i;
+		cheat_map[tmp->adr] = 1 + 1;
 
 		switch(tmp->code){
 		case 0x00:
@@ -124,7 +122,7 @@ void cheat_create_cheat_map()
 
 byte cheat_write(word adr, byte dat)
 {
-	cheat_dat *tmp=&cheats[cheat_map_n[adr]];
+	cheat_dat *tmp=&cheats[cheat_map[adr] - 1];
 
 	switch(tmp->code){
 	case 0x01:
