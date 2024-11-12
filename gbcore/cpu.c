@@ -72,7 +72,6 @@ int dma_rest;
 int gdma_rest;
 char b_dma_first;
 
-int last_int;
 volatile char int_disable_next;
 volatile char int_invoke_next;
 
@@ -133,7 +132,6 @@ void cpu_reset(void)
 	b_dma_first=false;
 	gdma_rest=0;
 
-	last_int=0;
 	int_disable_next=false;
 	int_invoke_next=false;
 
@@ -623,31 +621,26 @@ void cpu_irq_process()
 		c_regs_PC=0x40;
 		pc_ptr=get_rom()+0x40;
 		g_regs.IF&=0xFE;
-		last_int=INT_VBLANK;
 	}
 	else if (g_regs.IF&g_regs.IE&INT_LCDC){//LCDC
 		c_regs_PC=0x48;
 		pc_ptr=get_rom()+0x48;
 		g_regs.IF&=0xFD;
-		last_int=INT_LCDC;
 	}
 	else if (g_regs.IF&g_regs.IE&INT_TIMER){//Timer
 		c_regs_PC=0x50;
 		pc_ptr=get_rom()+0x50;
 		g_regs.IF&=0xFB;
-		last_int=INT_TIMER;
 	}
 	else if (g_regs.IF&g_regs.IE&INT_SERIAL){//Serial
 		c_regs_PC=0x58;
 		pc_ptr=get_rom()+0x58;
 		g_regs.IF&=0xF7;
-		last_int=INT_SERIAL;
 	}
 	else if (g_regs.IF&g_regs.IE&INT_PAD){//Pad
 		c_regs_PC=0x60;
 		pc_ptr=get_rom()+0x60;
 		g_regs.IF&=0xEF;
-		last_int=INT_PAD;
 	}
 	else {}
 
