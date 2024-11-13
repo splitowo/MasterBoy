@@ -70,6 +70,21 @@ void cheat_decreate_cheat_map()
 				cpu_write_direct(tmp->adr, tmp->dat_old);
 			}
 			break;
+		case 0xA0:
+		case 0xA1:
+			if(tmp->adr < 0x4000){
+				get_rom()[tmp->adr] = tmp->dat_old;
+			}
+			else{
+				//restore previous values for each bank unconditionally
+				int num_rom_switchable_banks = 2 * (1 << rom_get_info()->rom_size) - 1;
+				int j;
+				for(j = 0; j < num_rom_switchable_banks; j++){
+					get_rom()[0x4000 * j + tmp->adr] = tmp->dat_old_rom_banks[j];
+				}
+				free(tmp->dat_old_rom_banks);
+			}
+			break;
 		}
 	}
 }
@@ -86,7 +101,7 @@ void cheat_create_cheat_map()
 		if (!tmp->enable)
 			continue;
 
-		cheat_map[tmp->adr] = 1 + 1;
+		cheat_map[tmp->adr] = 1 + i;
 
 		switch(tmp->code){
 		case 0x00:
@@ -114,6 +129,40 @@ void cheat_create_cheat_map()
 			else{
 				tmp->dat_old = cpu_read(tmp->adr);
 				cpu_write_direct(tmp->adr, tmp->dat);
+			}
+			break;
+		case 0xA0:
+			// no check value: write value to all ROM banks
+			if(tmp->adr < 0x4000){
+				tmp->dat_old = get_rom()[tmp->adr];
+				get_rom()[tmp->adr] = tmp->dat;
+			}
+			else{
+				int num_rom_switchable_banks = 2 * (1 << rom_get_info()->rom_size) - 1;
+				tmp->dat_old_rom_banks = malloc(sizeof(byte) * num_rom_switchable_banks);
+				int j;
+				for(j = 0; j < num_rom_switchable_banks; j++){
+					tmp->dat_old_rom_banks[j] = get_rom()[0x4000 * j + tmp->adr];
+					get_rom()[0x4000 * j + tmp->adr] = tmp->dat;
+				}
+			}
+			break;
+		case 0xA1:
+			// check value: write value to applicable ROM banks only
+			if(tmp->adr < 0x4000){
+				tmp->dat_old = get_rom()[tmp->adr];
+				get_rom()[tmp->adr] = tmp->dat;
+			}
+			else{
+				int num_rom_switchable_banks = 2 * (1 << rom_get_info()->rom_size) - 1;
+				tmp->dat_old_rom_banks = malloc(sizeof(byte) * num_rom_switchable_banks);
+				int j;
+				for(j = 0; j < num_rom_switchable_banks; j++){
+					tmp->dat_old_rom_banks[j] = get_rom()[0x4000 * j + tmp->adr];
+					if(tmp->dat_old_rom_banks[j] == tmp->check_dat){
+						get_rom()[0x4000 * j + tmp->adr] = tmp->dat; // current state: cheats appear to be working. to address: possible visual glitches present, either from writing to too many ROM banks or from other reasons
+					}
+				}
 			}
 			break;
 		}
@@ -186,17 +235,42 @@ int cheat_load(FILE *file)
 						break;
 					}
 				}
-				if (i!=8){
+				if (i == 8){ // Gameshark code
+					tmp_dat.code = hex2n(buf[0])<< 4 | hex2n(buf[1]);
+					tmp_dat.dat  = hex2n(buf[2])<< 4 | hex2n(buf[3]);
+					tmp_dat.adr  = hex2n(buf[6])<<12 | hex2n(buf[7])<<8 | hex2n(buf[4])<<4 | hex2n(buf[5]);
+					tmp_dat.enable = true;
+					cheats[nCheats++] = tmp_dat;
+
+					first = true;
+				}
+				else if (i == 7){ // Gamegenie code 6-char
+					tmp_dat.code = 0xA0;
+					tmp_dat.dat = hex2n(buf[0])<< 4 | hex2n(buf[1]);
+					tmp_dat.adr = (hex2n(buf[6]) ^ 0xF) << 12 | hex2n(buf[2])<< 8 | hex2n(buf[4]) << 4 | hex2n(buf[5]);
+					tmp_dat.enable = true;
+					cheats[nCheats++] = tmp_dat;
+
+					first = true;
+				}
+				else if (i == 11){ // Gamegenie code 9-char
+					tmp_dat.code = 0xA1;
+					tmp_dat.dat = hex2n(buf[0])<< 4 | hex2n(buf[1]);
+					tmp_dat.adr = (hex2n(buf[6]) ^ 0xF) << 12 | hex2n(buf[2])<< 8 | hex2n(buf[4]) << 4 | hex2n(buf[5]);
+					uint32_t check = hex2n(buf[8]) << 4 | hex2n(buf[10]);
+					check = check >> 2 | (check) << 6;
+					check &= 0xFF;
+					check ^= 0xBA;
+					tmp_dat.check_dat = check;
+					tmp_dat.enable = true;
+					cheats[nCheats++] = tmp_dat;
+
+					first = true;
+				}
+				else {
 					cheat_clear();
 					return 0;
 				}
-				tmp_dat.code = hex2n(buf[0])<< 4 | hex2n(buf[1]);
-				tmp_dat.dat  = hex2n(buf[2])<< 4 | hex2n(buf[3]);
-				tmp_dat.adr  = hex2n(buf[6])<<12 | hex2n(buf[7])<<8 | hex2n(buf[4])<<4 | hex2n(buf[5]);
-				tmp_dat.enable = true;
-				cheats[nCheats++] = tmp_dat;
-
-				first = true;
 			}
 		}
 		if (nCheats >= MAX_CHEATS)

@@ -746,12 +746,12 @@ void ShowMenuCheatManager() {
 		if (osl_keys->pressed.triangle)			{
 			osl_keys->pressed.triangle = 0;
 		
+			cheat_decreate_cheat_map();
 			int i;
 			for(i = 0; i < nCheats; i++) {
 				cheats[i].enable = 0;
 				cheatManagerSubMenu->items[i].prop2 = RGB(192, 192, 192);
 			}
-			cheat_decreate_cheat_map();
 			cheat_create_cheat_map();
 		}
 		fade = min(fade + 16, 255);

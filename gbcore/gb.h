@@ -49,6 +49,8 @@ typedef struct {
 	byte dat;
 	byte dat_old;
 	char name[255];
+	byte check_dat;
+	byte *dat_old_rom_banks;
 } cheat_dat;
 
 struct gb_regs {
