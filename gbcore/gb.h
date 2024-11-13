@@ -265,7 +265,7 @@ extern byte oam[];
 
 extern byte *vram_bank;
 extern byte *ram_bank;
-extern char halt,speed,speed_change,dma_executing;
+extern int halt,speed,speed_change,dma_executing;
 extern int dma_src;
 extern int dma_dest;
 extern int dma_rest;
@@ -305,7 +305,7 @@ void cpu_set_ram_bank(int bank);
 struct cpu_regs *cpu_get_regs();
 int cpu_get_clock();
 char cpu_get_speed();
-char *cpu_get_halt();
+int *cpu_get_halt();
 
 struct cpu_regs *cpu_get_c_regs();
 struct cpu_regs *cpu_set_c_regs();

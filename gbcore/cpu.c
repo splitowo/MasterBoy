@@ -22,7 +22,6 @@
 
 #include "gb.h"
 #include "../syscall.h"
-#include "_bit_table.h"
 
 extern unsigned int gblCpuCycles;
 
@@ -64,7 +63,7 @@ byte z802gb[256],gb2z80[256];
 int total_clock,rest_clock,sys_clock,seri_occer;
 word div_clock;
 
-char halt,speed,speed_change,dma_executing;
+int halt,speed,speed_change,dma_executing;
 char b_trace;
 int dma_src;
 int dma_dest;
@@ -72,8 +71,8 @@ int dma_rest;
 int gdma_rest;
 char b_dma_first;
 
-volatile char int_disable_next;
-volatile char int_invoke_next;
+int int_disable_next;
+int int_invoke_next;
 
 byte *dma_src_bank;
 byte *dma_dest_bank;
@@ -547,9 +546,9 @@ static const byte ZTable[256] =
 
 //#define Z_FLAG 0x40
 //d==0の時に0x40を返す。それ以外は０を返す。
-static inline byte GenZF(byte d)
+static inline uint32_t GenZF(byte d)
 {
-	byte ret;
+	uint32_t ret;
 	asm (
 		"		sltiu	%0,%1,1 "				"\n"
 		"		sll		%0,%0,6 "				"\n"
@@ -559,6 +558,28 @@ static inline byte GenZF(byte d)
 	return ret;
 }
 
+#define GENERATE_GenZFBitTest_FOR_BIT(n) \
+static inline uint32_t GenZFBit##n##Test(byte value)	\
+{	\
+	uint32_t ret;	\
+	asm (	\
+		"		ext		%0,%1," #n ",1 "				"\n"	\
+		"		sll		%0,%0,6 "				"\n"	\
+		"		xori	%0,%0,0x40 "			"\n"	\
+			:	"=&r" (ret)					\
+			:	"r" (value)					\
+	);	\
+	return ret;	\
+}
+
+GENERATE_GenZFBitTest_FOR_BIT(0)
+GENERATE_GenZFBitTest_FOR_BIT(1)
+GENERATE_GenZFBitTest_FOR_BIT(2)
+GENERATE_GenZFBitTest_FOR_BIT(3)
+GENERATE_GenZFBitTest_FOR_BIT(4)
+GENERATE_GenZFBitTest_FOR_BIT(5)
+GENERATE_GenZFBitTest_FOR_BIT(6)
+GENERATE_GenZFBitTest_FOR_BIT(7)
 
 byte cpu_seri_send(byte dat)
 {
@@ -748,7 +769,7 @@ void cpu_set_ram_bank(int bank) { ram_bank=ram+bank*0x1000; }
 //struct cpu_regs *cpu_get_regs() { return &c_regs; }
 int cpu_get_clock() { return total_clock; }
 char cpu_get_speed() { return speed; }
-char *cpu_get_halt() { return &halt; }
+int *cpu_get_halt() { return &halt; }
 
 struct cpu_regs *cpu_get_c_regs() 
 { 

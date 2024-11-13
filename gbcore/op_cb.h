@@ -22,79 +22,79 @@
 
 //B 000 C 001 D 010 E 011 H 100 L 101 A 111
 //BIT b,r :01 b r :state 8
-inline void op_code_cb_case0x40(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable0[ REG_B ] ;} //BIT 0,B
-inline void op_code_cb_case0x41(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable0[ REG_C ] ;} //BIT 0,C
-inline void op_code_cb_case0x42(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable0[ REG_D ] ;} //BIT 0,D
-inline void op_code_cb_case0x43(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable0[ REG_E ] ;} //BIT 0,E
-inline void op_code_cb_case0x44(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable0[ REG_H ] ;} //BIT 0,H
-inline void op_code_cb_case0x45(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable0[ REG_L ] ;} //BIT 0,L
-inline void op_code_cb_case0x47(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable0[ REG_A ] ;} //BIT 0,A
+inline void op_code_cb_case0x40(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit0Test(REG_B) ;} //BIT 0,B
+inline void op_code_cb_case0x41(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit0Test(REG_C) ;} //BIT 0,C
+inline void op_code_cb_case0x42(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit0Test(REG_D) ;} //BIT 0,D
+inline void op_code_cb_case0x43(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit0Test(REG_E) ;} //BIT 0,E
+inline void op_code_cb_case0x44(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit0Test(REG_H) ;} //BIT 0,H
+inline void op_code_cb_case0x45(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit0Test(REG_L) ;} //BIT 0,L
+inline void op_code_cb_case0x47(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit0Test(REG_A) ;} //BIT 0,A
 
-inline void op_code_cb_case0x48(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable1[ REG_B ] ;} //BIT 1,B
-inline void op_code_cb_case0x49(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable1[ REG_C ] ;} //BIT 1,C
-inline void op_code_cb_case0x4A(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable1[ REG_D ] ;} //BIT 1,D
-inline void op_code_cb_case0x4B(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable1[ REG_E ] ;} //BIT 1,E
-inline void op_code_cb_case0x4C(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable1[ REG_H ] ;} //BIT 1,H
-inline void op_code_cb_case0x4D(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable1[ REG_L ] ;} //BIT 1,L
-inline void op_code_cb_case0x4F(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable1[ REG_A ] ;} //BIT 1,A
+inline void op_code_cb_case0x48(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit1Test(REG_B) ;} //BIT 1,B
+inline void op_code_cb_case0x49(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit1Test(REG_C) ;} //BIT 1,C
+inline void op_code_cb_case0x4A(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit1Test(REG_D) ;} //BIT 1,D
+inline void op_code_cb_case0x4B(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit1Test(REG_E) ;} //BIT 1,E
+inline void op_code_cb_case0x4C(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit1Test(REG_H) ;} //BIT 1,H
+inline void op_code_cb_case0x4D(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit1Test(REG_L) ;} //BIT 1,L
+inline void op_code_cb_case0x4F(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit1Test(REG_A) ;} //BIT 1,A
 
-inline void op_code_cb_case0x50(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable2[ REG_B ] ;} //BIT 2,B
-inline void op_code_cb_case0x51(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable2[ REG_C ] ;} //BIT 2,C
-inline void op_code_cb_case0x52(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable2[ REG_D ] ;} //BIT 2,D
-inline void op_code_cb_case0x53(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable2[ REG_E ] ;} //BIT 2,E
-inline void op_code_cb_case0x54(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable2[ REG_H ] ;} //BIT 2,H
-inline void op_code_cb_case0x55(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable2[ REG_L ] ;} //BIT 2,L
-inline void op_code_cb_case0x57(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable2[ REG_A ] ;} //BIT 2,A
+inline void op_code_cb_case0x50(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit2Test(REG_B) ;} //BIT 2,B
+inline void op_code_cb_case0x51(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit2Test(REG_C) ;} //BIT 2,C
+inline void op_code_cb_case0x52(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit2Test(REG_D) ;} //BIT 2,D
+inline void op_code_cb_case0x53(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit2Test(REG_E) ;} //BIT 2,E
+inline void op_code_cb_case0x54(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit2Test(REG_H) ;} //BIT 2,H
+inline void op_code_cb_case0x55(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit2Test(REG_L) ;} //BIT 2,L
+inline void op_code_cb_case0x57(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit2Test(REG_A) ;} //BIT 2,A
 
-inline void op_code_cb_case0x58(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable3[ REG_B ] ;} //BIT 3,B
-inline void op_code_cb_case0x59(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable3[ REG_C ] ;} //BIT 3,C
-inline void op_code_cb_case0x5A(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable3[ REG_D ] ;} //BIT 3,D
-inline void op_code_cb_case0x5B(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable3[ REG_E ] ;} //BIT 3,E
-inline void op_code_cb_case0x5C(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable3[ REG_H ] ;} //BIT 3,H
-inline void op_code_cb_case0x5D(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable3[ REG_L ] ;} //BIT 3,L
-inline void op_code_cb_case0x5F(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable3[ REG_A ] ;} //BIT 3,A
+inline void op_code_cb_case0x58(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit3Test(REG_B) ;} //BIT 3,B
+inline void op_code_cb_case0x59(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit3Test(REG_C) ;} //BIT 3,C
+inline void op_code_cb_case0x5A(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit3Test(REG_D) ;} //BIT 3,D
+inline void op_code_cb_case0x5B(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit3Test(REG_E) ;} //BIT 3,E
+inline void op_code_cb_case0x5C(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit3Test(REG_H) ;} //BIT 3,H
+inline void op_code_cb_case0x5D(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit3Test(REG_L) ;} //BIT 3,L
+inline void op_code_cb_case0x5F(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit3Test(REG_A) ;} //BIT 3,A
 
-inline void op_code_cb_case0x60(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable4[ REG_B ] ;} //BIT 4,B
-inline void op_code_cb_case0x61(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable4[ REG_C ] ;} //BIT 4,C
-inline void op_code_cb_case0x62(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable4[ REG_D ] ;} //BIT 4,D
-inline void op_code_cb_case0x63(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable4[ REG_E ] ;} //BIT 4,E
-inline void op_code_cb_case0x64(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable4[ REG_H ] ;} //BIT 4,H
-inline void op_code_cb_case0x65(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable4[ REG_L ] ;} //BIT 4,L
-inline void op_code_cb_case0x67(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable4[ REG_A ] ;} //BIT 4,A
+inline void op_code_cb_case0x60(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit4Test(REG_B) ;} //BIT 4,B
+inline void op_code_cb_case0x61(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit4Test(REG_C) ;} //BIT 4,C
+inline void op_code_cb_case0x62(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit4Test(REG_D) ;} //BIT 4,D
+inline void op_code_cb_case0x63(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit4Test(REG_E) ;} //BIT 4,E
+inline void op_code_cb_case0x64(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit4Test(REG_H) ;} //BIT 4,H
+inline void op_code_cb_case0x65(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit4Test(REG_L) ;} //BIT 4,L
+inline void op_code_cb_case0x67(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit4Test(REG_A) ;} //BIT 4,A
 
-inline void op_code_cb_case0x68(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable5[ REG_B ] ;} //BIT 5,B
-inline void op_code_cb_case0x69(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable5[ REG_C ] ;} //BIT 5,C
-inline void op_code_cb_case0x6A(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable5[ REG_D ] ;} //BIT 5,D
-inline void op_code_cb_case0x6B(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable5[ REG_E ] ;} //BIT 5,E
-inline void op_code_cb_case0x6C(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable5[ REG_H ] ;} //BIT 5,H
-inline void op_code_cb_case0x6D(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable5[ REG_L ] ;} //BIT 5,L
-inline void op_code_cb_case0x6F(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable5[ REG_A ] ;} //BIT 5,A
+inline void op_code_cb_case0x68(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit5Test(REG_B) ;} //BIT 5,B
+inline void op_code_cb_case0x69(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit5Test(REG_C) ;} //BIT 5,C
+inline void op_code_cb_case0x6A(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit5Test(REG_D) ;} //BIT 5,D
+inline void op_code_cb_case0x6B(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit5Test(REG_E) ;} //BIT 5,E
+inline void op_code_cb_case0x6C(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit5Test(REG_H) ;} //BIT 5,H
+inline void op_code_cb_case0x6D(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit5Test(REG_L) ;} //BIT 5,L
+inline void op_code_cb_case0x6F(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit5Test(REG_A) ;} //BIT 5,A
 
-inline void op_code_cb_case0x70(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable6[ REG_B ] ;} //BIT 6,B
-inline void op_code_cb_case0x71(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable6[ REG_C ] ;} //BIT 6,C
-inline void op_code_cb_case0x72(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable6[ REG_D ] ;} //BIT 6,D
-inline void op_code_cb_case0x73(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable6[ REG_E ] ;} //BIT 6,E
-inline void op_code_cb_case0x74(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable6[ REG_H ] ;} //BIT 6,H
-inline void op_code_cb_case0x75(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable6[ REG_L ] ;} //BIT 6,L
-inline void op_code_cb_case0x77(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable6[ REG_A ] ;} //BIT 6,A
+inline void op_code_cb_case0x70(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit6Test(REG_B) ;} //BIT 6,B
+inline void op_code_cb_case0x71(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit6Test(REG_C) ;} //BIT 6,C
+inline void op_code_cb_case0x72(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit6Test(REG_D) ;} //BIT 6,D
+inline void op_code_cb_case0x73(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit6Test(REG_E) ;} //BIT 6,E
+inline void op_code_cb_case0x74(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit6Test(REG_H) ;} //BIT 6,H
+inline void op_code_cb_case0x75(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit6Test(REG_L) ;} //BIT 6,L
+inline void op_code_cb_case0x77(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit6Test(REG_A) ;} //BIT 6,A
 
-inline void op_code_cb_case0x78(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable7[ REG_B ] ;} //BIT 7,B
-inline void op_code_cb_case0x79(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable7[ REG_C ] ;} //BIT 7,C
-inline void op_code_cb_case0x7A(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable7[ REG_D ] ;} //BIT 7,D
-inline void op_code_cb_case0x7B(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable7[ REG_E ] ;} //BIT 7,E
-inline void op_code_cb_case0x7C(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable7[ REG_H ] ;} //BIT 7,H
-inline void op_code_cb_case0x7D(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable7[ REG_L ] ;} //BIT 7,L
-inline void op_code_cb_case0x7F(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable7[ REG_A ] ;} //BIT 7,A
+inline void op_code_cb_case0x78(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit7Test(REG_B) ;} //BIT 7,B
+inline void op_code_cb_case0x79(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit7Test(REG_C) ;} //BIT 7,C
+inline void op_code_cb_case0x7A(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit7Test(REG_D) ;} //BIT 7,D
+inline void op_code_cb_case0x7B(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit7Test(REG_E) ;} //BIT 7,E
+inline void op_code_cb_case0x7C(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit7Test(REG_H) ;} //BIT 7,H
+inline void op_code_cb_case0x7D(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit7Test(REG_L) ;} //BIT 7,L
+inline void op_code_cb_case0x7F(void) { REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit7Test(REG_A) ;} //BIT 7,A
 
 //state 12
-inline void op_code_cb_case0x46(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable0[ tmp.b.l ];} //BIT 0,(HL)
-inline void op_code_cb_case0x4E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable1[ tmp.b.l ];} //BIT 1,(HL)
-inline void op_code_cb_case0x56(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable2[ tmp.b.l ];} //BIT 2,(HL)
-inline void op_code_cb_case0x5E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable3[ tmp.b.l ];} //BIT 3,(HL)
-inline void op_code_cb_case0x66(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable4[ tmp.b.l ];} //BIT 4,(HL)
-inline void op_code_cb_case0x6E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable5[ tmp.b.l ];} //BIT 5,(HL)
-inline void op_code_cb_case0x76(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable6[ tmp.b.l ];} //BIT 6,(HL)
-inline void op_code_cb_case0x7E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| _BitTable7[ tmp.b.l ];} //BIT 7,(HL)
+inline void op_code_cb_case0x46(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit0Test(tmp.b.l);} //BIT 0,(HL)
+inline void op_code_cb_case0x4E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit1Test(tmp.b.l);} //BIT 1,(HL)
+inline void op_code_cb_case0x56(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit2Test(tmp.b.l);} //BIT 2,(HL)
+inline void op_code_cb_case0x5E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit3Test(tmp.b.l);} //BIT 3,(HL)
+inline void op_code_cb_case0x66(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit4Test(tmp.b.l);} //BIT 4,(HL)
+inline void op_code_cb_case0x6E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit5Test(tmp.b.l);} //BIT 5,(HL)
+inline void op_code_cb_case0x76(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit6Test(tmp.b.l);} //BIT 6,(HL)
+inline void op_code_cb_case0x7E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=((REG_F&C_FLAG)|H_FLAG)| GenZFBit7Test(tmp.b.l);} //BIT 7,(HL)
 
 //bit set opcode
 //SET b,r :11 b r : state 8
