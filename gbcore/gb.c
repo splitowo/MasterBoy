@@ -87,7 +87,7 @@ void gb_reset()
 	g_regs.STAT=0;
 	g_regs.SCY=0;
 	g_regs.SCX=0;
-	g_regs.LY=153;
+	g_regs.LY=-1;
 	g_regs.LYC=0;
 	g_regs.BGP=0xFC;
 	g_regs.OBP1=0xFF;
@@ -659,7 +659,7 @@ int gb_run_frame()
 	do {
         if (rom_get_loaded()){
             if (g_regs.LCDC&0x80){ // LCDC 起動時
-                g_regs.LY=(g_regs.LY+1)%154;
+                g_regs.LY++;
 
                 g_regs.STAT&=0xF8;
                 if (g_regs.LYC==g_regs.LY){
@@ -682,7 +682,7 @@ int gb_run_frame()
                         cpu_exec(4);
                         g_regs.LY=0;
                         cpu_exec(456-4); // 前のラインのかなり早目から0になるようだ。
-                        g_regs.LY=153;
+                        g_regs.LY=-1;
                     }
                     else
                         cpu_exec(456);
