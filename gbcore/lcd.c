@@ -295,7 +295,7 @@ void lcd_bg_render(void *buf,byte scanline)
 //	word *now_pat2=(word*)(vrams[0]+pat+14-((y&7)<<1));
 	dword tmp_dat;
 
-	int screenx=g_regs.SCX/8*8-g_regs.SCX;		//現在のスクリーン上でのｘ座標。負になることもあり。以下では[-7,160]を取り得る。
+	int screenx=(g_regs.SCX & 0xF8)-g_regs.SCX;		//現在のスクリーン上でのｘ座標。負になることもあり。以下では[-7,160]を取り得る。
 	dat+=screenx;
 
 //	for (i=0;i<20;i++){
@@ -307,7 +307,7 @@ void lcd_bg_render(void *buf,byte scanline)
 		screenx+=8;
 		if (screenx>=160) break;
 
-		if ((x/8*8+i*8)-prefix>=248){
+		if (((x & 0xF8)+i*8)-prefix>=248){
 			now_tile=vram+back+((y/8)<<5);
 			prefix=256;
 		}
@@ -466,7 +466,7 @@ void lcd_bg_render_color(void *buf,byte scanline)
 	dword tmp_dat;
 	byte atr;
 
-	int screenx=g_regs.SCX/8*8-g_regs.SCX;		//現在のスクリーン上でのｘ座標。負になることもあり。以下では[-7,160]を取り得る。
+	int screenx=(g_regs.SCX & 0xF8)-g_regs.SCX;		//現在のスクリーン上でのｘ座標。負になることもあり。以下では[-7,160]を取り得る。
 	dat+=screenx;
 
 //	for (i=0;i<21;i++){
@@ -490,7 +490,7 @@ void lcd_bg_render_color(void *buf,byte scanline)
 		screenx+=8;
 		if (screenx>=160) break;
 
-		if ((x/8*8+i*8)-prefix>=248){
+		if (((x & 0xF8)+i*8)-prefix>=248){
 			now_tile=vram+back+((y/8)<<5);
 			now_atr=vram+back+((y/8)<<5)+0x2000;
 			prefix=256;
@@ -831,7 +831,7 @@ void lcd_bg_render_colored(void *buf,byte scanline)
 //	word *now_pat2=(word*)(vrams[0]+pat+14-((y&7)<<1));
 	dword tmp_dat;
 
-	int screenx=g_regs.SCX/8*8-g_regs.SCX;		//現在のスクリーン上でのｘ座標。負になることもあり。以下では[-7,160]を取り得る。
+	int screenx=(g_regs.SCX & 0xF8)-g_regs.SCX;		//現在のスクリーン上でのｘ座標。負になることもあり。以下では[-7,160]を取り得る。
 	dat+=screenx;
 
 //	for (i=0;i<20;i++){
@@ -850,7 +850,7 @@ void lcd_bg_render_colored(void *buf,byte scanline)
 		screenx+=8;
 		if (screenx>=160) break;
 
-		if ((x/8*8+i*8)-prefix>=248){
+		if (((x & 0xF8)+i*8)-prefix>=248){
 			now_tile=vram+back+((y/8)<<5);
 			prefix=256;
 		}
