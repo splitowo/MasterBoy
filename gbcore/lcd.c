@@ -79,9 +79,9 @@ byte ztbls[76];
 static void gbc_recreate_colors();
 static void sgb_recreate_colors();
 void gb_invalidate_all_colors();
-void lcd_bg_render_colored(void *buf,int scanline);
-void lcd_win_render_colored(void *buf,int scanline);
-void lcd_sprite_render_colored(void *buf,int scanline);
+void lcd_bg_render_colored(void *buf,byte scanline);
+void lcd_win_render_colored(void *buf,byte scanline);
+void lcd_sprite_render_colored(void *buf,byte scanline);
 static void gb_recreate_colors();
 void gb_invalidate_all_colors();
 void gb_invalidate_palette(int palNo);
@@ -250,7 +250,7 @@ static inline byte get_ztbl2(int screenx)
 	return ((ztbl2[screenx>>3]<<8)|ztbl2[(screenx>>3)+1])>>(8-(screenx&7));
 }
 
-void lcd_bg_render(void *buf,int scanline)
+void lcd_bg_render(void *buf,byte scanline)
 {
 	word pal[4];
 	int t;
@@ -276,12 +276,11 @@ void lcd_bg_render(void *buf,int scanline)
 	word pat=(g_regs.LCDC&0x10)?0x0000:0x1000;
 	word share=0x0000;//prefix
 	byte tile;
-	int i,x,y;
+	int i,x;
+	byte y;
 	byte *vrams[2]={vram,vram+0x2000};
 
 	y=scanline+g_regs.SCY;
-	if (y>=256)
-		y-=256;
 	x=g_regs.SCX;
 
 	word *dat=((word*)buf)+scanline*SIZE_LINE+GUARD_LINE;
@@ -316,7 +315,7 @@ void lcd_bg_render(void *buf,int scanline)
 }
 
 
-void lcd_win_render(void *buf,int scanline)
+void lcd_win_render(void *buf,byte scanline)
 {
 	if (!(g_regs.LCDC&0x80)||!(g_regs.LCDC&0x20)||g_regs.WY>=(scanline+1)||g_regs.WX>166){
 //		if ((g_regs.WY>=(scanline+1))&&((g_regs.LCDC&0x21)!=0x21))
@@ -356,7 +355,7 @@ void lcd_win_render(void *buf,int scanline)
 	}
 }
 
-void lcd_sprite_render(void *buf,int scanline)
+void lcd_sprite_render(void *buf,byte scanline)
 {
 	if (!(g_regs.LCDC&0x80)||!(g_regs.LCDC&0x02))
 		return;
@@ -424,7 +423,7 @@ void lcd_sprite_render(void *buf,int scanline)
 	}
 }
 
-void lcd_bg_render_color(void *buf,int scanline)
+void lcd_bg_render_color(void *buf,byte scanline)
 {
 	int t;
 
@@ -446,12 +445,11 @@ void lcd_bg_render_color(void *buf,int scanline)
 	word share=0x0000;//prefix
 	word *pal;
 	byte tile;
-	int i,x,y;
+	int i,x;
+	byte y;
 	byte *vrams[2]={vram,vram+0x2000};
 
 	y=scanline+g_regs.SCY;
-	if (y>=256)
-		y-=256;
 	x=g_regs.SCX;
 
 	word *dat=((word*)buf)+scanline*SIZE_LINE+GUARD_LINE;
@@ -507,7 +505,7 @@ fin:
 
 
 
-void lcd_win_render_color(void *buf,int scanline)
+void lcd_win_render_color(void *buf,byte scanline)
 {
 	if (!(g_regs.LCDC&0x80)||!(g_regs.LCDC&0x20)||g_regs.WY>=(scanline+1)||g_regs.WX>166){
 //		if ((g_regs.WY>=(scanline+1))&&((g_regs.LCDC&0x21)!=0x21))
@@ -556,7 +554,7 @@ void lcd_win_render_color(void *buf,int scanline)
 	}
 }
 
-void lcd_sprite_render_color(void *buf,int scanline)
+void lcd_sprite_render_color(void *buf,byte scanline)
 {
 	if (!(g_regs.LCDC&0x80)||!(g_regs.LCDC&0x02))
 		return;
@@ -621,7 +619,7 @@ void lcd_sprite_render_color(void *buf,int scanline)
 	}
 }
 
-static void lcd_sgb_render(void *buf,int scanline)
+static void lcd_sgb_render(void *buf,byte scanline)
 {
 	int i;
 	const int *tbl;
@@ -652,7 +650,7 @@ static void lcd_sgb_render(void *buf,int scanline)
 	}
 }
 
-void lcd_render(void *buf,int scanline)
+void lcd_render(void *buf,byte scanline)
 {
 	sprite_count=0;
 	
@@ -791,7 +789,7 @@ void gb_invalidate_all_colors()		{
 }
 
 
-void lcd_bg_render_colored(void *buf,int scanline)
+void lcd_bg_render_colored(void *buf,byte scanline)
 {
 	word pal[4];
 	int t;
@@ -813,12 +811,11 @@ void lcd_bg_render_colored(void *buf,int scanline)
 	word pat = (g_regs.LCDC&0x10)?0x000:0x100;
 	word share=0x0000;//prefix
 	byte tile;
-	int i,x,y;
+	int i,x;
+	byte y;
 	byte *vrams[2]={vram,vram+0x2000};
 
 	y=scanline+g_regs.SCY;
-	if (y>=256)
-		y-=256;
 	x=g_regs.SCX;
 
 	word *dat=((word*)buf)+scanline*SIZE_LINE+GUARD_LINE;
@@ -860,7 +857,7 @@ void lcd_bg_render_colored(void *buf,int scanline)
 	}
 }
 
-void lcd_win_render_colored(void *buf,int scanline)
+void lcd_win_render_colored(void *buf,byte scanline)
 {
 	if (!(g_regs.LCDC&0x80)||!(g_regs.LCDC&0x20)||g_regs.WY>=(scanline+1)||g_regs.WX>166){
 //		if ((g_regs.WY>=(scanline+1))&&((g_regs.LCDC&0x21)!=0x21))
@@ -907,7 +904,7 @@ void lcd_win_render_colored(void *buf,int scanline)
 	}
 }
 
-void lcd_sprite_render_colored(void *buf,int scanline)
+void lcd_sprite_render_colored(void *buf,byte scanline)
 {
 	if (!(g_regs.LCDC&0x80)||!(g_regs.LCDC&0x02))
 		return;

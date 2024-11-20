@@ -27,7 +27,7 @@
 #include "../renderer.h"
 #include "../lib/zlib.h"
 
-//Mettre cheat_enable à 1 si des cheats sont appliqués
+//Mettre cheat_enable Ã  1 si des cheats sont appliquÃ©s
 #define CHEAT_SUPPORT
 extern int cheat_enable;
 
@@ -212,7 +212,7 @@ enum{
 void lcd_init(void);
 void lcd_set_mpal(int n);
 int lcd_get_mpal();
-void lcd_render(void *buf,int scanline);
+void lcd_render(void *buf,byte scanline);
 void lcd_reset();
 void lcd_clear_win_count();
 word *lcd_get_pal(int num);
@@ -220,12 +220,6 @@ void gbc_invalidate_color(int palno, int color);
 void lcd_set_enable(int layer,char enable);
 char lcd_get_enable(int layer);
 int lcd_get_sprite_count();
-void lcd_bg_render(void *buf,int scanline);
-void lcd_win_render(void *buf,int scanline);
-void lcd_sprite_render(void *buf,int scanline);
-void lcd_bg_render_color(void *buf,int scanline);
-void lcd_win_render_color(void *buf,int scanline);
-void lcd_sprite_render_color(void *buf,int scanline);
 
 // mbc.c
 extern void (*mbc_write)(word adr,byte dat);
