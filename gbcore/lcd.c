@@ -278,7 +278,6 @@ void lcd_bg_render(void *buf,byte scanline)
 	byte tile;
 	int i,x;
 	byte y;
-	byte *vrams[2]={vram,vram+0x2000};
 
 	y=scanline+g_regs.SCY;
 	x=g_regs.SCX;
@@ -288,9 +287,9 @@ void lcd_bg_render(void *buf,byte scanline)
 	int start=g_regs.SCX>>3;
 	//int end=(start+20>32)?32:(start+21);
 	int prefix=0;
-	byte *now_tile=vrams[0]+back+((y>>3)<<5)+start;
-	word *now_share=(word*)(vrams[0]+share+((y&7)<<1));
-	word *now_pat=(word*)(vrams[0]+pat+((y&7)<<1));
+	byte *now_tile=vram+back+((y>>3)<<5)+start;
+	word *now_share=(word*)(vram+share+((y&7)<<1));
+	word *now_pat=(word*)(vram+pat+((y&7)<<1));
 //	word *now_share2=(word*)(vrams[0]+share+14-((y&7)<<1));
 //	word *now_pat2=(word*)(vrams[0]+pat+14-((y&7)<<1));
 	dword tmp_dat;
@@ -447,7 +446,6 @@ void lcd_bg_render_color(void *buf,byte scanline)
 	byte tile;
 	int i,x;
 	byte y;
-	byte *vrams[2]={vram,vram+0x2000};
 
 	y=scanline+g_regs.SCY;
 	x=g_regs.SCX;
@@ -457,8 +455,8 @@ void lcd_bg_render_color(void *buf,byte scanline)
 	int start=g_regs.SCX>>3;
 	//int end=(start+20>32)?32:(start+21);
 	int prefix=0;
-	byte *now_tile  =vrams[0]+back+((y>>3)<<5)+start;
-	byte *now_atr   =vrams[0]+back+((y>>3)<<5)+start+0x2000;
+	byte *now_tile  =vram+back+((y>>3)<<5)+start;
+	byte *now_atr   =vram+back+((y>>3)<<5)+start+0x2000;
 //	word *now_share =(word*)(vrams[0]+share+((y&7)<<1));
 //	word *now_pat   =(word*)(vrams[0]+pat  +((y&7)<<1));
 //	word *now_share2=(word*)(vrams[0]+share+14-((y&7)<<1));
@@ -476,7 +474,7 @@ void lcd_bg_render_color(void *buf,byte scanline)
 		pal=real_col_pal[atr&7];
 		tmp_dat=*(
 			(word *)(
-				vrams[0]
+				vram
 				+( (tile&0x80) ? share : pat )
 				+( (atr&0x40)  ? (14-((y&7)<<1)) : ((y&7)<<1) )
 			)
@@ -516,8 +514,6 @@ void lcd_win_render_color(void *buf,byte scanline)
 	int y=now_win_line-1/*scanline-res->system_reg.WY*/;
 	now_win_line++;
 
-	byte *vrams[2]={vram,vram+0x2000};
-
 	word back=(g_regs.LCDC&0x40)?0x1C00:0x1800;
 	word pat=(g_regs.LCDC&0x10)?0x0000:0x1000;
 	word share=0x0000;//prefix
@@ -532,8 +528,8 @@ void lcd_win_render_color(void *buf,byte scanline)
 	byte *now_atr=vram+back+(((y>>3)-1)<<5)+0x2000;
 	word *now_share=(word*)(vram+share+((y&7)<<1));
 	word *now_pat=(word*)(vram+pat+((y&7)<<1));
-	word *now_share2=(word*)(vrams[0]+share+14-((y&7)<<1));
-	word *now_pat2=(word*)(vrams[0]+pat+14-((y&7)<<1));
+	word *now_share2=(word*)(vram+share+14-((y&7)<<1));
+	word *now_pat2=(word*)(vram+pat+14-((y&7)<<1));
 	dword tmp_dat;
 	byte atr;
 	word bank;
@@ -813,7 +809,6 @@ void lcd_bg_render_colored(void *buf,byte scanline)
 	byte tile;
 	int i,x;
 	byte y;
-	byte *vrams[2]={vram,vram+0x2000};
 
 	y=scanline+g_regs.SCY;
 	x=g_regs.SCX;
@@ -823,7 +818,7 @@ void lcd_bg_render_colored(void *buf,byte scanline)
 	int start=g_regs.SCX>>3;
 	//int end=(start+20>32)?32:(start+21);
 	int prefix=0;
-	byte *now_tile=vrams[0]+back+((y>>3)<<5)+start;
+	byte *now_tile=vram+back+((y>>3)<<5)+start;
 //	word *now_share=(word*)(vrams[0]+share+((y&7)<<1));
 //	word *now_pat=(word*)(vrams[0]+pat+((y&7)<<1));
 
