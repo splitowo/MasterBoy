@@ -206,13 +206,21 @@ static inline word horizflip(word src)
 	return ret;
 }
 
+/* Extracts bits at position 9 and 1 and puts them at positions 2 and 1, respectively. All other bits set to 0
+*/
 static inline dword dtwk(dword src)
 {
-	dword d=src&0x0202;
-	return ((d>>7)|d)&6;
+	dword temp;
+	asm (
+		"		ext %1, %2, 9, 1"	"\n"
+		"		ins %0, %1, 2, 1"	"\n"
+			:	"+r"(src), "=r" (temp)
+			:	"r"(src)
+	);
+	return src & 0x6;
 }
 
-void dattrans2n(word *pal, word *dat, dword src)
+static void dattrans2n(word *pal, word *dat, dword src)
 {
 	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src>>6) ) );
 	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src>>5) ) );
