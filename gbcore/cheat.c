@@ -19,6 +19,7 @@
 
 #include "gb.h"
 #include <ctype.h>
+#include <stdlib.h>
 
 #ifdef CHEAT_SUPPORT
 

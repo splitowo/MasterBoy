@@ -842,7 +842,7 @@ static void cpu_io_write_69( word adr,byte dat )
 	}
 	cg_regs.BCPD=dat;
 	if (cg_regs.BCPS&0x80)
-		cg_regs.BCPS=0x80|((cg_regs.BCPS+1)&0x3f);
+		cg_regs.BCPS=((cg_regs.BCPS+1)&(0x3f | 0x80));
 //	fprintf(file,"%d :BCPS = %02X\n",g_regs.LY,dat);
 }
 static void cpu_io_write_6A( word adr,byte dat ){ cg_regs.OCPS=dat; }
@@ -870,7 +870,7 @@ static void cpu_io_write_6B( word adr,byte dat )
 	}
 	cg_regs.OCPD=dat;
 	if (cg_regs.OCPS&0x80)
-		cg_regs.OCPS=0x80|((cg_regs.OCPS+1)&0x3f);
+		cg_regs.OCPS=((cg_regs.OCPS+1)&(0x3f | 0x80));
 }
 static void cpu_io_write_6C( word adr,byte dat ){ _ff6c=dat&1 ; }
 static void cpu_io_write_6D( word adr,byte dat ){ ; }
