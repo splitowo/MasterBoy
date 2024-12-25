@@ -731,6 +731,8 @@ int gb_run_frame()
                             lcd_render(vframe,g_regs.LY);
 
                         g_regs.STAT&=0xfc;
+                        if ((g_regs.STAT&0x08))
+                            cpu_irq(INT_LCDC);
                         cpu_exec(204); // state=3
                     }
                     else{
