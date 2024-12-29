@@ -702,12 +702,6 @@ static void cpu_io_write_55( word adr,byte dat )
 			return;
 		}
 		if (dat&0x80){ //HBlank毎
-			if (dma_executing){
-				dma_executing=false;
-				dma_rest=0;
-				cg_regs.HDMA5=0xFF;
-				return;
-			}
 			dma_executing=true;
 			b_dma_first=true;
 			dma_rest=(dat&0x7F)+1;
