@@ -65,7 +65,6 @@ short tileMapTileList[384];
 
 int n_mpal16;
 int now_win_line;
-int mul;
 int sprite_count;
 
 char layer_enable[3];
@@ -222,14 +221,20 @@ static inline dword dtwk(dword src)
 
 static void dattrans2n(word *pal, word *dat, dword src)
 {
-	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src>>6) ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src>>5) ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src>>4) ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src>>3) ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src>>2) ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src>>1) ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src   ) ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( dtwk(src<<1) ) );
+	// for input bits:   abcdefghABCDEFGH
+	// even_pairs gives: 00000000bBdDfFhH
+	// odd_pairs gives:  aAcCeEgG00000000
+	dword even_pairs = (src & 0x55) | ((src & 0x5500) >> 7);
+	dword odd_pairs =  ((src & 0xAA) << 7) | (src & 0xAA00);
+
+	*(dat++)=*(word *)( ((byte *)pal)+( (odd_pairs >> 13) & 0x6 ) );
+	*(dat++)=*(word *)( ((byte *)pal)+( (even_pairs >> 5) & 0x6 ) );
+	*(dat++)=*(word *)( ((byte *)pal)+( (odd_pairs >> 11) & 0x6 ) );
+	*(dat++)=*(word *)( ((byte *)pal)+( (even_pairs >> 3) & 0x6 ) );
+	*(dat++)=*(word *)( ((byte *)pal)+( (odd_pairs >> 9) & 0x6 ) );
+	*(dat++)=*(word *)( ((byte *)pal)+( (even_pairs >> 1) & 0x6 ) );
+	*(dat++)=*(word *)( ((byte *)pal)+( (odd_pairs >> 7) & 0x6 ) );
+	*(dat++)=*(word *)( ((byte *)pal)+( (even_pairs << 1) & 0x6 ) );
 }
 
 #define dattrans2nd(pal,dat,src) dattrans2n(pal,dat,src);dat+=8;
