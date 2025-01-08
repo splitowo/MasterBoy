@@ -21,7 +21,6 @@
 // CPU ニーモニック以外実装部 (I/O､IRQ 等)
 
 #include "gb.h"
-#include "../syscall.h"
 
 extern unsigned int gblCpuCycles;
 
