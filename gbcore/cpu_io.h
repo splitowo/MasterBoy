@@ -769,8 +769,6 @@ static void cpu_io_write_55( word adr,byte dat )
 			}
 			dma_src+=((dat&0x7F)+1)*16;
 			dma_dest+=((dat&0x7F)+1)*16;
-
-			gdma_rest=456*2+((dat&0x7f)+1)*32*(speed?2:1); // CPU パワーを占領
 		}
 }
 static void cpu_io_write_56( word adr,byte dat )

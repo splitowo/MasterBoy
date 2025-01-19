@@ -67,7 +67,6 @@ char b_trace;
 int dma_src;
 int dma_dest;
 int dma_rest;
-int gdma_rest;
 char b_dma_first;
 
 int int_disable_next;
@@ -128,7 +127,6 @@ void cpu_reset(void)
 	speed_change=false;
 	dma_executing=false;
 	b_dma_first=false;
-	gdma_rest=0;
 
 	int_disable_next=false;
 	int_invoke_next=false;
@@ -694,23 +692,6 @@ void cpu_exec(unsigned short clocks)
 		clocks*=2;
 
 	rest_clock+=clocks;
-
-	if (gdma_rest){
-		if (rest_clock<=gdma_rest){
-			gdma_rest-=rest_clock;
-			sys_clock+=rest_clock;
-			div_clock+=rest_clock;
-			total_clock+=rest_clock;
-			rest_clock=0;
-		}
-		else{
-			rest_clock-=gdma_rest;
-			sys_clock+=gdma_rest;
-			div_clock+=gdma_rest;
-			total_clock+=gdma_rest;
-			gdma_rest=0;
-		}
-	}
 
 	while(rest_clock>0){
 		if (int_invoke_next) cpu_irq_process();

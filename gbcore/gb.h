@@ -264,7 +264,6 @@ extern int halt,speed,speed_change,dma_executing;
 extern int dma_src;
 extern int dma_dest;
 extern int dma_rest;
-extern int gdma_rest;
 extern char b_dma_first;
 extern byte *dma_src_bank;
 extern byte *dma_dest_bank;
