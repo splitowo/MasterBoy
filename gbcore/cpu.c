@@ -55,7 +55,6 @@ byte *vram_bank;
 byte *ram_bank;
 
 byte *pc_ptr;
-byte *sp_ptr;
 
 byte z802gb[256],gb2z80[256];
 //	word org_pal[16][4];
@@ -105,7 +104,6 @@ void cpu_reset(void)
 	c_regs_I=0;
 	c_regs_SP=0xFFFE;
 	c_regs_PC=0x100;
-	sp_ptr = stack + 0x7E;
 
 	if(rom_get_loaded())
 	{
@@ -624,7 +622,6 @@ static void cpu_irq_process()
 
 	writew(c_regs_SP - 2, c_regs_PC);
 	c_regs_SP-=2;
-	sp_ptr-=2;
 	
 	if (g_regs.IF&g_regs.IE&INT_VBLANK){//VBlank
 		c_regs_PC=0x40;
@@ -762,6 +759,5 @@ struct cpu_regs *cpu_set_c_regs()
 	c_regs_I =_c_regs.I   ;
 	cpu_irq_check();
 	pc_ptr = cpu_get_memory_ref(c_regs_PC);
-	sp_ptr = cpu_get_memory_ref(c_regs_SP);
 	return &_c_regs; 
 }

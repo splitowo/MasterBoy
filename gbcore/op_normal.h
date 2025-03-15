@@ -37,10 +37,10 @@ inline void op_code_normal_case0x3A(void) { REG_A=cpu_read(REG_HL);REG_HL--;} //
 //0x32 LD (mn),A -> LD (HLD),A Save A at (HL) and decrement HL
 inline void op_code_normal_case0x32(void) { cpu_write(REG_HL,REG_A);REG_HL--;} // LD (HLD),A : 00 110 010 :state 13
 
-inline void op_code_normal_case0xD9(void) { /*Log("Return Interrupts.\n");*/c_regs_I=1;REG_PC=*sp_ptr | *(sp_ptr + 1) << 8;pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;sp_ptr+=2;/*;g_regs.IF=0*/;/*res->system_reg.IF&=~Int_hist[(Int_depth>0)?--Int_depth:Int_depth]*//*Int_depth=((Int_depth>0)?--Int_depth:Int_depth);*//*res->system_reg.IF=0;*//*Log("RETI %d\n",Int_depth);*/ cpu_irq_check(); }//RETI state 16
+inline void op_code_normal_case0xD9(void) { /*Log("Return Interrupts.\n");*/c_regs_I=1;REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;/*;g_regs.IF=0*/;/*res->system_reg.IF&=~Int_hist[(Int_depth>0)?--Int_depth:Int_depth]*//*Int_depth=((Int_depth>0)?--Int_depth:Int_depth);*//*res->system_reg.IF=0;*//*Log("RETI %d\n",Int_depth);*/ cpu_irq_check(); }//RETI state 16
 inline void op_code_normal_case0xE0(void) { cpu_write(0xFF00+op_read(),REG_A);}//LDH (n),A
 inline void op_code_normal_case0xE2(void) { cpu_write(0xFF00+REG_C,REG_A);}//LDH (C),A
-inline void op_code_normal_case0xE8(void) { REG_SP+=(signed char)op_read();sp_ptr = cpu_get_memory_ref(REG_SP);}//ADD SP,n
+inline void op_code_normal_case0xE8(void) { REG_SP+=(signed char)op_read();}//ADD SP,n
 inline void op_code_normal_case0xEA(void) { cpu_write(op_readw(),REG_A);}//LD (mn),A
 
 inline void op_code_normal_case0xF0(void) { REG_A=cpu_read(0xFF00+op_read());}//LDH A,(n)
@@ -149,24 +149,24 @@ inline void op_code_normal_case0x12(void) { cpu_write(REG_DE,REG_A);} // LD (DE)
 inline void op_code_normal_case0x01(void) { REG_BC=op_readw();} //LD BC,(mn)
 inline void op_code_normal_case0x11(void) { REG_DE=op_readw();} //LD DE,(mn)
 inline void op_code_normal_case0x21(void) { REG_HL=op_readw();} //LD HL,(mn)
-inline void op_code_normal_case0x31(void) { REG_SP=op_readw();sp_ptr = cpu_get_memory_ref(REG_SP);} //LD SP,(mn)
+inline void op_code_normal_case0x31(void) { REG_SP=op_readw();} //LD SP,(mn)
 
-inline void op_code_normal_case0xF9(void) { REG_SP=REG_HL;sp_ptr = cpu_get_memory_ref(REG_SP);} //LD SP,HL : 11 111 001 :state 6
+inline void op_code_normal_case0xF9(void) { REG_SP=REG_HL;} //LD SP,HL : 11 111 001 :state 6
 
 //stack opcode
 //rq Pair Reg 00 BC 01 DE 10 HL 11 AF
 
 //PUSH rq : 11 rq0 101 : state 11(16?)
-inline void op_code_normal_case0xC5(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_BC;*(sp_ptr + 1) = REG_BC>>8;} //PUSH BC
-inline void op_code_normal_case0xD5(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_DE;*(sp_ptr + 1) = REG_DE>>8;} //PUSH DE
-inline void op_code_normal_case0xE5(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_HL;*(sp_ptr + 1) = REG_HL>>8;} //PUSH HL
-inline void op_code_normal_case0xF5(void) { *(sp_ptr - 1) = REG_A;*(sp_ptr - 2) = z802gb[REG_F]|0xe;REG_SP-=2;sp_ptr-=2;} //PUSH AF // 未使用ビットは1になるみたい(メタルギアよ
+inline void op_code_normal_case0xC5(void) { REG_SP-=2;writew(REG_SP,REG_BC);} //PUSH BC
+inline void op_code_normal_case0xD5(void) { REG_SP-=2;writew(REG_SP,REG_DE);} //PUSH DE
+inline void op_code_normal_case0xE5(void) { REG_SP-=2;writew(REG_SP,REG_HL);} //PUSH HL
+inline void op_code_normal_case0xF5(void) { cpu_write(REG_SP-2,z802gb[REG_F]|0xe);cpu_write(REG_SP-1,REG_A);REG_SP-=2;} //PUSH AF // 未使用ビットは1になるみたい(メタルギアよ
 
 //POP rq : 11 rq0 001 : state 10 (12?)
-inline void op_code_normal_case0xC1(void) { REG_B=*(sp_ptr + 1);REG_C=*sp_ptr;REG_SP+=2;sp_ptr+=2;} //POP BC
-inline void op_code_normal_case0xD1(void) { REG_D=*(sp_ptr + 1);REG_E=*sp_ptr;REG_SP+=2;sp_ptr+=2;} //POP DE
-inline void op_code_normal_case0xE1(void) { REG_H=*(sp_ptr + 1);REG_L=*sp_ptr;REG_SP+=2;sp_ptr+=2;} //POP HL
-inline void op_code_normal_case0xF1(void) { REG_A=*(sp_ptr + 1);REG_F=gb2z80[(*sp_ptr)&0xf0];REG_SP+=2;sp_ptr+=2;} //POP AF
+inline void op_code_normal_case0xC1(void) { REG_B=cpu_read(REG_SP+1);REG_C=cpu_read(REG_SP);REG_SP+=2;} //POP BC
+inline void op_code_normal_case0xD1(void) { REG_D=cpu_read(REG_SP+1);REG_E=cpu_read(REG_SP);REG_SP+=2;} //POP DE
+inline void op_code_normal_case0xE1(void) { REG_H=cpu_read(REG_SP+1);REG_L=cpu_read(REG_SP);REG_SP+=2;} //POP HL
+inline void op_code_normal_case0xF1(void) { REG_A=cpu_read(REG_SP+1);REG_F=gb2z80[cpu_read(REG_SP)&0xf0];REG_SP+=2;} //POP AF
 
 //8bit arithmetic/logical opcode
 //regs B 000 C 001 D 010 E 011 H 100 L 101 A 111
@@ -300,13 +300,13 @@ inline void op_code_normal_case0x39(void) { ADDW(REG_SP);} //ADD HL,SP
 inline void op_code_normal_case0x03(void) { REG_BC++;;} //INC BC
 inline void op_code_normal_case0x13(void) { REG_DE++;} //INC DE
 inline void op_code_normal_case0x23(void) { REG_HL++;} //INC HL
-inline void op_code_normal_case0x33(void) { REG_SP++;sp_ptr++;} //INC SP
+inline void op_code_normal_case0x33(void) { REG_SP++;} //INC SP
 
 //DEC BC : 00 rp1 011 :state 11
 inline void op_code_normal_case0x0B(void) { REG_BC--;} //DEC BC
 inline void op_code_normal_case0x1B(void) { REG_DE--;} //DEC DE
 inline void op_code_normal_case0x2B(void) { REG_HL--;} //DEC HL
-inline void op_code_normal_case0x3B(void) { REG_SP--;sp_ptr--;} //DEC SP
+inline void op_code_normal_case0x3B(void) { REG_SP--;} //DEC SP
 
 //汎用：CPU制御 opcode
 
@@ -440,31 +440,31 @@ inline void op_code_normal_case0x38(void) { if (REG_F&C_FLAG) {REG_PC+=(signed c
 
 //call/ret opcode
 
-inline void op_code_normal_case0xCD(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)(REG_PC + 2);*(sp_ptr + 1) = (REG_PC + 2)>>8;;REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);} //CALL mn :state 24
+inline void op_code_normal_case0xCD(void) { REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);} //CALL mn :state 24
 
 //CALL cc,mn : 11 0cc 100 : state 24 or 12
-inline void op_code_normal_case0xC4(void) { if (REG_F&Z_FLAG) {REG_PC+=2;pc_ptr+=2;} else {REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)(REG_PC + 2);*(sp_ptr + 1) = (REG_PC + 2)>>8;REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} } //CALLNZ mn
-inline void op_code_normal_case0xCC(void) { if (REG_F&Z_FLAG) {REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)(REG_PC + 2);*(sp_ptr + 1) = (REG_PC + 2)>>8;REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} else {REG_PC+=2;pc_ptr+=2;} } //CALLZ mn
-inline void op_code_normal_case0xD4(void) { if (REG_F&C_FLAG) {REG_PC+=2;pc_ptr+=2;} else {REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)(REG_PC + 2);*(sp_ptr + 1) = (REG_PC + 2)>>8;REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} } //CALLNC mn
-inline void op_code_normal_case0xDC(void) { if (REG_F&C_FLAG) {REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)(REG_PC + 2);*(sp_ptr + 1) = (REG_PC + 2)>>8;REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} else {REG_PC+=2;pc_ptr+=2;} } //CALLC mn
+inline void op_code_normal_case0xC4(void) { if (REG_F&Z_FLAG) {REG_PC+=2;pc_ptr+=2;} else {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} } //CALLNZ mn
+inline void op_code_normal_case0xCC(void) { if (REG_F&Z_FLAG) {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} else {REG_PC+=2;pc_ptr+=2;} } //CALLZ mn
+inline void op_code_normal_case0xD4(void) { if (REG_F&C_FLAG) {REG_PC+=2;pc_ptr+=2;} else {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} } //CALLNC mn
+inline void op_code_normal_case0xDC(void) { if (REG_F&C_FLAG) {REG_SP-=2;writew(REG_SP,REG_PC+2);REG_PC=op_readw();pc_ptr=cpu_get_memory_ref(REG_PC);tmp_clocks=24;} else {REG_PC+=2;pc_ptr+=2;} } //CALLC mn
 
 //RST p : 11 t 111 (p=t<<3) : state 16
-inline void op_code_normal_case0xC7(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_PC;*(sp_ptr + 1) = REG_PC>>8;REG_PC=0x00;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x00
-inline void op_code_normal_case0xCF(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_PC;*(sp_ptr + 1) = REG_PC>>8;REG_PC=0x08;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x08
-inline void op_code_normal_case0xD7(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_PC;*(sp_ptr + 1) = REG_PC>>8;REG_PC=0x10;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x10
-inline void op_code_normal_case0xDF(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_PC;*(sp_ptr + 1) = REG_PC>>8;REG_PC=0x18;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x18
-inline void op_code_normal_case0xE7(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_PC;*(sp_ptr + 1) = REG_PC>>8;REG_PC=0x20;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x20
-inline void op_code_normal_case0xEF(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_PC;*(sp_ptr + 1) = REG_PC>>8;REG_PC=0x28;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x28
-inline void op_code_normal_case0xF7(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_PC;*(sp_ptr + 1) = REG_PC>>8;REG_PC=0x30;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x30
-inline void op_code_normal_case0xFF(void) { REG_SP-=2;sp_ptr-=2;*sp_ptr = (byte)REG_PC;*(sp_ptr + 1) = REG_PC>>8;REG_PC=0x38;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x38
+inline void op_code_normal_case0xC7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x00;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x00
+inline void op_code_normal_case0xCF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x08;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x08
+inline void op_code_normal_case0xD7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x10;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x10
+inline void op_code_normal_case0xDF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x18;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x18
+inline void op_code_normal_case0xE7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x20;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x20
+inline void op_code_normal_case0xEF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x28;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x28
+inline void op_code_normal_case0xF7(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x30;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x30
+inline void op_code_normal_case0xFF(void) { REG_SP-=2;writew(REG_SP,REG_PC);REG_PC=0x38;pc_ptr=cpu_get_memory_ref(REG_PC);} //RST 0x38
 
-inline void op_code_normal_case0xC9(void) { REG_PC=*sp_ptr | *(sp_ptr + 1) << 8;pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;sp_ptr+=2;} //RET state 16
+inline void op_code_normal_case0xC9(void) { REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;} //RET state 16
 
 //RET cc : 11 0cc 000 : state 20 or 8
-inline void op_code_normal_case0xC0(void) { if (!(REG_F&Z_FLAG)) {REG_PC=*sp_ptr | *(sp_ptr + 1) << 8;pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;sp_ptr+=2;tmp_clocks=20;} } //RETNZ
-inline void op_code_normal_case0xC8(void) { if (REG_F&Z_FLAG) {REG_PC=*sp_ptr | *(sp_ptr + 1) << 8;pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;sp_ptr+=2;tmp_clocks=20;} } //RETZ
-inline void op_code_normal_case0xD0(void) { if (!(REG_F&C_FLAG)) {REG_PC=*sp_ptr | *(sp_ptr + 1) << 8;pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;sp_ptr+=2;tmp_clocks=20;} } //RETNC
-inline void op_code_normal_case0xD8(void) { if (REG_F&C_FLAG) {REG_PC=*sp_ptr | *(sp_ptr + 1) << 8;pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;sp_ptr+=2;tmp_clocks=20;} } //RETC
+inline void op_code_normal_case0xC0(void) { if (!(REG_F&Z_FLAG)) {REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;tmp_clocks=20;} } //RETNZ
+inline void op_code_normal_case0xC8(void) { if (REG_F&Z_FLAG) {REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;tmp_clocks=20;} } //RETZ
+inline void op_code_normal_case0xD0(void) { if (!(REG_F&C_FLAG)) {REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;tmp_clocks=20;} } //RETNC
+inline void op_code_normal_case0xD8(void) { if (REG_F&C_FLAG) {REG_PC=readw(REG_SP);pc_ptr=cpu_get_memory_ref(REG_PC);REG_SP+=2;tmp_clocks=20;} } //RETC
 
 inline void op_code_normal_case0xCB(void) {
 	int op_code=op_read();
