@@ -238,7 +238,7 @@ inline void op_code_normal_case0xAA(void) { XOR(REG_D);} //XOR A,D
 inline void op_code_normal_case0xAB(void) { XOR(REG_E);} //XOR A,E
 inline void op_code_normal_case0xAC(void) { XOR(REG_H);} //XOR A,H
 inline void op_code_normal_case0xAD(void) { XOR(REG_L);} //XOR A,L
-inline void op_code_normal_case0xAF(void) { XOR(REG_A);} //XOR A,A
+inline void op_code_normal_case0xAF(void) { REG_A=0;REG_F=Z_FLAG;} //XOR A,A
 
 inline void op_code_normal_case0xEE(void) { byte tmpb;tmpb=op_read();XOR(tmpb);} //XOR A,n : 11 101 110 :state 7
 inline void op_code_normal_case0xAE(void) { byte tmpb;tmpb=cpu_read(REG_HL);XOR(tmpb);} //XOR A,(HL) : 10 101 110 :state 7
