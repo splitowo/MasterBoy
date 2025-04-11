@@ -62,10 +62,9 @@ byte z802gb[256],gb2z80[256];
 int total_clock,rest_clock,sys_clock,seri_occer;
 int div_clock_timestamp;
 
-int halt,speed,speed_change,dma_executing;
+int halt,speed,speed_change;
 int dma_src;
 int dma_dest;
-int dma_rest;
 char b_dma_first;
 
 int int_disable_next;
@@ -122,7 +121,6 @@ void cpu_reset(void)
 	halt=false;
 	speed=false;
 	speed_change=false;
-	dma_executing=false;
 	b_dma_first=false;
 
 	int_disable_next=false;
@@ -146,10 +144,10 @@ void cpu_save_state(int *dat)
 	dat[1]=(vram_bank-vram)/0x2000;
 
 	dat[2]=(speed?1:0);
-	dat[3]=(dma_executing?1:0);
+	dat[3]=0;
 	dat[4]=dma_src;
 	dat[5]=dma_dest;
-	dat[6]=dma_rest;
+	dat[6]=0;
 	dat[7]=(speed_change?1:0);
 }
 
@@ -169,10 +167,8 @@ void cpu_restore_state(int *dat)
 	vram_bank=vram+dat[1]*0x2000;
 
 	speed=(dat[2]?true:false);
-	dma_executing=(dat[3]?true:false);
 	dma_src=dat[4];
 	dma_dest=dat[5];
-	dma_rest=dat[6];
 	speed_change=(dat[7]?true:false);
 }
 

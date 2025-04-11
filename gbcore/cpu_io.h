@@ -150,7 +150,7 @@ static byte cpu_io_read_51( word adr ){ return dma_src>>8; }
 static byte cpu_io_read_52( word adr ){ return dma_src&0xff; }
 static byte cpu_io_read_53( word adr ){ return dma_dest>>8; }
 static byte cpu_io_read_54( word adr ){ return dma_dest&0xff; }
-static byte cpu_io_read_55( word adr ){ return (dma_executing?((dma_rest-1)&0x7f):0xFF); }
+static byte cpu_io_read_55( word adr ){ return cg_regs.HDMA5; }
 static byte cpu_io_read_56( word adr )
 { 
 	// 赤外線
@@ -703,10 +703,8 @@ static void cpu_io_write_55( word adr,byte dat )
 			return;
 		}
 		if (dat&0x80){ //HBlank毎
-			dma_executing=true;
 			b_dma_first=true;
-			dma_rest=(dat&0x7F)+1;
-			cg_regs.HDMA5=0;
+			cg_regs.HDMA5=dat&0x7F;
 /*				dma_dest_bank=vram_bank;
 			if (dma_src<0x4000)
 				dma_src_bank=get_rom();
@@ -721,9 +719,7 @@ static void cpu_io_write_55( word adr,byte dat )
 			else dma_src_bank=NULL;
 */			}
 		else{ //通常DMA
-			if (dma_executing){
-				dma_executing=false;
-				dma_rest=0;
+			if (is_dma_transfer_in_progress()){
 				cg_regs.HDMA5=0xFF;
 //					fprintf(file,"dma stopped\n");
 				return;
@@ -734,8 +730,6 @@ static void cpu_io_write_55( word adr,byte dat )
 //					return;
 //				}
 
-			dma_executing=false;
-			dma_rest=0;
 			cg_regs.HDMA5=0xFF;
 
 			const unsigned long memcpy_length = min(space_to_vram_bound(dma_dest), 16*(dat&0x7F)+16) / 4;

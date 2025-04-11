@@ -96,6 +96,7 @@ void gb_reset()
 	g_regs.WX=0;
 	g_regs.IF=0;
 	g_regs.IE=0;
+	cg_regs.HDMA5=0xFF;
 	
 	cpu_irq_check();
 	
@@ -695,7 +696,7 @@ int gb_run_frame()
                     g_regs.STAT|=3;
                     cpu_exec(172); // state=3
 
-                    if (dma_executing){ // HBlank DMA
+                    if (is_dma_transfer_in_progress()){ // HBlank DMA
                         if (b_dma_first){
                             dma_dest_bank=vram_bank;
                             if (dma_src<0x4000)
@@ -718,9 +719,7 @@ int gb_run_frame()
                         dma_src&=0xfff0;
                         dma_dest+=16;
                         dma_dest&=0xfff0;
-                        dma_rest--;
-                        if (!dma_rest)
-                            dma_executing=false;
+						cg_regs.HDMA5--;
 
 //		    			cpu_total_clock+=207*(cpu_speed?2:1);
 //	    				cpu_sys_clock+=207*(cpu_speed?2:1);
