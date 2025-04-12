@@ -63,7 +63,6 @@ int total_clock,rest_clock,sys_clock,seri_occer;
 word div_clock;
 
 int halt,speed,speed_change,dma_executing;
-char b_trace;
 int dma_src;
 int dma_dest;
 int dma_rest;
@@ -89,8 +88,6 @@ byte rp_data;
 void cpu_init(void)
 {
 	int i;
-
-	b_trace=false;
 
 	for (i=0;i<256;i++){
 		z802gb[i]=((i&0x40)?0x80:0)|((i&0x10)?0x20:0)|((i&0x02)?0x40:0)|((i&0x01)?0x10:0);
@@ -739,7 +736,6 @@ void cpu_exec(unsigned short clocks)
 	}
 }
 
-void cpu_set_trace(char trace) { b_trace=trace; }
 byte *cpu_get_vram() { return vram; }
 byte *cpu_get_ram() { return ram; }
 byte *cpu_get_oam() { return oam; }

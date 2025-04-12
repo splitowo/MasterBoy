@@ -289,7 +289,6 @@ void cpu_irq_check();
 void cpu_irq_process();
 void cpu_exec(unsigned short clocks);
 
-void cpu_set_trace(char trace);
 byte *cpu_get_vram();
 byte *cpu_get_ram();
 byte *cpu_get_oam();
