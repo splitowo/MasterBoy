@@ -64,7 +64,7 @@ static byte cpu_io_read_00( word adr )
 static byte cpu_io_read_01( word adr ){ return g_regs.SB; }
 static byte cpu_io_read_02( word adr ){ return (g_regs.SC&0x83)|0x7C; }
 static byte cpu_io_read_03( word adr ){ return 0; }
-static byte cpu_io_read_04( word adr ){ return div_clock >> 8 ; }
+static byte cpu_io_read_04( word adr ){ return (total_clock - div_clock_timestamp) >> 8 ; }
 static byte cpu_io_read_05( word adr ){ return g_regs.TIMA; }
 static byte cpu_io_read_06( word adr ){ return g_regs.TMA ; }
 static byte cpu_io_read_07( word adr ){ return g_regs.TAC ; }
@@ -535,7 +535,7 @@ static void cpu_io_write_02( word adr,byte dat )
 		}
 }
 static void cpu_io_write_03( word adr,byte dat ){ ; }
-static void cpu_io_write_04( word adr,byte dat ){ div_clock=0; }
+static void cpu_io_write_04( word adr,byte dat ){ div_clock_timestamp=total_clock; }
 static void cpu_io_write_05( word adr,byte dat ){ g_regs.TIMA=dat; }
 static void cpu_io_write_06( word adr,byte dat ){ g_regs.TMA=dat; }
 static void cpu_io_write_07( word adr,byte dat )

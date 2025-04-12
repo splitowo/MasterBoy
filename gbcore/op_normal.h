@@ -399,7 +399,6 @@ inline void op_code_normal_case0x76(void) {
 	else{
 		halt=true;
 		total_clock+=rest_clock;
-		div_clock+=rest_clock;
 		rest_clock=0;
 		REG_PC--;
 		pc_ptr--;

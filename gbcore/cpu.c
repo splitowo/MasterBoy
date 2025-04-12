@@ -60,7 +60,7 @@ byte *sp_ptr;
 byte z802gb[256],gb2z80[256];
 //	word org_pal[16][4];
 int total_clock,rest_clock,sys_clock,seri_occer;
-word div_clock;
+int div_clock_timestamp;
 
 int halt,speed,speed_change,dma_executing;
 int dma_src;
@@ -117,7 +117,7 @@ void cpu_reset(void)
 	ram_bank=ram+0x1000;
 
 	rest_clock=0;
-	total_clock=sys_clock=div_clock=0;
+	total_clock=sys_clock=div_clock_timestamp=0;
 	seri_occer=0x7fffffff;
 	halt=false;
 	speed=false;
@@ -155,7 +155,7 @@ void cpu_save_state(int *dat)
 
 void cpu_save_state_ex(int *dat)
 {
-	dat[0]=div_clock;
+	dat[0]=div_clock_timestamp;
 	dat[1]=rest_clock;
 	dat[2]=sys_clock;
 	dat[3]=total_clock;
@@ -178,7 +178,7 @@ void cpu_restore_state(int *dat)
 
 void cpu_restore_state_ex(int *dat)
 {
-	div_clock=dat[0];
+	div_clock_timestamp=dat[0];
 	rest_clock=dat[1];
 	sys_clock=dat[2];
 	total_clock=dat[3];
@@ -669,7 +669,6 @@ void cpu_irq_process()
 	//13stateは暫定値。GBでどうなってるかは知らない。
 	//よくわからんのでsys_clockは足してないが入れてもいいかも - LCK
 //	rest_clock-=13;
-//	div_clock+=13;
 //	total_clock+=13;
 
 	return;
@@ -699,7 +698,6 @@ void cpu_exec(unsigned short clocks)
 		op_code_normal_JmpTbl[op_code]();
 
 		rest_clock-=tmp_clocks;
-		div_clock+=tmp_clocks;
 		total_clock+=tmp_clocks;
 
 		if (g_regs.TAC&0x04){//タイマ割りこみ
