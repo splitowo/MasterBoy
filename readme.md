@@ -2,7 +2,7 @@
 A Game Boy, Game Boy Color, Sega Master System and Game Gear emulator for PSP. It features:
 - Save states along with traditional on-cartridge saves
 - Emulation turbo mode
-- Gameshark cheats [(how to)](https://github.com/splitowo/MasterBoy/wiki/Cheats)
+- Gameshark and Gamegenie cheats [(how to)](https://github.com/splitowo/MasterBoy/wiki/Cheats)
 - Screenshots
 - Rich customization settings [(more details)](https://github.com/splitowo/MasterBoy/wiki/Feature-documentation-(from-psp-Doc.txt))
 

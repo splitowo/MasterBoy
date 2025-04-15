@@ -1902,9 +1902,9 @@ SUBMENU menuMainFileMusic=		{
 SUBMENUITEM menuMainFileItems[]=		{
 	{"Load ROM", "Load and start a new game", "", NULL, 1},
 	{"Reset game", NULL, "", NULL, 2},
-	{"Load cheats", "Load Gameshark cheats in .cheats file", "", NULL, 6},
+	{"Load cheats", "Load Gameshark/Gamegenie cheats in .cheats file", "", NULL, 6},
 	{"Cheat manager", NULL, "", NULL, 7},
-	{"Screenshot", "Take a screenshot and place it into /PICTURE/MasterBoy/GameName_xx.png.", "", NULL, 5},
+	{"Screenshot", "Take a screenshot and place it into /PICTURE/MasterBoy/GameName_xx.png", "", NULL, 5},
 	{"About MasterBoy", "About MasterBoy", "", NULL, 4},
 	{"Exit", "Return to the PSP menu", "", NULL, 3},
 };
