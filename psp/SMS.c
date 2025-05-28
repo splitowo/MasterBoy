@@ -462,8 +462,8 @@ void SmsEmulate()
 		else
 			frameskip = 0;*/
 
-		//Pal support
-		if (menuConfig.video.country == 1)
+		//PAL support
+		if (gblMachineType == EM_SMS && menuConfig.video.country == 1)
 			framerate = (menuConfig.video.slowMode ? 25 : 50);
 		else
 			framerate = (menuConfig.video.slowMode ? 30 : 60);
