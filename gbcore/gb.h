@@ -280,17 +280,10 @@ void cpu_restore_state(int *dat);
 void cpu_restore_state_ex(int *dat);
 inline byte cpu_read_direct(word adr);
 byte cpu_read(word adr);
-inline word readw(word adr);
-inline void writew(word adr,word dat);
-inline byte op_read();
-inline word op_readw();
 inline void cpu_write(word adr,byte dat);
 inline void cpu_write_direct(word adr,byte dat);
-byte cpu_io_read(word adr);
-void cpu_io_write(word adr,byte dat);
 void cpu_irq(int irq_type);
 void cpu_irq_check();
-void cpu_irq_process();
 void cpu_exec(unsigned short clocks);
 
 byte *cpu_get_vram();

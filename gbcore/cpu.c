@@ -312,27 +312,27 @@ inline byte cpu_read(word adr)
 }
 */
 
-inline word readw(word adr)
+static inline word readw(word adr)
 {
 	const byte *ref = cpu_get_memory_ref(adr);
 	return *ref | *(ref + 1) << 8;
 }
 
-inline void writew(word adr,word dat)
+static inline void writew(word adr,word dat)
 {
 	byte *ref = cpu_get_memory_ref(adr);
 	*ref = (byte)dat;
 	*(ref + 1) = dat>>8;
 }
 
-inline byte op_read()
+static inline byte op_read()
 {
 	c_regs_PC++;
 	return *pc_ptr++;
 }
 
 //こっちのほうが早いと思われ - LCK
-inline word op_readw()
+static inline word op_readw()
 {
 	word r = *pc_ptr | *(pc_ptr + 1) << 8;
 	c_regs_PC+=2;
@@ -605,7 +605,7 @@ void cpu_irq_check()
 }
 
 //割り込みがかかったら積算clockもいじるように変更
-void cpu_irq_process()
+static void cpu_irq_process()
 {
 	if (int_disable_next){
 		int_disable_next=false;
