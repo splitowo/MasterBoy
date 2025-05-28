@@ -260,7 +260,7 @@ extern byte oam[];
 
 extern byte *vram_bank;
 extern byte *ram_bank;
-extern int halt,speed,speed_change;
+extern int halt,speed;
 
 static inline int is_dma_transfer_in_progress() {
 	return (cg_regs.HDMA5 & 0x80) == 0;

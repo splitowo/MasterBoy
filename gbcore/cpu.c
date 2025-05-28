@@ -62,7 +62,7 @@ byte z802gb[256],gb2z80[256];
 int total_clock,rest_clock,sys_clock,seri_occer;
 int div_clock_timestamp;
 
-int halt,speed,speed_change;
+int halt,speed;
 int dma_src;
 int dma_dest;
 char b_dma_first;
@@ -120,7 +120,6 @@ void cpu_reset(void)
 	seri_occer=0x7fffffff;
 	halt=false;
 	speed=false;
-	speed_change=false;
 	b_dma_first=false;
 
 	int_disable_next=false;
@@ -148,7 +147,7 @@ void cpu_save_state(int *dat)
 	dat[4]=dma_src;
 	dat[5]=dma_dest;
 	dat[6]=0;
-	dat[7]=(speed_change?1:0);
+	dat[7]=0;
 }
 
 void cpu_save_state_ex(int *dat)
@@ -169,7 +168,6 @@ void cpu_restore_state(int *dat)
 	speed=(dat[2]?true:false);
 	dma_src=dat[4];
 	dma_dest=dat[5];
-	speed_change=(dat[7]?true:false);
 }
 
 void cpu_restore_state_ex(int *dat)

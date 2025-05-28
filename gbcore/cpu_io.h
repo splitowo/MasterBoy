@@ -682,7 +682,7 @@ static void cpu_io_write_49( word adr,byte dat ){ g_regs.OBP2=dat; }
 static void cpu_io_write_4A( word adr,byte dat ){ g_regs.WY=dat; }
 static void cpu_io_write_4B( word adr,byte dat ){ g_regs.WX=dat; }
 static void cpu_io_write_4C( word adr,byte dat ){ ; }
-static void cpu_io_write_4D( word adr,byte dat ){ cg_regs.KEY1=dat&1; speed_change=dat&1; }
+static void cpu_io_write_4D( word adr,byte dat ){ cg_regs.KEY1=dat&1; }
 static void cpu_io_write_4E( word adr,byte dat ){ ; }
 static void cpu_io_write_4F( word adr,byte dat )
 {
