@@ -1464,14 +1464,15 @@ SUBMENUITEM menuMainCtrlRedefineItems[]=		{
 SUBMENUITEM menuMainCtrlShortcutsItems[]=		{
 	{"Menu", NULL, "", NULL, 0},
 	{"Turbo", NULL, "", NULL, 1},
-	{"Pause", NULL, "", NULL, 2},
-	{"Load state", NULL, "", NULL, 3},
-	{"Save state", NULL, "", NULL, 4},
-	{"State +", NULL, "", NULL, 5},
-	{"State -", NULL, "", NULL, 6},
-	{"Reset", NULL, "", NULL, 7},
-	{"Music player", NULL, "", NULL, 8},
-	{"Screenshot", NULL, "", NULL, 9},
+	{"Slow mode", NULL, "", NULL, 2},
+	{"Pause", NULL, "", NULL, 3},
+	{"Load state", NULL, "", NULL, 4},
+	{"Save state", NULL, "", NULL, 5},
+	{"State +", NULL, "", NULL, 6},
+	{"State -", NULL, "", NULL, 7},
+	{"Reset", NULL, "", NULL, 8},
+	{"Music player", NULL, "", NULL, 9},
+	{"Screenshot", NULL, "", NULL, 10},
 };
 
 int fctMenuMainVideo(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
@@ -3636,6 +3637,7 @@ void InitConfig()
 	menuConfig.ctrl.cuts.menu = OSL_KEYMASK_L;
 	menuConfig.ctrl.cuts.pause = OSL_KEYMASK_R | OSL_KEYMASK_CROSS;
 	menuConfig.ctrl.cuts.turbo = OSL_KEYMASK_R | OSL_KEYMASK_SQUARE;
+	menuConfig.ctrl.cuts.slowmode = OSL_KEYMASK_R | OSL_KEYMASK_TRIANGLE;
 	menuConfig.ctrl.cuts.sload = OSL_KEYMASK_R | OSL_KEYMASK_START;
 	menuConfig.ctrl.cuts.ssave = OSL_KEYMASK_R | OSL_KEYMASK_SELECT;
 	menuConfig.ctrl.cuts.splus = OSL_KEYMASK_R | OSL_KEYMASK_UP;
@@ -4885,10 +4887,24 @@ u32 ControlsMenuUpdate(u32 buttons)		{
 		ControlsShowMenu();
 	if (menuGetMenuKey(&buttons, MENUKEY_TURBO))		{
 		char str[100];
+		menuConfig.video.slowMode = 0;
 		//Toggle turbo
 		SetTurbo(!menuConfig.video.turbo);
 		strcpy(str, "Turbo mode ");
 		if (menuConfig.video.turbo)
+			strcat(str, "on");
+		else
+			strcat(str, "off");
+		menuDisplayStatusMessage(str, -1);
+	}
+	if (menuGetMenuKey(&buttons, MENUKEY_SLOWMODE))		{
+		char str[100];
+		if (menuConfig.video.turbo) {
+			SetTurbo(!menuConfig.video.turbo);
+		}
+		menuConfig.video.slowMode = !menuConfig.video.slowMode;
+		strcpy(str, "Slow mode ");
+		if (menuConfig.video.slowMode)
 			strcat(str, "on");
 		else
 			strcat(str, "off");

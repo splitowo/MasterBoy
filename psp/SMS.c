@@ -464,9 +464,9 @@ void SmsEmulate()
 
 		//Pal support
 		if (menuConfig.video.country == 1)
-			framerate = 50;
+			framerate = (menuConfig.video.slowMode ? 25 : 50);
 		else
-			framerate = 60;
+			framerate = (menuConfig.video.slowMode ? 30 : 60);
 		oslSetFramerate(framerate);
 
 		if (menuUpdateRender)

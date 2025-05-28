@@ -18,7 +18,7 @@ extern "C" {
 #define RAM_STATE_SIZE (128 << 10)
 
 #define NBRE_TOUCHES 10
-#define NBRE_CUTS 10
+#define NBRE_CUTS 11
 
 extern char gblRomPath[MAX_PATH];
 extern char gblMusicPath[MAX_PATH];
@@ -55,6 +55,7 @@ typedef struct		{
 		int leftBar;				// 0 = off, 1 = on, 2 = auto
 		int spriteLimit;			// 0 = off, 1 = on
 		int turbo, pause;
+		int slowMode;				// 0 = off, 1 = on; toggle via keybind only
 		int syncMode;				// 0 = tight, 1 = loose
 	} video;
 
@@ -86,7 +87,7 @@ typedef struct		{
 		union		{
 			u32 acuts[NBRE_CUTS];
 			struct		{
-				u32 menu, turbo, pause, sload, ssave, splus, sminus, reset, musicplayer, screenshot;
+				u32 menu, turbo, slowmode, pause, sload, ssave, splus, sminus, reset, musicplayer, screenshot;
 			} cuts;
 		};
 		int autofireRate;
@@ -113,7 +114,7 @@ typedef struct			{
 } MENUPRESSEDKEYS;
 
 //MENUKEY_LAST_ONE must always stay the last one!
-enum {MENUKEY_MENU = 0, MENUKEY_TURBO, MENUKEY_PAUSE, MENUKEY_SLOAD, MENUKEY_SSAVE, MENUKEY_SPLUS, MENUKEY_SMINUS, MENUKEY_RESET, MENUKEY_MUSICPLAYER, MENUKEY_SCREENSHOT, MENUKEY_LAST_ONE};
+enum {MENUKEY_MENU = 0, MENUKEY_TURBO, MENUKEY_SLOWMODE, MENUKEY_PAUSE, MENUKEY_SLOAD, MENUKEY_SSAVE, MENUKEY_SPLUS, MENUKEY_SMINUS, MENUKEY_RESET, MENUKEY_MUSICPLAYER, MENUKEY_SCREENSHOT, MENUKEY_LAST_ONE};
 #define MENUKEY_AUTOREPEAT_MASK ((1<<5) | (1<<6))
 #define STATE_SRAM -1
 #define STATE_RAM 10
