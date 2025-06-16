@@ -28,7 +28,6 @@ struct gb_regs g_regs;
 struct gbc_regs cg_regs;
 int gb_lastVramCrc = 0;
 
-word dmy[160*5]; // vframe はみ出した時用
 word vframe_mem[SIZE_LINE*(144+112)];
 #ifdef USE_GPU
 word *vframe = (word*)0x040CC000;
@@ -44,7 +43,6 @@ int gbSkip;
 int re_render;
 
 char hook_ext;
-char use_gba;
 
 void gb_fill_vframe(word color)
 {
@@ -72,7 +70,6 @@ void gb_init(void)
 	gb_reset();
 
 	hook_ext=false;
-	use_gba=false;
 }
 
 void gb_reset()

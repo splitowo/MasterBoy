@@ -182,7 +182,6 @@ extern struct gb_regs g_regs;
 extern struct gbc_regs cg_regs;
 extern struct ext_hook hook_proc;
 extern char hook_ext;
-extern char use_gba;
 extern int now_gb_mode;
 extern int gbSkip, now_frame;
 
