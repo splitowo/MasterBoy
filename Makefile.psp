@@ -69,7 +69,7 @@ CXXFLAGS = -g $(CFLAGS) -fno-exceptions -fno-rtti -Wpointer-arith
 ASFLAGS = -c $(CFLAGS) 
 
 LIBDIR = 
-LDFLAGS = -Wl,-Map -Wl,MasterBoy.map
+#LDFLAGS = -Wl,-Map -Wl,MasterBoy.map
 #LDFLAGS =
 LIBS = -losl -lpng -ljpeg -lz \
 		-lpspsdk -lpsphprm -lpspctrl -lpspumd -lpsprtc -lpsppower -lpspusb -lpspusbstor -lpspgu -lpspaudiolib -lpspaudio -lstdc++ -lm
