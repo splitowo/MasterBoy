@@ -1,6 +1,6 @@
 #include <oslib/oslib.h>
 #include "VirtualGz.h"
-#include "zlib.h"
+#include <zlib.h>
 
 /*
 	SOURCE VFS: gzio

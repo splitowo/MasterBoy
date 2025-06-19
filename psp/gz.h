@@ -1,4 +1,4 @@
-#include "lib/zlib.h"
+#include <zlib.h>
 
 #define OS_CODE  0x03  /* assume Unix */
 

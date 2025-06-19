@@ -45,7 +45,7 @@ OBJS	+= psp/gym/gym.o psp/gym/gym_play.o psp/gym/psg.o psp/gym/ym2612.o
 
 OBJS	+=	psp/vgm/mame_fm.o psp/vgm/emu2413.o psp/vgm/sn76489.o psp/vgm/mame_ym2151.o psp/vgm/In_vgm.o
 
-OBJS	+= psp/gz.o psp/VirtualGz.o psp/deflate.o psp/gzio.o
+OBJS	+= psp/gz.o psp/VirtualGz.o
 
 OBJS	+= error.o
 
@@ -152,12 +152,6 @@ psp/gz.o: psp/gz.c
 	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
 
 psp/VirtualGz.o: psp/VirtualGz.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
-
-psp/deflate.o: psp/deflate.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
-
-psp/gzio.o: psp/gzio.c
 	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
 
 error.o: error.c

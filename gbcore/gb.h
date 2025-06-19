@@ -24,7 +24,7 @@
 #include <string.h>
 #include "gb_types.h"
 #include "../renderer.h"
-#include "../lib/zlib.h"
+#include <zlib.h>
 
 //Mettre cheat_enable à 1 si des cheats sont appliqués
 #define CHEAT_SUPPORT

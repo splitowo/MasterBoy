@@ -1,7 +1,7 @@
 #include "sound_int.h"
 #include "sound.h"
 #include "gym/gym.h"
-#include "zlib.h"
+#include <zlib.h>
 #include "unzip.h"
 #include <pspaudio.h>
 #include "pspcommon.h"
