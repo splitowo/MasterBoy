@@ -42,8 +42,7 @@ OBJS	+=	unzip/ioapi.o	\
 		unzip/unzip.o
 
 OBJS	+= psp/gym/gym.o psp/gym/gym_play.o psp/gym/psg.o psp/gym/ym2612.o
-OBJS	+= psp/gym/bzlib/blocksort.o psp/gym/bzlib/bzlib.o psp/gym/bzlib/compress.o psp/gym/bzlib/crctable.o \
-			psp/gym/bzlib/decompress.o psp/gym/bzlib/huffman.o psp/gym/bzlib/randtable.o
+
 OBJS	+=	psp/vgm/mame_fm.o psp/vgm/emu2413.o psp/vgm/sn76489.o psp/vgm/mame_ym2151.o psp/vgm/In_vgm.o
 
 OBJS	+= psp/gz.o psp/VirtualGz.o psp/deflate.o psp/gzio.o
@@ -71,7 +70,7 @@ ASFLAGS = -c $(CFLAGS)
 LIBDIR = 
 #LDFLAGS = -Wl,-Map -Wl,MasterBoy.map
 #LDFLAGS =
-LIBS = -losl -lpng -ljpeg -lz \
+LIBS = -losl -lpng -lz -lbz2 \
 		-lpspsdk -lpsphprm -lpspctrl -lpspumd -lpsprtc -lpsppower -lpspusb -lpspusbstor -lpspgu -lpspaudiolib -lpspaudio -lstdc++ -lm
 
 #EXTRA_TARGETS = kxploit

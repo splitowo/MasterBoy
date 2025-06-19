@@ -11,7 +11,7 @@
 #include "../sound_int.h"
 #include "gym.h"
 #include "zlib/zlib.h"
-#include "bzlib/bzlib.h"
+#include <bzlib.h>
 
 extern int gym_update_needed;
 
