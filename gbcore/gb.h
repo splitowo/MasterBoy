@@ -330,15 +330,6 @@ void snd_init();
 void snd_reset();
 void snd_set_enable(int ch,char enable);
 char snd_get_enable(int ch);
-
-void snd_process(word adr,byte dat);
-void snd_update();
-
-inline short snd_sq1_produce(int freq);
-inline short snd_sq2_produce(int freq);
-inline short snd_wav_produce(int freq);
-inline short snd_noi_produce(int freq);
-void snd_render(short *buf1, short *buf2, int sample);
 void snd_render_orig(short *buf,int sample);
 
 // cheat.c

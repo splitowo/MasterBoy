@@ -1,5 +1,4 @@
 #include "pspcommon.h"
-#include "specialtext.h"
 #include "sound.h"
 #include "menuplusint.h"
 #include <psprtc.h>

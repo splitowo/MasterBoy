@@ -41,6 +41,8 @@ char snd_b_lowpass;
 byte snd_mem[0x100];
 char snd_b_enable[4];
 
+static void snd_process(word adr,byte dat);
+static void snd_update();
 
 void apu_init()
 {
@@ -161,7 +163,7 @@ char snd_get_enable(int ch)
 
 //extern FILE *file;
 
-void snd_process(word adr,byte dat)
+static void snd_process(word adr,byte dat)
 {
 	const char tb[]={0,4,2,1};
 
@@ -373,7 +375,7 @@ static const int sq_wav_dat[4][8]={
 	{-10000,-10000, 10000, 10000, 10000, 10000, 10000, 10000}
 };
 
-inline short snd_sq1_produce(int freq)
+static short snd_sq1_produce(int freq)
 {
 	static dword cur_sample=0;
 //	dword cur_freq;
@@ -402,7 +404,7 @@ inline short snd_sq1_produce(int freq)
 	return ret;
 }
 
-inline short snd_sq2_produce(int freq)
+static short snd_sq2_produce(int freq)
 {
 	static dword cur_sample=0;
 //	dword cur_freq;
@@ -431,7 +433,7 @@ inline short snd_sq2_produce(int freq)
 	return ret;
 }
 
-inline short snd_wav_produce(int freq)
+static short snd_wav_produce(int freq)
 {
 	static dword cur_pos2=0;
 	static byte bef_sample=0,cur_sample=0;
@@ -464,7 +466,7 @@ inline short snd_wav_produce(int freq)
 
 #include "_mrand_table.h"
 
-inline short snd_noi_produce(int freq)
+static short snd_noi_produce(int freq)
 {
  	static int cur_sample=10000;
  	short ret;
@@ -502,7 +504,7 @@ inline short snd_noi_produce(int freq)
  	return ret;
 }
 
-void snd_update()
+static void snd_update()
 {
 	//このルーチンはcpu側とサウンド生成側で共用しているので、このcounterを共用するのは多分よくないと思われ。必要時に修正のこと  - LCK
 	static int counter=0;
@@ -570,127 +572,6 @@ void snd_update()
 //	}
 
 	counter++;
-}
-
-void snd_render(short *buf1, short *buf2, int sample)
-{
-	memcpy(&snd_stat_tmp,&snd_stat,sizeof(snd_stat));
-	memcpy(&snd_stat,&snd_stat_cpy,sizeof(snd_stat_cpy));
-
-	//static int tmp_sample=0;
-	//int bef_sample_l[5]={0,0,0,0,0}, bef_sample_r[5]={0,0,0,0,0};
-	int tmp_l,tmp_r,tmp;
-	int now_clock=cpu_get_clock();
-	int cur=0;
-	unsigned int update_count=0;
-	const unsigned int update_count_inc = CLOKS_PER_INTERVAL*(cpu_get_speed()+1);
-	int sq1_freq = 131072/(2048-(snd_stat.sq1_freq&0x7FF));
-	int sq2_freq = 131072/(2048-(snd_stat.sq2_freq&0x7FF));
-	int wav_freq = (65536/(2048-(snd_stat.wav_freq&0x7FF))) << 5;
-	unsigned int now_time = snd_bef_clock;
-	const unsigned int time_inc = (now_clock - snd_bef_clock) / sample;
-	int i;
-
-	for (i=0;i<sample;i++){
-		//now_time = snd_bef_clock + (now_clock - snd_bef_clock) * i / sample;
-
-		if ( snd_que_count>cur && (now_time>snd_write_que[cur].clock) ){
-			snd_process(snd_write_que[cur].adr,snd_write_que[cur].dat);
-			cur++;
-			
-			sq1_freq = 131072/(2048-(snd_stat.sq1_freq&0x7FF));
-			sq2_freq = 131072/(2048-(snd_stat.sq2_freq&0x7FF));
-			wav_freq = (65536/(2048-(snd_stat.wav_freq&0x7FF))) << 5;
-		}
-
-		tmp_l=tmp_r=0;
-		if (snd_stat.master_enable){
-			if (snd_stat.sq1_playing/*&&(snd_stat.sq1_freq!=0x7ff)*/){
-				tmp = snd_sq1_produce(sq1_freq) * snd_stat.sq1_vol;
-				if (snd_stat.ch_enable[0][0])
-					tmp_l+=tmp;
-				if (snd_stat.ch_enable[0][1])
-					tmp_r+=tmp;
-			}
-			if (snd_stat.sq2_playing/*&&(snd_stat.sq2_freq!=0x7ff)*/){
-				tmp = snd_sq2_produce(sq2_freq) * snd_stat.sq2_vol;
-				if (snd_stat.ch_enable[1][0])
-					tmp_l+=tmp;
-				if (snd_stat.ch_enable[1][1])
-					tmp_r+=tmp;
-			}
-			if (snd_stat.wav_playing/*&&(snd_stat.wav_freq!=0x7ff)*/){
-				tmp = snd_wav_produce(wav_freq) * snd_stat.wav_vol << 1;
-				if (snd_stat.wav_enable){
-					if (snd_stat.ch_enable[2][0])
-						tmp_l+=tmp;
-					if (snd_stat.ch_enable[2][1])
-						tmp_r+=tmp;
-				}
-			}
-			if (snd_stat.noi_playing){
-				tmp = snd_noi_produce(snd_stat.noi_freq) * snd_stat.noi_vol;
-				if (snd_stat.ch_enable[3][0])
-					tmp_l+=tmp;
-				if (snd_stat.ch_enable[3][1])
-					tmp_r+=tmp;
-			}
-			*buf1++ = tmp_l * snd_stat.master_vol[0] >> 8;
-			*buf2++ = tmp_r * snd_stat.master_vol[1] >> 8;
-
-			//Original
-//			buf[0] = tmp_l * snd_stat.master_vol[0] >> 8;
-//			buf[1] = tmp_r * snd_stat.master_vol[1] >> 8;
-			//End original
-
-			//tmp_l = tmp_l * snd_stat.master_vol[0] / 160;
-			//tmp_r = tmp_r * snd_stat.master_vol[1] / 160;
-			
-			/*
-			if (snd_b_lowpass){
-				// 出力をフィルタリング
-				bef_sample_l[4]=bef_sample_l[3];
-				bef_sample_l[3]=bef_sample_l[2];
-				bef_sample_l[2]=bef_sample_l[1];
-				bef_sample_l[1]=bef_sample_l[0];
-				bef_sample_l[0]=buf[0];
-				bef_sample_r[4]=bef_sample_r[3];
-				bef_sample_r[3]=bef_sample_r[2];
-				bef_sample_r[2]=bef_sample_r[1];
-				bef_sample_r[1]=bef_sample_r[0];
-				bef_sample_r[0]=buf[1];
-				buf[0]=(bef_sample_l[4]+bef_sample_l[3]*2+bef_sample_l[2]*8+bef_sample_l[1]*2+bef_sample_l[0])/14;
-				buf[1]=(bef_sample_r[4]+bef_sample_r[3]*2+bef_sample_r[2]*8+bef_sample_r[1]*2+bef_sample_r[0])/14;
-			}
-			*((unsigned long*)buf) = (tmp_r & 0x0000FFFF) | ((tmp_l & 0x0000FFFF) << 16) ;
-			*/
-//			buf += 2 ;
-
-			while(update_count*update_count_inc<now_time-snd_bef_clock){
-				snd_update();
-				update_count++;
-			}
-		}else{
-			*buf1++ = 0;
-			*buf2++ = 0;
-
-			//Original
-//			*((unsigned long*)buf) = 0;
-//			buf+=2;
-		}
-
-		now_time += time_inc;
-	}
-
-	while (snd_que_count>cur){ // 取りこぼし
-		snd_process(snd_write_que[cur].adr,snd_write_que[cur].dat);
-		cur++;
-	}
-	snd_que_count=0;
-	snd_bef_clock=now_clock;
-
-	memcpy(&snd_stat_cpy,&snd_stat,sizeof(snd_stat));
-	memcpy(&snd_stat,&snd_stat_tmp,sizeof(snd_stat));
 }
 
 void snd_render_orig(short *buf,int sample)
