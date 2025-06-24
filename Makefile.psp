@@ -58,13 +58,13 @@ INCDIR =
 
 BASECFLAGS = -G0 \
 	-I. -Icpu -Isound -Iunzip -Ipsp -DLSB_FIRST \
-	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-functions --std=gnu89
+	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-functions
 #	-DALIGN_DWORD -DDOS -DPSP -DUSE_ZLIB  -fno-align-loops -fno-align-jumps -fno-align-functions -fno-align-labels -fno-reorder-blocks -fno-reorder-blocks-and-partition -fno-prefetch-loop-arrays -fno-tree-vect-loop-version -fno-tree-loop-optimize -fno-strict-aliasing
 #-fno-reorder-blocks -fno-align-functions
 
 # Note that O3 is not optimal, at least for SMS. But for GB it gives an huge improvement, so I globally enabled it; if someone can tell me how to only compile some files (i.e. those in the gbcore directory) it would be very nice, thanks :)
-CFLAGS = -O3 $(BASECFLAGS)
-CXXFLAGS = -g $(CFLAGS) -fno-exceptions -fno-rtti -Wpointer-arith
+CFLAGS = -O3 $(BASECFLAGS) --std=gnu89
+CXXFLAGS = -g -O3 $(BASECFLAGS) -fno-exceptions -fno-rtti -Wpointer-arith
 ASFLAGS = -c $(CFLAGS) 
 
 LIBDIR = 
@@ -83,77 +83,80 @@ PSP_EBOOT_SND0 = snd0.at3
 
 include $(PSPSDK)/lib/build.mak
 
+CFLAGS_O2 = $(CFLAGS) -O2
+CFLAGS_OS = $(CFLAGS) -Os
+
 #Game Boy
 #gbcore/cpu.o: gbcore/cpu.c
-#	$(CC) $(addprefix -I,$(INCDIR)) -O2 $(BASECFLAGS) -c -o $@ $<
+#	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_O2) -c -o $@ $<
 
 
 #Master System
 cpu/z80.o: cpu/z80.c
-	$(CC) $(addprefix -I,$(INCDIR)) -O2 $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_O2) -c -o $@ $<
 memz80.o: memz80.c
-	$(CC) $(addprefix -I,$(INCDIR)) -O2 $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_O2) -c -o $@ $<
 pio.o: pio.c
-	$(CC) $(addprefix -I,$(INCDIR)) -O2 $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_O2) -c -o $@ $<
 vdp.o: vdp.c
-	$(CC) $(addprefix -I,$(INCDIR)) -O2 $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_O2) -c -o $@ $<
 render.o: render.c
-	$(CC) $(addprefix -I,$(INCDIR)) -O2 $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_O2) -c -o $@ $<
 sms.o: sms.c
-	$(CC) $(addprefix -I,$(INCDIR)) -O2 $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_O2) -c -o $@ $<
 system.o: system.c
-	$(CC) $(addprefix -I,$(INCDIR)) -O2 $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_O2) -c -o $@ $<
 
 
 #User Interface
 main.o: main.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 	
 menuplus.o: menuplus.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 menuplus2.o: menuplus2.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 config.o: config.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 usb.o: usb.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 fileio.o: fileio.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 state.o: state.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 loadrom.o: loadrom.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 unzip/ioapi.o: unzip/ioapi.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 unzip/unzip.o: unzip/unzip.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 psp/vgm/mame_fm.o: psp/vgm/mame_fm.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 psp/vgm/emu2413.o: psp/vgm/emu2413.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 psp/vgm/sn76489.o: psp/vgm/sn76489.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 psp/vgm/mame_ym2151.o: psp/vgm/mame_ym2151.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 psp/gz.o: psp/gz.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 psp/VirtualGz.o: psp/VirtualGz.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
 error.o: error.c
-	$(CC) $(addprefix -I,$(INCDIR)) -Os $(BASECFLAGS) -c -o $@ $<
+	$(CC) $(addprefix -I,$(INCDIR)) $(CFLAGS_OS) -c -o $@ $<
 
