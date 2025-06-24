@@ -128,7 +128,7 @@ int check_zip(char *filename)
 /*
     Returns the size of a GZ compressed file.
 */
-int gzsize(gzFile *gd)
+int gzsize(gzFile gd)
 {
     #define CHUNKSIZE   (0x10000)
     int size = 0, length = 0;
