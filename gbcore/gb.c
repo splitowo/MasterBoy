@@ -268,7 +268,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 
 		write_state(fd, cpu_get_c_regs(),sizeof(struct cpu_regs)); // cpu_reg
 		write_state(fd, &g_regs,sizeof(struct gb_regs));//sys_reg
-		write_state(fd, &cg_regs,sizeof(struct gbc_regs));//col_reg		//color
+		write_state(fd, &cg_regs,13);//col_reg		//color
 		write_state(fd, lcd_get_pal(0),sizeof(word)*(8*4*2));//palette	//color
 		int halt=((*cpu_get_halt())?1:0);
 		write_state(fd, &halt,sizeof(int));
@@ -427,7 +427,7 @@ void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
 		read_state(fd, cpu_get_c_regs(),sizeof(struct cpu_regs)); // cpu_reg
 		cpu_set_c_regs();
 		read_state(fd, &g_regs,sizeof(struct gb_regs));//sys_reg
-		read_state(fd, &cg_regs,sizeof(struct gbc_regs));//col_reg
+		read_state(fd, &cg_regs,13);//col_reg
 		read_state(fd, lcd_get_pal(0),sizeof(word)*(8*4*2));//palette
 		int halt;
 		read_state(fd, &halt,sizeof(int));
@@ -696,26 +696,26 @@ int gb_run_frame()
                     if (is_dma_transfer_in_progress()){ // HBlank DMA
                         if (b_dma_first){
                             dma_dest_bank=vram_bank;
-                            if (dma_src<0x4000)
+                            if (cg_regs.HDMA_source.w<0x4000)
                                 dma_src_bank=get_rom();
-                            else if (dma_src<0x8000)
+                            else if (cg_regs.HDMA_source.w<0x8000)
                                 dma_src_bank=mbc_get_rom();
-                            else if (dma_src>=0xA000&&dma_src<0xC000)
+                            else if (cg_regs.HDMA_source.w>=0xA000&&cg_regs.HDMA_source.w<0xC000)
                                 dma_src_bank=mbc_get_sram()-0xA000;
-                            else if (dma_src>=0xC000&&dma_src<0xD000)
+                            else if (cg_regs.HDMA_source.w>=0xC000&&cg_regs.HDMA_source.w<0xD000)
                                 dma_src_bank=ram-0xC000;
-                            else if (dma_src>=0xD000&&dma_src<0xE000)
+                            else if (cg_regs.HDMA_source.w>=0xD000&&cg_regs.HDMA_source.w<0xE000)
                                 dma_src_bank=ram_bank-0xD000;
                             else dma_src_bank=NULL;
                             b_dma_first=false;
                         }
-                        memcpy(dma_dest_bank+(dma_dest&0x1ff0),dma_src_bank+dma_src,16);
+                        memcpy(dma_dest_bank+(cg_regs.HDMA_destination.w&0x1ff0),dma_src_bank+cg_regs.HDMA_source.w,16);
 //	    				fprintf(cpu_file,"%03d : dma exec %04X -> %04X rest %d\n",g_regs.LY,cpu_dma_src,cpu_dma_dest,cpu_dma_rest);
 
-                        dma_src+=16;
-                        dma_src&=0xfff0;
-                        dma_dest+=16;
-                        dma_dest&=0xfff0;
+                        cg_regs.HDMA_source.w+=16;
+                        cg_regs.HDMA_source.w&=0xfff0;
+                        cg_regs.HDMA_destination.w+=16;
+                        cg_regs.HDMA_destination.w&=0xfff0;
 						cg_regs.HDMA5--;
 
 //		    			cpu_total_clock+=207*(cpu_speed?2:1);

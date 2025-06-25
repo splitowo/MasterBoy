@@ -52,17 +52,20 @@ typedef struct {
 	byte *dat_old_rom_banks;
 } cheat_dat;
 
+union pare_reg {
+	word w;
+	struct{byte l,h;}b;
+};
+
 struct gb_regs {
 	byte P1,SB,SC,DIV,TIMA,TMA,TAC,IF,LCDC,STAT,SCY,SCX,LY,LYC,DMA,BGP,OBP1,OBP2,WY,WX,IE;
 };
 
 struct gbc_regs {
-	byte KEY1,VBK,HDMA1,HDMA2,HDMA3,HDMA4,HDMA5,RP,BCPS,BCPD,OCPS,OCPD,SVBK;
-};
-
-union pare_reg {
-	word w;
-	struct{byte l,h;}b;
+	byte KEY1,VBK;
+	union pare_reg HDMA_source;
+	union pare_reg HDMA_destination;
+	byte HDMA5,RP,BCPS,BCPD,OCPS,OCPD,SVBK;
 };
 
 struct cpu_regs {
@@ -265,8 +268,6 @@ static inline int is_dma_transfer_in_progress() {
 	return (cg_regs.HDMA5 & 0x80) == 0;
 }
 
-extern int dma_src;
-extern int dma_dest;
 extern char b_dma_first;
 extern byte *dma_src_bank;
 extern byte *dma_dest_bank;

@@ -146,10 +146,10 @@ static byte cpu_io_read_4D( word adr ){ return (speed?0x80:(cg_regs.KEY1&1)?1:0x
 static byte cpu_io_read_4E( word adr ){ return 0 ; }
 static byte cpu_io_read_4F( word adr ){ return cg_regs.VBK; }
 static byte cpu_io_read_50( word adr ){ return 0 ; }
-static byte cpu_io_read_51( word adr ){ return dma_src>>8; }
-static byte cpu_io_read_52( word adr ){ return dma_src&0xff; }
-static byte cpu_io_read_53( word adr ){ return dma_dest>>8; }
-static byte cpu_io_read_54( word adr ){ return dma_dest&0xff; }
+static byte cpu_io_read_51( word adr ){ return cg_regs.HDMA_source.b.h; }
+static byte cpu_io_read_52( word adr ){ return cg_regs.HDMA_source.b.l; }
+static byte cpu_io_read_53( word adr ){ return cg_regs.HDMA_destination.b.h; }
+static byte cpu_io_read_54( word adr ){ return cg_regs.HDMA_destination.b.l; }
 static byte cpu_io_read_55( word adr ){ return cg_regs.HDMA5; }
 static byte cpu_io_read_56( word adr )
 { 
@@ -690,15 +690,15 @@ static void cpu_io_write_4F( word adr,byte dat )
 		cg_regs.VBK=dat;//&0x01;
 }
 static void cpu_io_write_50( word adr,byte dat ){ ; }
-static void cpu_io_write_51( word adr,byte dat ){ dma_src&=0x00F0; dma_src|=(dat<<8); }
-static void cpu_io_write_52( word adr,byte dat ){ dma_src&=0xFF00; dma_src|=(dat&0xF0); }
-static void cpu_io_write_53( word adr,byte dat ){ dma_dest&=0x00F0; dma_dest|=((dat&0xFF)<<8); }
-static void cpu_io_write_54( word adr,byte dat ){ dma_dest&=0xFF00; dma_dest|=(dat&0xF0); }
+static void cpu_io_write_51( word adr,byte dat ){ cg_regs.HDMA_source.b.h = dat; }
+static void cpu_io_write_52( word adr,byte dat ){ cg_regs.HDMA_source.b.l = dat & 0xF0; }
+static void cpu_io_write_53( word adr,byte dat ){ cg_regs.HDMA_destination.b.h = dat; }
+static void cpu_io_write_54( word adr,byte dat ){ cg_regs.HDMA_destination.b.l = dat & 0xF0; }
 static void cpu_io_write_55( word adr,byte dat )
 { 
-		word tmp_adr=0x8000+(dma_dest&0x1ff0);
+		word tmp_adr=0x8000+(cg_regs.HDMA_destination.w&0x1ff0);
 //			fprintf(file,"%03d : %04X -> %04X  %d byte %s\n",g_regs.LY,dma_src,dma_dest,((dat&0x7f)+1)*16,(dat&0x80)?"delay":"immidiately");
-		if ((dma_src>=0x8000&&dma_src<0xA000)||(dma_src>=0xE000)||(!(tmp_adr>=0x8000&&tmp_adr<0xA000))){
+		if ((cg_regs.HDMA_source.w>=0x8000&&cg_regs.HDMA_source.w<0xA000)||(cg_regs.HDMA_source.w>=0xE000)||(!(tmp_adr>=0x8000&&tmp_adr<0xA000))){
 			cg_regs.HDMA5=0;
 			return;
 		}
@@ -732,37 +732,37 @@ static void cpu_io_write_55( word adr,byte dat )
 
 			cg_regs.HDMA5=0xFF;
 
-			const unsigned long memcpy_length = min(space_to_vram_bound(dma_dest), 16*(dat&0x7F)+16) / 4;
-			switch(dma_src>>13){
+			const unsigned long memcpy_length = min(space_to_vram_bound(cg_regs.HDMA_destination.w), 16*(dat&0x7F)+16) / 4;
+			switch(cg_regs.HDMA_source.w>>13){
 			case 0:
 			case 1:
-				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(get_rom()+(dma_src)),memcpy_length);
+				_memcpy4x((unsigned long *)(vram_bank+(cg_regs.HDMA_destination.w&0x1ff0)),(unsigned long *)(get_rom()+(cg_regs.HDMA_source.w)),memcpy_length);
 				//_memcpy(vram_bank+(dma_dest&0x1ff0),get_rom()+(dma_src),16*(dat&0x7F)+16);
 				break;
 			case 2:
 			case 3:
-				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(mbc_get_rom()+(dma_src)),memcpy_length);
+				_memcpy4x((unsigned long *)(vram_bank+(cg_regs.HDMA_destination.w&0x1ff0)),(unsigned long *)(mbc_get_rom()+(cg_regs.HDMA_source.w)),memcpy_length);
 				//_memcpy(vram_bank+(dma_dest&0x1ff0),mbc_get_rom()+(dma_src),16*(dat&0x7F)+16);
 				break;
 			case 4:
 				break;
 			case 5:
-				_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(mbc_get_sram()+(dma_src&0x1FFF)),memcpy_length);
+				_memcpy4x((unsigned long *)(vram_bank+(cg_regs.HDMA_destination.w&0x1ff0)),(unsigned long *)(mbc_get_sram()+(cg_regs.HDMA_source.w&0x1FFF)),memcpy_length);
 				//_memcpy(vram_bank+(dma_dest&0x1ff0),mbc_get_sram()+(dma_src&0x1FFF),16*(dat&0x7F)+16);
 				break;
 			case 6:
-				if (dma_src&0x1000)
-					_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(ram_bank+(dma_src&0x0FFF)), memcpy_length);
+				if (cg_regs.HDMA_source.w&0x1000)
+					_memcpy4x((unsigned long *)(vram_bank+(cg_regs.HDMA_destination.w&0x1ff0)),(unsigned long *)(ram_bank+(cg_regs.HDMA_source.w&0x0FFF)), memcpy_length);
 					//_memcpy(vram_bank+(dma_dest&0x1ff0),ram_bank+(dma_src&0x0FFF),16*(dat&0x7F)+16);
 				else
-					_memcpy4x((unsigned long *)(vram_bank+(dma_dest&0x1ff0)),(unsigned long *)(ram+(dma_src&0x0FFF)),memcpy_length);
+					_memcpy4x((unsigned long *)(vram_bank+(cg_regs.HDMA_destination.w&0x1ff0)),(unsigned long *)(ram+(cg_regs.HDMA_source.w&0x0FFF)),memcpy_length);
 					//_memcpy(vram_bank+(dma_dest&0x1ff0),ram+(dma_src&0x0FFF),16*(dat&0x7F)+16);
 				break;
 			case 7:
 				break;
 			}
-			dma_src+=((dat&0x7F)+1)*16;
-			dma_dest+=((dat&0x7F)+1)*16;
+			cg_regs.HDMA_source.w+=((dat&0x7F)+1)*16;
+			cg_regs.HDMA_destination.w+=((dat&0x7F)+1)*16;
 		}
 }
 static void cpu_io_write_56( word adr,byte dat )

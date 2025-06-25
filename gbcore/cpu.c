@@ -62,12 +62,10 @@ int total_clock,rest_clock,sys_clock,seri_occer;
 int div_clock_timestamp;
 
 int halt,speed;
-int dma_src;
-int dma_dest;
 char b_dma_first;
 
-int int_disable_next;
-int int_invoke_next;
+byte int_disable_next;
+byte int_invoke_next;
 
 byte *dma_src_bank;
 byte *dma_dest_bank;
@@ -142,8 +140,8 @@ void cpu_save_state(int *dat)
 
 	dat[2]=(speed?1:0);
 	dat[3]=0;
-	dat[4]=dma_src;
-	dat[5]=dma_dest;
+	dat[4]=cg_regs.HDMA_source.w;
+	dat[5]=cg_regs.HDMA_destination.w;
 	dat[6]=0;
 	dat[7]=0;
 }
@@ -164,8 +162,8 @@ void cpu_restore_state(int *dat)
 	vram_bank=vram+dat[1]*0x2000;
 
 	speed=(dat[2]?true:false);
-	dma_src=dat[4];
-	dma_dest=dat[5];
+	cg_regs.HDMA_source.w=dat[4];
+	cg_regs.HDMA_destination.w=dat[5];
 }
 
 void cpu_restore_state_ex(int *dat)
