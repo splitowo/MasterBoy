@@ -67,7 +67,7 @@ u32 menuColorCursor[4], menuColorSubmenuTitle;
 u32 gblShortcutKey = -1;
 char menuTempMessageText[256];
 int menuMusicLocked;
-int gblConfigAutoShowCrc = 0, gblModeColorIt = 0;
+char gblConfigAutoShowCrc = 0, gblModeColorIt = 0;
 MENUPARAMS *menuConfigDefault, *menuConfigUserDefault, *menuConfigUserMachineDefault;
 char gblColorItPaletteFileName[MAX_PATH];
 int menuDisplaySpecialMessage = 0;
@@ -342,20 +342,6 @@ OSL_CONTROLLER *MyReadKeys()
 	return osl_keys;
 }
 
-int alphaSave[2];
-
-void PushAlpha()
-{
-	alphaSave[0] = osl_currentAlphaCoeff;
-	alphaSave[1] = osl_currentAlphaEffect;
-}
-
-void PopAlpha()
-{
-	osl_currentAlphaCoeff = alphaSave[0];
-	osl_currentAlphaEffect = alphaSave[1];
-}
-
 int GetStringWidth(const char *str)
 {
 	int r = 0;
@@ -365,14 +351,14 @@ int GetStringWidth(const char *str)
 	return r;
 }
 
-int mod(int x, int y)		{
+static int mod(int x, int y)		{
 	x = x % y;
 	if (x < 0)
 		x += y;
 	return x;
 }
 
-float mod_f(float x, float y)		{
+static float mod_f(float x, float y)		{
 	if (x < 0)
 		x += y * (int)((-x)/y);
 	if (x >= y)
@@ -871,7 +857,7 @@ void OuvreFichierPalette(int crc, char *fonction)		{
 	}
 }
 
-int fileExists(char *fileName)		{
+static int fileExists(char *fileName)		{
 	SceIoStat fileStatus;
 	return (sceIoGetstat(fileName, &fileStatus) >= 0);
 }
@@ -2634,7 +2620,7 @@ int SubMenuItemPositionCanceled(SUBMENU *menu, SUBMENUITEM *item)
 		return 1;
 }
 
-void CreateDigitsFromInt(SUBMENUMINMAX *mm, int value, int fix)
+static void CreateDigitsFromInt(SUBMENUMINMAX *mm, int value, int fix)
 {
 	int i = mm->width - 1;
 	while (i >= 0)		{
@@ -2646,7 +2632,7 @@ void CreateDigitsFromInt(SUBMENUMINMAX *mm, int value, int fix)
 	}
 }
 
-void CreateDigitsFromStr(SUBMENUMINMAX *mm, char *str, int fix)
+static void CreateDigitsFromStr(SUBMENUMINMAX *mm, char *str, int fix)
 {
 	int i = 0;
 	while (i < NB_MAX_DIGITS && str[i])		{
@@ -3525,7 +3511,7 @@ void DrawHint(HINT *h)
 	}
 }
 
-void InitChoice(CHOICEMENU *h)
+static void InitChoice(CHOICEMENU *h)
 {
 	h->active = 0;
 	h->position = 0.f;
@@ -3713,7 +3699,7 @@ void InitConfig()
 	}*/
 }
 
-int SetSubMenuItemValueByInt(SUBMENUITEM *s, int value)		{
+static int SetSubMenuItemValueByInt(SUBMENUITEM *s, int value)		{
 	SUBMENU *menu = s->link;
 	int i, j, success = 0;
 	if (menu)		{

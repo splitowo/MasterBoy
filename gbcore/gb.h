@@ -171,7 +171,7 @@ void gb_unhook_extport();
 void gb_set_skip(int frame);
 char gb_load_rom(byte *buf,int size,byte *ram,int ram_size);
 void gb_refresh_pal();
-int gb_run_frame();
+int gb_run_frame(int skip);
 void gb_fill_vframe(word color);
 void gb_invalidate_all_colors();
 
@@ -186,7 +186,7 @@ extern struct gbc_regs cg_regs;
 extern struct ext_hook hook_proc;
 extern char hook_ext;
 extern int now_gb_mode;
-extern int gbSkip, now_frame;
+extern int now_frame;
 
 extern unsigned short sgb_palette_real[8*16];
 extern unsigned short sgb_palette_inval[8*16];
@@ -212,7 +212,6 @@ enum{
 
 void lcd_init(void);
 void lcd_set_mpal(int n);
-int lcd_get_mpal();
 void lcd_render(void *buf,byte scanline);
 void lcd_reset();
 void lcd_clear_win_count();

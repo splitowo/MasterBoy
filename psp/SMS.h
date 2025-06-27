@@ -10,19 +10,15 @@
 
 sms_config SmsConfig;*/
 
-void SmsInit(void);
-
 void SmsEmulate();
-
-void SmsShutdown(void);
 
 void system_manage_sram(uint8 *sram, int slot, int mode);
 
 extern int frameReady, gblFramerate, gblVirtualFramerate;
 
 enum {EM_SMS, EM_GBC};
-extern int gblMachineType;
-extern int gblNewGame;
+extern char gblMachineType;
+extern char gblNewGame;
 
 void gbe_reset();
 void gbe_init();

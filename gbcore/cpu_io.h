@@ -247,7 +247,7 @@ static byte cpu_io_read_7D( word adr ){ return ext_mem[12]; }//ext_mem[adr-0xff7
 static byte cpu_io_read_7E( word adr ){ return ext_mem[13]; }//ext_mem[adr-0xff71]; }
 static byte cpu_io_read_7F( word adr ){ return ext_mem[14]; }//ext_mem[adr-0xff71]; }
 
-static byte cpu_io_read_80_FE( word adr ){ return stack[adr-0xFF80] ; }
+static byte cpu_io_read_80_FE( word adr ){ return stack[adr & 0x7F]; }
 /*
 static byte cpu_io_read_80( word adr ){ ; }
 static byte cpu_io_read_81( word adr ){ ; }
@@ -888,7 +888,7 @@ static void cpu_io_write_7D( word adr,byte dat ){ ext_mem[12]=dat; }//ext_mem[ad
 static void cpu_io_write_7E( word adr,byte dat ){ ext_mem[13]=dat; }//ext_mem[adr-0xff71]=dat; }
 static void cpu_io_write_7F( word adr,byte dat ){ ext_mem[14]=dat; }//ext_mem[adr-0xff71]=dat; }
 
-static void cpu_io_write_80_FE( word adr,byte dat ){ stack[adr-0xFF80]=dat; }
+static void cpu_io_write_80_FE( word adr,byte dat ){ stack[adr & 0x7F]=dat; }
 
 /*
 static void cpu_io_write_80( word adr,byte dat ){ ; }

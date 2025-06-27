@@ -7,8 +7,6 @@ int SubMenuItemPositionCanceled(SUBMENU *menu, SUBMENUITEM *item);
 void UpdateMenus(int elements);
 char SelectSubMenuItemPositionByValueInt(SUBMENU *menu, int param);
 void SelectSubMenu(SUBMENU *s, char isNew);
-void CreateDigitsFromInt(SUBMENUMINMAX *mm, int value, int fix);
-void CreateDigitsFromStr(SUBMENUMINMAX *mm, char *str, int fix);
 int GetIntFromDigits(SUBMENUMINMAX *mm);
 void CloseChoice(CHOICEMENU *h);
 void fadeInit(int value, int reason);
@@ -57,7 +55,7 @@ extern int gblFlagLoadParams;
 extern u32 gblShortcutKey;
 extern char menuTempMessageText[256];
 extern int menuMusicLocked;
-extern int gblConfigAutoShowCrc, gblModeColorIt;
+extern char gblConfigAutoShowCrc, gblModeColorIt;
 
 typedef struct		{
 	char *szExt;

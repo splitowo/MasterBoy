@@ -174,7 +174,7 @@ void cpu_restore_state_ex(int *dat)
 	total_clock=dat[3];
 }
 
-byte cpu_read_direct_ord(word adr)
+static byte cpu_read_direct_ord(word adr)
 {
 	switch(adr>>13){
 	case 0:
@@ -565,7 +565,7 @@ GENERATE_GenZFBitTest_FOR_BIT(5)
 GENERATE_GenZFBitTest_FOR_BIT(6)
 GENERATE_GenZFBitTest_FOR_BIT(7)
 
-byte cpu_seri_send(byte dat)
+static byte cpu_seri_send(byte dat)
 {
 //	if ((!(g_regs.IE&INT_SERIAL))||(g_regs.IF&INT_SERIAL))
 //		return 0xFF;

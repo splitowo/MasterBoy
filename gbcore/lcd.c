@@ -104,11 +104,6 @@ void lcd_set_mpal(int n)
 	n_mpal16 = n;
 }
 
-int lcd_get_mpal()
-{
-	return n_mpal16;
-}
-
 void lcd_set_enable(int layer,char enable)
 {
 	layer_enable[layer]=enable;
@@ -435,7 +430,7 @@ void lcd_sprite_render(void *buf,byte scanline)
 	}
 }
 
-void lcd_bg_render_color(void *buf,byte scanline)
+static void lcd_bg_render_color(void *buf,byte scanline)
 {
 	int t;
 
@@ -516,7 +511,7 @@ fin:
 
 
 
-void lcd_win_render_color(void *buf,byte scanline)
+static void lcd_win_render_color(void *buf,byte scanline)
 {
 	if (!(g_regs.LCDC&0x80)||!(g_regs.LCDC&0x20)||g_regs.WY>=(scanline+1)||g_regs.WX>166){
 //		if ((g_regs.WY>=(scanline+1))&&((g_regs.LCDC&0x21)!=0x21))
@@ -563,7 +558,7 @@ void lcd_win_render_color(void *buf,byte scanline)
 	}
 }
 
-void lcd_sprite_render_color(void *buf,byte scanline)
+static void lcd_sprite_render_color(void *buf,byte scanline)
 {
 	if (!(g_regs.LCDC&0x80)||!(g_regs.LCDC&0x02))
 		return;

@@ -19,8 +19,8 @@
 int systemInit = 0;
 int frameReady = 0;
 unsigned char pixel_values[256];
-int gblMachineType = EM_SMS;
-int gblNewGame = 0;
+char gblMachineType = EM_SMS;
+char gblNewGame = 0;
 uLong sram_crc;
 unsigned int gblCpuCycles = 0;
 
@@ -357,7 +357,7 @@ void machine_reset()		{
 	menuConfig.video.pause = 0;
 }
 
-void SmsInit(void)
+static void SmsInit(void)
 {
 
 //	sceDisplayWaitVblankStart();
@@ -366,7 +366,7 @@ void SmsInit(void)
 	systemInit = 1;
 }
 
-void SmsTerm(void)
+static void SmsTerm(void)
 {
 	if(systemInit)
 	{
@@ -390,8 +390,7 @@ void SmsTerm(void)
 }
 
 void gb_doFrame(int skip)		{
-	gbSkip = skip;
-	gb_run_frame();
+	gb_run_frame(skip);
 }
 
 

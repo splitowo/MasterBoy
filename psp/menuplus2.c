@@ -138,7 +138,7 @@ void AddToMyPlaces(const char *dirName, int type)		{
 	}
 }
 
-void SetMyPlacesEntry(int entry, const char *dirName, int type)		{
+static void SetMyPlacesEntry(int entry, const char *dirName, int type)		{
 	if (entry < 0 || entry >= nbPlaces)
 		return;
 	strcpy(cPlaces[entry], dirName);
@@ -146,7 +146,7 @@ void SetMyPlacesEntry(int entry, const char *dirName, int type)		{
 	myPlacesModified = 1;
 }
 
-void RemoveMyPlacesEntry(int entry)		{
+static void RemoveMyPlacesEntry(int entry)		{
 	if (entry < 0 || entry >= nbPlaces)
 		return;
 
@@ -238,7 +238,7 @@ int menuFileItemCompare(SUBMENUITEM *a, SUBMENUITEM *b)
 	else					          return  1 ;
 }
 
-void menuFileSelectSortFiles(SUBMENU *s, int left)
+static void menuFileSelectSortFiles(SUBMENU *s, int left)
 {
 	SUBMENUITEM tmp;
 	int n, m;
@@ -258,7 +258,7 @@ void menuFileSelectSortFiles(SUBMENU *s, int left)
 	}
 }
 
-int getExtId(const char *szFilePath) 
+static int getExtId(const char *szFilePath) 
 {
 	char *pszExt;
 	int i;

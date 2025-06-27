@@ -37,7 +37,6 @@ word *vframe = vframe_mem;
 
 struct ext_hook hook_proc;
 
-int gbSkip;
 //skip_buf;
 //int now_frame;
 int re_render;
@@ -110,7 +109,6 @@ void gb_reset()
 	gb_fill_vframe(0);
 	
 //	now_frame=0;
-	gbSkip=0;
 	//skip_buf=0;
 	re_render=0;
 	
@@ -651,144 +649,143 @@ int gb_run()
 #else
 //int skip = 0;
 
-int gb_run_frame()
+int gb_run_frame(int skip)
 {
 	int cmd = 0;
+	while(!rom_get_loaded()) {}
 	do {
-        if (rom_get_loaded()){
-            if (g_regs.LCDC&0x80){ // LCDC 起動時
-                g_regs.LY++;
+		if (g_regs.LCDC&0x80){ // LCDC 起動時
+			g_regs.LY++;
 
-                g_regs.STAT&=0xF8;
-                if (g_regs.LYC==g_regs.LY){
-                    g_regs.STAT|=4;
-                    if (g_regs.STAT&0x40)
-                        cpu_irq(INT_LCDC);
-                }
-                if (g_regs.LY>=144){ // VBlank 期間中
-                    g_regs.STAT|=1;
-                    if (g_regs.LY==144){
-						cmd |= 1;
-						lcd_clear_win_count();
-                        cpu_exec(72);
-                        cpu_irq(INT_VBLANK);
-                        if (g_regs.STAT&0x10)
-                            cpu_irq(INT_LCDC);
-                        cpu_exec(456-80);
-                    }
-                    else if (g_regs.LY==153){
-                        cpu_exec(4);
-                        g_regs.LY=0;
-                        cpu_exec(456-4); // 前のラインのかなり早目から0になるようだ。
-                        g_regs.LY=-1;
-                    }
-                    else
-                        cpu_exec(456);
-                }
-                else{ // VBlank 期間外
-                    g_regs.STAT|=2;
-                    if (g_regs.STAT&0x20)
-                        cpu_irq(INT_LCDC);
-                    cpu_exec(80); // state=2
-                    g_regs.STAT|=3;
-                    cpu_exec(172); // state=3
+			g_regs.STAT&=0xF8;
+			if (g_regs.LYC==g_regs.LY){
+				g_regs.STAT|=4;
+				if (g_regs.STAT&0x40)
+					cpu_irq(INT_LCDC);
+			}
+			if (g_regs.LY>=144){ // VBlank 期間中
+				g_regs.STAT|=1;
+				if (g_regs.LY==144){
+					cmd |= 1;
+					lcd_clear_win_count();
+					cpu_exec(72);
+					cpu_irq(INT_VBLANK);
+					if (g_regs.STAT&0x10)
+						cpu_irq(INT_LCDC);
+					cpu_exec(456-80);
+				}
+				else if (g_regs.LY==153){
+					cpu_exec(4);
+					g_regs.LY=0;
+					cpu_exec(456-4); // 前のラインのかなり早目から0になるようだ。
+					g_regs.LY=-1;
+				}
+				else
+					cpu_exec(456);
+			}
+			else{ // VBlank 期間外
+				g_regs.STAT|=2;
+				if (g_regs.STAT&0x20)
+					cpu_irq(INT_LCDC);
+				cpu_exec(80); // state=2
+				g_regs.STAT|=3;
+				cpu_exec(172); // state=3
 
-                    if (is_dma_transfer_in_progress()){ // HBlank DMA
-                        if (b_dma_first){
-                            dma_dest_bank=vram_bank;
-                            if (cg_regs.HDMA_source.w<0x4000)
-                                dma_src_bank=get_rom();
-                            else if (cg_regs.HDMA_source.w<0x8000)
-                                dma_src_bank=mbc_get_rom();
-                            else if (cg_regs.HDMA_source.w>=0xA000&&cg_regs.HDMA_source.w<0xC000)
-                                dma_src_bank=mbc_get_sram()-0xA000;
-                            else if (cg_regs.HDMA_source.w>=0xC000&&cg_regs.HDMA_source.w<0xD000)
-                                dma_src_bank=ram-0xC000;
-                            else if (cg_regs.HDMA_source.w>=0xD000&&cg_regs.HDMA_source.w<0xE000)
-                                dma_src_bank=ram_bank-0xD000;
-                            else dma_src_bank=NULL;
-                            b_dma_first=false;
-                        }
-                        memcpy(dma_dest_bank+(cg_regs.HDMA_destination.w&0x1ff0),dma_src_bank+cg_regs.HDMA_source.w,16);
-//	    				fprintf(cpu_file,"%03d : dma exec %04X -> %04X rest %d\n",g_regs.LY,cpu_dma_src,cpu_dma_dest,cpu_dma_rest);
+				if (is_dma_transfer_in_progress()){ // HBlank DMA
+					if (b_dma_first){
+						dma_dest_bank=vram_bank;
+						if (cg_regs.HDMA_source.w<0x4000)
+							dma_src_bank=get_rom();
+						else if (cg_regs.HDMA_source.w<0x8000)
+							dma_src_bank=mbc_get_rom();
+						else if (cg_regs.HDMA_source.w>=0xA000&&cg_regs.HDMA_source.w<0xC000)
+							dma_src_bank=mbc_get_sram()-0xA000;
+						else if (cg_regs.HDMA_source.w>=0xC000&&cg_regs.HDMA_source.w<0xD000)
+							dma_src_bank=ram-0xC000;
+						else if (cg_regs.HDMA_source.w>=0xD000&&cg_regs.HDMA_source.w<0xE000)
+							dma_src_bank=ram_bank-0xD000;
+						else dma_src_bank=NULL;
+						b_dma_first=false;
+					}
+					memcpy(dma_dest_bank+(cg_regs.HDMA_destination.w&0x1ff0),dma_src_bank+cg_regs.HDMA_source.w,16);
+//	    			fprintf(cpu_file,"%03d : dma exec %04X -> %04X rest %d\n",g_regs.LY,cpu_dma_src,cpu_dma_dest,cpu_dma_rest);
 
-                        cg_regs.HDMA_source.w+=16;
-                        cg_regs.HDMA_source.w&=0xfff0;
-                        cg_regs.HDMA_destination.w+=16;
-                        cg_regs.HDMA_destination.w&=0xfff0;
-						cg_regs.HDMA5--;
+					cg_regs.HDMA_source.w+=16;
+					cg_regs.HDMA_source.w&=0xfff0;
+					cg_regs.HDMA_destination.w+=16;
+					cg_regs.HDMA_destination.w&=0xfff0;
+					cg_regs.HDMA5--;
 
-//		    			cpu_total_clock+=207*(cpu_speed?2:1);
-//	    				cpu_sys_clock+=207*(cpu_speed?2:1);
-//    					cpu_div_clock+=207*(cpu_speed?2:1);
-//	    				g_regs.STAT|=3;
+//		    		cpu_total_clock+=207*(cpu_speed?2:1);
+//	    			cpu_sys_clock+=207*(cpu_speed?2:1);
+//    				cpu_div_clock+=207*(cpu_speed?2:1);
+//	    			g_regs.STAT|=3;
 
-                        if (!gbSkip && !sgb_mask)
-                            lcd_render(vframe,g_regs.LY);
+					if (!skip && !sgb_mask)
+						lcd_render(vframe,g_regs.LY);
 
-                        g_regs.STAT&=0xfc;
-                        if ((g_regs.STAT&0x08))
-                            cpu_irq(INT_LCDC);
-                        cpu_exec(204); // state=3
-                    }
-                    else{
-/*	    				if (lcd_get_sprite_count()){
-                            if (lcd_get_sprite_count()>=10){
-                                cpu_exec(129);
-                                if ((g_regs.STAT&0x08))
-                                    cpu_irq(INT_LCDC);
-                                g_regs.STAT&=0xfc;
-                                if (now_frame>=skip)
-                                    lcd_render(vframe,g_regs.LY);
-                                cpu_exec(78); // state=0
-                            }
-                            else{
-                                cpu_exec(129*lcd_get_sprite_count()/10);
-                                if ((g_regs.STAT&0x08))
-                                    cpu_irq(INT_LCDC);
-                                g_regs.STAT&=0xfc;
-                                if (now_frame>=skip)
-                                    lcd_render(vframe,g_regs.LY);
-                                cpu_exec(207-(129*lcd_get_sprite_count()/10)); // state=0
-                            }
-                        }
-                        else{
-*/    						g_regs.STAT&=0xfc;
-                            if (!gbSkip && !sgb_mask)
-                                lcd_render(vframe,g_regs.LY);
-                            if ((g_regs.STAT&0x08))
-                                cpu_irq(INT_LCDC);
-                            cpu_exec(204); // state=0
-//	    				}
-                    }
-                }
-            }
-            else{ // LCDC 停止時
-                g_regs.LY=0;
-//	    		g_regs.LY=(g_regs.LY+1)%154;
-                re_render++;
-                if (re_render>=154)		{
-//	    			memset(vframe,0xff,(160+16)*144*2);
-                    if (!gbSkip)
-                        memset(vframe, 0xff, VFRAME_SIZE);
-//	    			renderer_refresh();
-                    cmd |= 1;
-/*	    			if (!gbSkip)		{
-//	    				render_screen(vframe);
-                        now_frame=0;
-                    }
-                    else
-                        now_frame++;*/
-                    lcd_clear_win_count();
-                    re_render=0;
-                }
-                g_regs.STAT&=0xF8;
-                cpu_exec(456);
-            }
+					g_regs.STAT&=0xfc;
+					if ((g_regs.STAT&0x08))
+						cpu_irq(INT_LCDC);
+					cpu_exec(204); // state=3
+				}
+				else{
+/*	    			if (lcd_get_sprite_count()){
+						if (lcd_get_sprite_count()>=10){
+							cpu_exec(129);
+							if ((g_regs.STAT&0x08))
+								cpu_irq(INT_LCDC);
+							g_regs.STAT&=0xfc;
+							if (now_frame>=skip)
+								lcd_render(vframe,g_regs.LY);
+							cpu_exec(78); // state=0
+						}
+						else{
+							cpu_exec(129*lcd_get_sprite_count()/10);
+							if ((g_regs.STAT&0x08))
+								cpu_irq(INT_LCDC);
+							g_regs.STAT&=0xfc;
+							if (now_frame>=skip)
+								lcd_render(vframe,g_regs.LY);
+							cpu_exec(207-(129*lcd_get_sprite_count()/10)); // state=0
+						}
+					}
+					else{
+*/    					g_regs.STAT&=0xfc;
+						if (!skip && !sgb_mask)
+							lcd_render(vframe,g_regs.LY);
+						if ((g_regs.STAT&0x08))
+							cpu_irq(INT_LCDC);
+						cpu_exec(204); // state=0
+//	    			}
+				}
+			}
+		}
+		else{ // LCDC 停止時
+			g_regs.LY=0;
+//	    	g_regs.LY=(g_regs.LY+1)%154;
+			re_render++;
+			if (re_render>=154)		{
+//	    		memset(vframe,0xff,(160+16)*144*2);
+				if (!skip)
+					memset(vframe, 0xff, VFRAME_SIZE);
+//	    		renderer_refresh();
+				cmd |= 1;
+/*	    		if (!skip)		{
+//	    			render_screen(vframe);
+				now_frame=0;
+			}
+			else
+				now_frame++;*/
+				lcd_clear_win_count();
+				re_render=0;
+			}
+			g_regs.STAT&=0xF8;
+			cpu_exec(456);
+		}
 
-//    		if (!menuConfig.sound.perfectSynchro)
-//    			sound_update_gb(line);
-        }
+//    	if (!menuConfig.sound.perfectSynchro)
+//    		sound_update_gb(line);
     }while(cmd == 0);
 	return cmd;
 
