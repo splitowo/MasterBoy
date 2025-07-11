@@ -153,20 +153,15 @@ void gb_set_skip(int frame)
 
 #define write_state(fd, in, inlen) \
 { \
-	if(buf){ \
-		memcpy(buf, in, inlen); \
-		buf += inlen; \
-	}else{ \
-		VirtualFileWrite(in, inlen, 1, fd); \
-	} \
+	VirtualFileWrite(in, inlen, 1, fd); \
 }
 
-void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
+void gb_save_state(VIRTUAL_FILE *fd)
 {
 	const int tbl_ram[]={1,1,1,4,16,8}; // 0と1は保険
 
 #ifdef CHEAT_SUPPORT
-	if (buf || fd)
+	if (fd)
 		cheat_decreate_cheat_map();
 #endif
 
@@ -299,7 +294,7 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 	}
 
 #ifdef CHEAT_SUPPORT
-	if (buf || fd)
+	if (fd)
 		cheat_create_cheat_map();
 #endif
 
@@ -308,15 +303,10 @@ void gb_save_state(VIRTUAL_FILE *fd, byte *buf)
 
 #define read_state(fd, out, len) \
 { \
-	if(buf){ \
-		memcpy(out, buf, len); \
-		buf += len; \
-	}else{ \
-		VirtualFileRead(out, len, 1, fd); \
-	} \
+	VirtualFileRead(out, len, 1, fd); \
 }
 
-void gb_restore_state(VIRTUAL_FILE *fd, const byte *buf)
+void gb_restore_state(VIRTUAL_FILE *fd)
 {
 	const int tbl_ram[]={1,1,1,4,16,8}; // 0と1は保険
 	int gb_type,dmy;

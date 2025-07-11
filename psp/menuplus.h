@@ -281,7 +281,7 @@ void makeDir(char *dir);
 void menuShowPaletteList();
 void pspGetStateName(char *name, int slot);
 void pspGetStateNameEx(char *romFile, char *name, int slot);
-extern char gblConfigAutoShowCrc, gblModeColorIt;
+extern int gblConfigAutoShowCrc, gblModeColorIt;
 extern int gb_lastVramCrc;
 extern int gbUsbAvailable;
 extern OSL_COLOR currentPalCache[12];

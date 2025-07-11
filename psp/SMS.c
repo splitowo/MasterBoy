@@ -16,8 +16,8 @@
 //Defined here, also in MENUPLUS.C
 #define DEBUG_MODE
 
-int systemInit = 0;
-int frameReady = 0;
+char systemInit = 0;
+char frameReady = 0;
 unsigned char pixel_values[256];
 char gblMachineType = EM_SMS;
 char gblNewGame = 0;

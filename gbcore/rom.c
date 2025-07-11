@@ -18,7 +18,7 @@
 */
 
 //-----------------------------------------------
-// ROMイメージ管理部 (含SRAM)
+// ROMイ�撈[ジ管理部 (含SRAM)
 
 #include "gb.h"
 
@@ -49,7 +49,7 @@ char rom_has_battery()
 	return has_bat[(info.cart_type>0x20)?3:info.cart_type]==1;
 }
 
-int rom_get_sram_size()
+static int rom_get_sram_size()
 {
 	static const int tbl_ram[]={1,1,1,4,16,8};//0と1は保険
 	return 0x2000*tbl_ram[info.ram_size];

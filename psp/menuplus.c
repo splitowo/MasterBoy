@@ -67,7 +67,7 @@ u32 menuColorCursor[4], menuColorSubmenuTitle;
 u32 gblShortcutKey = -1;
 char menuTempMessageText[256];
 int menuMusicLocked;
-char gblConfigAutoShowCrc = 0, gblModeColorIt = 0;
+int gblConfigAutoShowCrc = 0, gblModeColorIt = 0;
 MENUPARAMS *menuConfigDefault, *menuConfigUserDefault, *menuConfigUserMachineDefault;
 char gblColorItPaletteFileName[MAX_PATH];
 int menuDisplaySpecialMessage = 0;
@@ -838,7 +838,7 @@ void machine_load_state(VIRTUAL_FILE *fd)		{
 	if (gblMachineType == EM_SMS)
 		system_load_state(fd);
 	else if (gblMachineType == EM_GBC)		{
-		gb_restore_state(fd, NULL);
+		gb_restore_state(fd);
 	}
 }
 
@@ -921,7 +921,7 @@ void machine_save_state(VIRTUAL_FILE *fd)		{
 	if (gblMachineType == EM_SMS)
 		system_save_state(fd);
 	else if (gblMachineType == EM_GBC)		{
-		gb_save_state(fd, NULL);
+		gb_save_state(fd);
 	}
 }
 

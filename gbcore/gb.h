@@ -186,7 +186,6 @@ extern struct gbc_regs cg_regs;
 extern struct ext_hook hook_proc;
 extern char hook_ext;
 extern int now_gb_mode;
-extern int now_frame;
 
 extern unsigned short sgb_palette_real[8*16];
 extern unsigned short sgb_palette_inval[8*16];
@@ -308,7 +307,6 @@ extern int sgb_mode, org_gbtype;
 
 void rom_init();
 char rom_has_battery();
-int rom_get_sram_size();
 char rom_load_rom(byte *buf,int size,byte *ram,int ram_size);
 //struct rom_info *rom_get_info();
 //byte *get_rom();

@@ -14,7 +14,8 @@ void SmsEmulate();
 
 void system_manage_sram(uint8 *sram, int slot, int mode);
 
-extern int frameReady, gblFramerate, gblVirtualFramerate;
+extern int gblFramerate, gblVirtualFramerate;
+extern char frameReady;
 
 enum {EM_SMS, EM_GBC};
 extern char gblMachineType;

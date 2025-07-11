@@ -20,7 +20,7 @@ enum types_objets {TYPE_FONCTION, TYPE_ENTIER, TYPE_BOOL, TYPE_CHAINE, TYPE_REEL
 #define TYPE_MAXSIZE_MASK(flags)	((flags >> 4) & 15)
 #define ScriptErrorEx(format...)	({ char __str[1000]; sprintf(__str , ##format); ScriptError(__str); })
 
-void ScriptError(char *msg);
+static void ScriptError(char *msg);
 
 VIRTUAL_FILE *gblFichierConfig;
 int bModeWideCrLf=1;
@@ -30,7 +30,6 @@ enum {FCT_SET=1, FCT_GET, FCT_SET_BEFORE, FCT_SET_AFTER};
 char tempValue[TAILLE_MAX_CHAINES];
 char menuDefaultExecute[TAILLE_MAX_CHAINES];
 int GetEntier(char *valeur);
-int atox(char *chn);
 char *ProchArgEntier(char *ptr);
 char *GetChaine(char **dest);
 #define SAUTE_ESPACES(ptr)	 { while(*ptr==' ' || *ptr=='	') ptr++; }
@@ -531,7 +530,7 @@ int strlwrmixcmp(const char *lower, const char *mix)			{
 }
 
 //Returns the corresponding address in config_referenceConfig from a member of menuConfig
-void *getOffsetedAddr(void *value)		{
+static void *getOffsetedAddr(void *value)		{
 	if (!config_referenceConfig)
 		return NULL;
 	if ((u8*)value >= (u8*)(&menuConfig) && (u8*)value < (u8*)(&menuConfig) + sizeof(menuConfig))			{
@@ -652,10 +651,10 @@ void ScriptSave(const char *filename, int type)		{
 	}
 }
 
-void ScriptBegin()		{
+static void ScriptBegin()		{
 }
 
-void ScriptEnd()		{
+static void ScriptEnd()		{
 	//Mise à jour des menus
 	UpdateMenus(MENUUPD_ALL);
 }
@@ -743,7 +742,7 @@ parsingTermine:
 	VirtualFileClose(f);
 }
 
-int atox(char *chn)	{
+static int atox(char *chn)	{
 	int i;
 	int n;
 	int v;
@@ -766,7 +765,7 @@ int atox(char *chn)	{
 }
 
 //Idem mais en binaire
-int atob(char *chn)	{
+static int atob(char *chn)	{
 	int i;
 	int n;
 	int v;
@@ -1437,7 +1436,7 @@ sauteEspaces:
 	return idObjet;
 }
 
-void ScriptError(char *msg)		{
+static void ScriptError(char *msg)		{
 	MessageBox(msg, "Script error", MB_OK);
 	arretdurgence = 1;
 }

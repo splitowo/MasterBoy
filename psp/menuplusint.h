@@ -55,7 +55,7 @@ extern int gblFlagLoadParams;
 extern u32 gblShortcutKey;
 extern char menuTempMessageText[256];
 extern int menuMusicLocked;
-extern char gblConfigAutoShowCrc, gblModeColorIt;
+extern int gblConfigAutoShowCrc, gblModeColorIt;
 
 typedef struct		{
 	char *szExt;
