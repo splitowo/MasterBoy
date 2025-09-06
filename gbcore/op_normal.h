@@ -160,7 +160,7 @@ inline void op_code_normal_case0xF9(void) { REG_SP=REG_HL;} //LD SP,HL : 11 111 
 inline void op_code_normal_case0xC5(void) { REG_SP-=2;writew(REG_SP,REG_BC);} //PUSH BC
 inline void op_code_normal_case0xD5(void) { REG_SP-=2;writew(REG_SP,REG_DE);} //PUSH DE
 inline void op_code_normal_case0xE5(void) { REG_SP-=2;writew(REG_SP,REG_HL);} //PUSH HL
-inline void op_code_normal_case0xF5(void) { cpu_write(REG_SP-2,z802gb[REG_F]|0xe);cpu_write(REG_SP-1,REG_A);REG_SP-=2;} //PUSH AF // 未使用ビットは1になるみたい(メタルギアよ
+inline void op_code_normal_case0xF5(void) { cpu_write(REG_SP-2,z802gb[REG_F]);cpu_write(REG_SP-1,REG_A);REG_SP-=2;} //PUSH AF
 
 //POP rq : 11 rq0 001 : state 10 (12?)
 inline void op_code_normal_case0xC1(void) { REG_B=cpu_read(REG_SP+1);REG_C=cpu_read(REG_SP);REG_SP+=2;} //POP BC
