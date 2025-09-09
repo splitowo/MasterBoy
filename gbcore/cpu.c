@@ -618,6 +618,12 @@ static void cpu_irq_process()
 		pc_ptr++;
 	}
 
+	if(c_regs_I == 0) {
+		// interrupted out of HALT state with interrupts disabled, continue normal execution
+		halt=false;
+		return;
+	}
+
 	writew(c_regs_SP - 2, c_regs_PC);
 	c_regs_SP-=2;
 	
