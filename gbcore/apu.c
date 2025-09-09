@@ -224,9 +224,15 @@ static void snd_process(word adr,byte dat)
 		break;
 	case 0xFF12:
 		snd_stat.sq1_init_vol=dat>>4;
-		snd_stat.sq1_vol=snd_stat.sq1_init_vol;
 		snd_stat.sq1_env_dir=(dat>>3)&1;
-		snd_stat.sq1_env_speed=dat&7;
+		if(dat == 0x08 && snd_stat.sq1_playing && snd_stat.sq1_env_speed == 0) {
+			// "zombie mode" volume control
+			snd_stat.sq1_vol++;
+			snd_stat.sq1_vol &= 0x0F;
+		}
+		else {
+			snd_stat.sq1_env_speed=dat&7;
+		}
 		break;
 	case 0xFF13:
 		snd_stat.sq1_init_freq&=0x700;
@@ -252,9 +258,15 @@ static void snd_process(word adr,byte dat)
 		break;
 	case 0xFF17:
 		snd_stat.sq2_init_vol=dat>>4;
-		snd_stat.sq2_vol=snd_stat.sq2_init_vol;
 		snd_stat.sq2_env_dir=(dat>>3)&1;
-		snd_stat.sq2_env_speed=dat&7;
+		if(dat == 0x08 && snd_stat.sq2_playing && snd_stat.sq2_env_speed == 0) {
+			// "zombie mode" volume control
+			snd_stat.sq2_vol++;
+			snd_stat.sq2_vol &= 0x0F;
+		}
+		else {
+			snd_stat.sq2_env_speed=dat&7;
+		}
 		break;
 	case 0xFF18:
 		snd_stat.sq2_init_freq&=0x700;
