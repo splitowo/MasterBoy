@@ -336,7 +336,7 @@ inline void op_code_normal_case0x27(void) {//DAA :state 4
       (((REG_F&H_FLAG)? 0x6600:((tmp.b.h<0x0A)? 0x6000:0x6600))+C_FLAG):
       (
         (REG_F&H_FLAG)?
-          ((REG_A<0xA0)? 0x0600:(0x6600+C_FLAG)):
+          ((REG_A<=0x99)? 0x0600:(0x6600+C_FLAG)):
           (
             (tmp.b.h<0x0A)? 
               ((REG_A<0xA0)? 0x0000:(0x6000+C_FLAG)): 
