@@ -1,4 +1,4 @@
-#ifndef OP_DEF_
+#ifndef OP_DEF
 #define OP_DEF
 
 // プリフィックスなしZ80オペコード
@@ -71,4 +71,9 @@
 	REG_F=(REG_F&Z_FLAG)|(((REG_HL^arg^tmp.w)&0x1000)?H_FLAG:0)|((((unsigned long)REG_HL+(unsigned long)arg)&0x10000)?C_FLAG:0); \
 	REG_HL=tmp.w
 
+static inline byte sp_flags(word sp, signed char arg) {
+	byte carry_flag = (arg & 0xFF) + (sp & 0xFF) >= 0x100;
+	byte h_flag = ((arg & 0xF) + (sp & 0xF) >= 0x10) ? H_FLAG : 0;
+	return carry_flag|h_flag;
+}
 #endif
