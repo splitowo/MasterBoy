@@ -232,6 +232,9 @@ static void snd_process(word adr,byte dat)
 		}
 		else {
 			snd_stat.sq1_env_speed=dat&7;
+			if(!snd_stat.sq1_init_vol && !snd_stat.sq1_env_dir) {
+				snd_stat.sq1_playing = false;
+			}
 		}
 		break;
 	case 0xFF13:
@@ -245,7 +248,7 @@ static void snd_process(word adr,byte dat)
 		snd_stat.sq1_freq=snd_stat.sq1_init_freq;
 		snd_stat.sq1_hold=(dat>>6)&1;
 		if (dat&0x80){
-			snd_stat.sq1_playing=true;
+			snd_stat.sq1_playing = (snd_stat.sq1_init_vol || snd_stat.sq1_env_dir);
 			snd_stat.sq1_vol=snd_stat.sq1_init_vol;
 			snd_stat.sq1_len=snd_stat.sq1_init_len;
 			if ((!snd_stat.sq1_playing)||(!snd_stat.sq1_vol)) sq1_cur_pos=0;
@@ -266,6 +269,9 @@ static void snd_process(word adr,byte dat)
 		}
 		else {
 			snd_stat.sq2_env_speed=dat&7;
+			if(!snd_stat.sq2_init_vol && !snd_stat.sq2_env_dir) {
+				snd_stat.sq2_playing = false;
+			}
 		}
 		break;
 	case 0xFF18:
@@ -280,7 +286,7 @@ static void snd_process(word adr,byte dat)
 		snd_stat.sq2_hold=(dat>>6)&1;
 		if (dat&0x80){
 			if ((!snd_stat.sq2_playing)||(!snd_stat.sq2_vol)) sq2_cur_pos=0;
-			snd_stat.sq2_playing=true;
+			snd_stat.sq2_playing = (snd_stat.sq2_init_vol || snd_stat.sq2_env_dir);
 			snd_stat.sq2_vol=snd_stat.sq2_init_vol;
 			snd_stat.sq2_len=snd_stat.sq2_init_len;
 		}
