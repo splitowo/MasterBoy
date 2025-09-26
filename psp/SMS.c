@@ -68,7 +68,7 @@ int machine_manage_sram(int mode, int force)			{
 	int ramsize = 0;
 
 	if(menuConfig.file.filename[0] == '\0')
-		return;
+		return 0;
 
 	pspGetStateName(name, STATE_SRAM);
 

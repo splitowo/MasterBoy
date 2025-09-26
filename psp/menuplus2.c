@@ -218,7 +218,7 @@ int menuFileItemCompare(SUBMENUITEM *a, SUBMENUITEM *b)
     unsigned char file1[0x108];
     unsigned char file2[0x108];
 	unsigned char ca, cb;
-	int i, n, ret;
+	int i, ret;
 
 	if( (a->prop1 & 0x30) == (b->prop1 & 0x30) )
 	{
@@ -788,30 +788,30 @@ STEXTENSIONLIST *stExtentions;
 
 STEXTENSIONLIST stRomExtentions[] = 
 {
-	"gb" , EXT_GB,
-	"gbc", EXT_GB,
-	"sgb", EXT_GB,
-	// "pce", EXT_PCE ,
-	"zip", EXT_ZIP ,
-//	"gz" , EXT_ZIP ,
-//	"tgz", EXT_ZIP ,
-	"sms", EXT_SMS,
-	"gg",  EXT_GG,
-	NULL , EXT_UNKNOWN
+	{"gb" , EXT_GB},
+	{"gbc", EXT_GB},
+	{"sgb", EXT_GB},
+	// {"pce", EXT_PCE},
+	{"zip", EXT_ZIP},
+//	{"gz" , EXT_ZIP},
+//	{"tgz", EXT_ZIP},
+	{"sms", EXT_SMS},
+	{"gg",  EXT_GG},
+	{NULL , EXT_UNKNOWN}
 };
 
 STEXTENSIONLIST stMusicExtentions[] = 
 {
-	// "gb" , EXT_GB  ,
-	// "gbc", EXT_GB  ,
-	// "pce", EXT_PCE ,
-	"zip", EXT_ZIP ,
-	NULL , EXT_UNKNOWN
+	// {"gb" , EXT_GB} ,
+	// {"gbc", EXT_GB} ,
+	// {"pce", EXT_PCE},
+	{"zip", EXT_ZIP},
+	{NULL , EXT_UNKNOWN}
 };
 
 STEXTENSIONLIST stCheatExtensions[] =
 {
-	"cheats", EXT_CHEATS
+	{"cheats", EXT_CHEATS}
 };
 
 int fctMsgBoxChoice(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
@@ -856,9 +856,10 @@ void fctMsgBoxChoice_Handle(WINDOW *w, int event)		{
 void fctMsgBoxChoice_Destroy(WINDOW *w)		{
 	SUBMENU *s = (SUBMENU*)w->userData[0];
 	if (s)		{
-		if (s->items)
+		if (s->items) {
 			free(s->items);
 			s->items = NULL;
+		}
 	}
 }
 
@@ -921,7 +922,7 @@ int ShowChoiceMsgBox(char *msg, char *title, int buttons, int width, char *eleme
 	choiceMsgBoxMenu.items = malloc(sizeof(SUBMENUITEM) * nbElements);
 
 	if (!choiceMsgBoxMenu.items)
-		return;
+		return -1;
 
 	memset(choiceMsgBoxMenu.items, 0, sizeof(SUBMENUITEM) * nbElements);
 	for (i=0;i<nbElements;i++)		{

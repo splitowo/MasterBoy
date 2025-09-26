@@ -344,9 +344,7 @@ void HSLToRGB(unsigned h, unsigned s, unsigned l,
 
 
 uint16 MAKE_COLOR(uint8 r, uint8 g, uint8 b)		{
-	if (menuConfig.video.vibrance == 128)
-		return MAKE_PIXEL(r, g, b);
-	else if (menuConfig.video.vibrance > 128)			{
+	if (menuConfig.video.vibrance > 128)			{
 		unsigned h, s, l;
 		unsigned coeff2 = ((256 - menuConfig.video.vibrance) >> 1) + 64;
 		RGBToHSL(r, g, b, &h, &s, &l);
@@ -359,7 +357,6 @@ uint16 MAKE_COLOR(uint8 r, uint8 g, uint8 b)		{
 				l = 32768 - (((32768 - l) * coeff2) >> 7);
 		}
 		HSLToRGB(h, s, l, &r, &g, &b);
-		return MAKE_PIXEL(r, g, b);
 
 /*		unsigned h, s, l;
 		unsigned coeff2 = (menuConfig.video.vibrance - 128) << 9;
@@ -380,8 +377,7 @@ uint16 MAKE_COLOR(uint8 r, uint8 g, uint8 b)		{
 					l = 32768;
 			}
 		}
-		HSLToRGB(h, s, l, &r, &g, &b);
-		return MAKE_PIXEL(r, g, b);*/
+		HSLToRGB(h, s, l, &r, &g, &b);*/
 	}
 	else if (menuConfig.video.vibrance < 128)			{
 		int value = (b * 77 + r * 84 + g * 95) >> 8;
@@ -389,8 +385,8 @@ uint16 MAKE_COLOR(uint8 r, uint8 g, uint8 b)		{
 		r = (coeff * r + (127 - coeff) * value) >> 7;
 		g = (coeff * g + (127 - coeff) * value) >> 7;
 		b = (coeff * b + (127 - coeff) * value) >> 7;
-		return MAKE_PIXEL(r, g, b);
 	}
+	return MAKE_PIXEL(r, g, b);
 }
 
 

@@ -3334,7 +3334,7 @@ void DrawBackgroundAfter()		{
 	if (menuDebugRamShow)		{
 		oslSetFont(ftGlow);
 		oslSetTextColor(RGB(255, 255, 255));
-		oslPrintf_xy(0, 20, "RAM: %ik", ramAvailable() >> 10);
+		oslPrintf_xy(0, 20, "RAM: %lik", ramAvailable() >> 10);
 	}
 #endif
 //	oslSysBenchmarkDisplay();
@@ -3833,7 +3833,6 @@ void DrawWindowBox(int x0, int y0, int x1, int y1)
 		couleurBody1 = RGBA(0, 0, 192, alphaBoite), couleurBody2 = RGBA(128, 0, 192, alphaBoite),
 		couleurContour = RGB(0, 192, 128), couleurContourMilieu = couleurContour;
 	void *oldPal = imgBord->palette->data;
-	int i, j;
 
 	windowBoxPalette[0][0] = 0;
 	windowBoxPalette[0][1] = couleurContour;
@@ -4438,7 +4437,7 @@ static void menuOnSecondPassed()
 	sceRtcGetCurrentClockLocalTime(&local_time);
 	//Batterie présente?
 	if (scePowerIsBatteryExist()) {
-		char batteryTime[64];
+		char batteryTime[32];
 		int batteryLifeTime;
 		batteryLifeTime = scePowerGetBatteryLifeTime();
 		if (scePowerIsPowerOnline())

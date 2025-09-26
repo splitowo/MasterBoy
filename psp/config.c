@@ -23,7 +23,6 @@ enum types_objets {TYPE_FONCTION, TYPE_ENTIER, TYPE_BOOL, TYPE_CHAINE, TYPE_REEL
 static void ScriptError(char *msg);
 
 VIRTUAL_FILE *gblFichierConfig;
-int bModeWideCrLf=1;
 int gblIndice;
 char gblVarName[TAILLE_MAX_CHAINES];
 enum {FCT_SET=1, FCT_GET, FCT_SET_BEFORE, FCT_SET_AFTER};
@@ -415,7 +414,7 @@ const IDENTIFICATEUR objSound[]=	{
 	{"syncMode",			&menuConfig.sound.perfectSynchro,	TYPE_ENTIER},
 };
 
-INFOS_TABLEAU infoTabCtrlAnalogCalValues[] = {4, TYPE_ENTIER, menuConfig.ctrl.analog.calValues};
+INFOS_TABLEAU infoTabCtrlAnalogCalValues[] = {{4, TYPE_ENTIER, menuConfig.ctrl.analog.calValues}};
 
 const IDENTIFICATEUR objCtrlAnalog[]=	{
 	{"todPad",				&menuConfig.ctrl.analog.toPad,		TYPE_BOOL},
@@ -424,9 +423,9 @@ const IDENTIFICATEUR objCtrlAnalog[]=	{
 	{"calValues",			infoTabCtrlAnalogCalValues,			TYPE_TABLEAU, FLAG_NOSAVEGAME},
 };
 
-INFOS_OBJET infoObjCtrlAnalog[]={numberof(objCtrlAnalog), objCtrlAnalog};
-INFOS_TABLEAU infoTabCtrlKeys[] = {NBRE_TOUCHES, TYPE_ENTIER, menuConfig.ctrl.akeys};
-INFOS_TABLEAU infoTabCtrlCuts[] = {NBRE_CUTS, TYPE_ENTIER, menuConfig.ctrl.acuts};
+INFOS_OBJET infoObjCtrlAnalog[]={{numberof(objCtrlAnalog), objCtrlAnalog}};
+INFOS_TABLEAU infoTabCtrlKeys[] = {{NBRE_TOUCHES, TYPE_ENTIER, menuConfig.ctrl.akeys}};
+INFOS_TABLEAU infoTabCtrlCuts[] = {{NBRE_CUTS, TYPE_ENTIER, menuConfig.ctrl.acuts}};
 
 const IDENTIFICATEUR objCtrl[]=	{
 	{"analog",				infoObjCtrlAnalog,					TYPE_OBJET},
@@ -440,7 +439,7 @@ const IDENTIFICATEUR objMisc[]=	{
 	{"z80Clock",			&menuConfig.misc.z80Clock,			TYPE_ENTIER},
 };
 
-INFOS_TABLEAU infoTabMenuColCursor[] = {4, TYPE_ENTIER, &menuColorCursor};
+INFOS_TABLEAU infoTabMenuColCursor[] = {{4, TYPE_ENTIER, &menuColorCursor}};
 
 const IDENTIFICATEUR objMenu[]=	{
 	{"imgBack",				FctImgBack,							TYPE_FONCTION},
@@ -481,16 +480,16 @@ const IDENTIFICATEUR objColorIt[]=	{
 	{"autoShowVramCrc",		&gblConfigAutoShowCrc,				TYPE_BOOL},
 };
 
-INFOS_OBJET infoObjFile[]={numberof(objFile), objFile};
-INFOS_OBJET infoObjVideo[]={numberof(objVideo), objVideo};
-INFOS_OBJET infoObjSound[]={numberof(objSound), objSound};
-INFOS_OBJET infoObjCtrl[]={numberof(objCtrl), objCtrl};
-INFOS_OBJET infoObjMisc[]={numberof(objMisc), objMisc};
-INFOS_OBJET infoObjMenu[]={numberof(objMenu), objMenu};
-INFOS_OBJET infoObjMusic[]={numberof(objMusic), objMusic};
-INFOS_OBJET infoObjGameBoy[]={numberof(objGameBoy), objGameBoy};
-//INFOS_OBJET infoObjGameboy[]={numberof(objGameboy), objGameboy};
-INFOS_OBJET infoObjColorIt[]={numberof(objColorIt), objColorIt};
+INFOS_OBJET infoObjFile[]={{numberof(objFile), objFile}};
+INFOS_OBJET infoObjVideo[]={{numberof(objVideo), objVideo}};
+INFOS_OBJET infoObjSound[]={{numberof(objSound), objSound}};
+INFOS_OBJET infoObjCtrl[]={{numberof(objCtrl), objCtrl}};
+INFOS_OBJET infoObjMisc[]={{numberof(objMisc), objMisc}};
+INFOS_OBJET infoObjMenu[]={{numberof(objMenu), objMenu}};
+INFOS_OBJET infoObjMusic[]={{numberof(objMusic), objMusic}};
+INFOS_OBJET infoObjGameBoy[]={{numberof(objGameBoy), objGameBoy}};
+//INFOS_OBJET infoObjGameboy[]={{numberof(objGameboy), objGameboy}};
+INFOS_OBJET infoObjColorIt[]={{numberof(objColorIt), objColorIt}};
 
 const IDENTIFICATEUR objets[]=		{
 	{"file",				infoObjFile,			TYPE_OBJET},
@@ -514,7 +513,7 @@ const IDENTIFICATEUR objets[]=		{
 };
 
 //Un objet qui les contient tous
-INFOS_OBJET infoObjMain[]={numberof(objets), objets};
+INFOS_OBJET infoObjMain[]={{numberof(objets), objets}};
 
 //Comparaison entre une chaîne à casse basse et mixte
 int strlwrmixcmp(const char *lower, const char *mix)			{
