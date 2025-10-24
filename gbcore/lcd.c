@@ -214,25 +214,45 @@ static inline dword dtwk(dword src)
 	return src & 0x6;
 }
 
-static void dattrans2n(word *pal, word *dat, dword src)
-{
-	// for input bits:   abcdefghABCDEFGH
-	// even_pairs gives: 00000000bBdDfFhH
-	// odd_pairs gives:  aAcCeEgG00000000
-	dword even_pairs = (src & 0x55) | ((src & 0x5500) >> 7);
-	dword odd_pairs =  ((src & 0xAA) << 7) | (src & 0xAA00);
-
-	*(dat++)=*(word *)( ((byte *)pal)+( (odd_pairs >> 13) & 0x6 ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( (even_pairs >> 5) & 0x6 ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( (odd_pairs >> 11) & 0x6 ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( (even_pairs >> 3) & 0x6 ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( (odd_pairs >> 9) & 0x6 ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( (even_pairs >> 1) & 0x6 ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( (odd_pairs >> 7) & 0x6 ) );
-	*(dat++)=*(word *)( ((byte *)pal)+( (even_pairs << 1) & 0x6 ) );
+#define GENERATE_ext_3bits_at_pos(n) \
+static inline dword ext_3bits_at_pos##n(dword value)	\
+{	\
+	dword ret;	\
+	asm (	\
+		"		ext		%0,%1," #n ",3 "				"\n"	\
+			:	"=&r" (ret)					\
+			:	"r" (value)					\
+	);	\
+	return ret;	\
 }
+GENERATE_ext_3bits_at_pos(0)
+GENERATE_ext_3bits_at_pos(1)
+GENERATE_ext_3bits_at_pos(3)
+GENERATE_ext_3bits_at_pos(6)
+GENERATE_ext_3bits_at_pos(9)
 
-#define dattrans2nd(pal,dat,src) dattrans2n(pal,dat,src);dat+=8;
+static void draw_pixels_to_frame(word *pal, word *frame, dword src)
+{
+	/*
+	Color palette index decoder
+	For input bits:	abcdefghABCDEFGH
+	pairs0 gives:	0000000aA0dD0gG0
+	pairs1 gives:	0bB0eE0hH0000000
+	pairs2 gives:	000000000cC0fF00
+	*/
+	dword pairs0 = (src & 0x92) | ((src & 0x9200) >> 7);
+	dword pairs1 = (src & 0x49) << 7 | ((src & 0x4900));
+	dword pairs2 = (src & 0x24) | ((src & 0x2400) >> 7);
+
+	*(frame++)=*(word *)( ((byte *)pal)+( (pairs0 >> 6) & 0x7 ) );
+	*(frame++)=*(word *)( ((byte *)pal)+( (pairs1 >> 12) & 0x7 ) );
+	*(frame++)=*(word *)( ((byte *)pal)+( (pairs2 >> 4) & 0x7 ) );
+	*(frame++)=*(word *)( ((byte *)pal)+ext_3bits_at_pos3(pairs0) );
+	*(frame++)=*(word *)( ((byte *)pal)+ext_3bits_at_pos9(pairs1) );
+	*(frame++)=*(word *)( ((byte *)pal)+ext_3bits_at_pos1(pairs2) );
+	*(frame++)=*(word *)( ((byte *)pal)+ext_3bits_at_pos0(pairs0) );
+	*(frame++)=*(word *)( ((byte *)pal)+ext_3bits_at_pos6(pairs1) );
+}
 
 #define trb(ofs,b,c) if ( (!(b))&&(c) ) *(now_pos+ofs)=*(word *)(((char *)cur_p)+(c))
 
@@ -309,7 +329,8 @@ void lcd_bg_render(void *buf,byte scanline)
 	for (i=0; ;i++){
 		tile=*(now_tile++);
 		tmp_dat=(tile&0x80)?*(now_share+(tile<<3)):*(now_pat+(tile<<3));
-		dattrans2nd(pal,dat,tmp_dat);
+		draw_pixels_to_frame(pal,dat,tmp_dat);
+		dat+=8;
 		set_ztbl(screenx,(tmp_dat>>8)|tmp_dat,1);
 		screenx+=8;
 		if (screenx>=160) break;
@@ -356,7 +377,8 @@ void lcd_win_render(void *buf,byte scanline)
 	for (i=g_regs.WX>>3;i<21;i++){
 		tile=*(now_tile++);
 		tmp_dat=(tile&0x80)?*(now_share+(tile<<3)):*(now_pat+(tile<<3));
-		dattrans2nd(pal,dat,tmp_dat);
+		draw_pixels_to_frame(pal,dat,tmp_dat);
+		dat+=8;
 		set_ztbl(screenx,(tmp_dat>>8)|tmp_dat,1);
 		screenx+=8;
 	}
@@ -491,7 +513,8 @@ static void lcd_bg_render_color(void *buf,byte scanline)
 		);
 
 		if (atr&0x20) tmp_dat=horizflip(tmp_dat);	// …•½”½“]‚·‚é
-		dattrans2nd(pal,dat,tmp_dat);
+		draw_pixels_to_frame(pal,dat,tmp_dat);
+		dat+=8;
 		set_ztbl(screenx,(tmp_dat>>8)|tmp_dat,(atr&0x80));
 		screenx+=8;
 		if (screenx>=160) break;
@@ -552,7 +575,8 @@ static void lcd_win_render_color(void *buf,byte scanline)
 		tmp_dat=(tile&0x80)?*(((atr&0x40)?now_share2:now_share)+(tile<<3)+bank):*(((atr&0x40)?now_pat2:now_pat)+(tile<<3)+bank);
 
 		if (atr&0x20) tmp_dat=horizflip(tmp_dat);	// …•½”½“]‚·‚é
-		dattrans2nd(pal,dat,tmp_dat);
+		draw_pixels_to_frame(pal,dat,tmp_dat);
+		dat+=8;
 		set_ztbl(screenx,(tmp_dat>>8)|tmp_dat,(atr&0x80));
 		screenx+=8;
 	}
@@ -848,7 +872,8 @@ void lcd_bg_render_colored(void *buf,byte scanline)
 		pal[2] = tilePalPalette_real[tilePalList[tilenb]][(g_regs.BGP>>4)&0x3];
 		pal[3] = tilePalPalette_real[tilePalList[tilenb]][(g_regs.BGP>>6)&0x3];
 
-		dattrans2nd(pal,dat,tmp_dat);
+		draw_pixels_to_frame(pal,dat,tmp_dat);
+		dat+=8;
 		set_ztbl(screenx,(tmp_dat>>8)|tmp_dat,1);
 		screenx+=8;
 		if (screenx>=160) break;
@@ -901,7 +926,8 @@ void lcd_win_render_colored(void *buf,byte scanline)
 		pal[2] = tilePalPalette_real[tilePalList[tilenb]][(g_regs.BGP>>4)&0x3];
 		pal[3] = tilePalPalette_real[tilePalList[tilenb]][(g_regs.BGP>>6)&0x3];
 
-		dattrans2nd(pal,dat,tmp_dat);
+		draw_pixels_to_frame(pal,dat,tmp_dat);
+		dat+=8;
 		set_ztbl(screenx,(tmp_dat>>8)|tmp_dat,1);
 		screenx+=8;
 	}
