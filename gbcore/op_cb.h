@@ -251,24 +251,24 @@ inline void op_code_cb_case0xBE(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_
 
 //shift rotate opcode
 //RLC s : 00 000 r : state 8
-inline void op_code_cb_case0x00(void) { REG_F=(REG_B>>7);REG_B=(REG_B<<1)|(REG_F);REG_F|=GenZF(REG_B);}//RLC B
-inline void op_code_cb_case0x01(void) { REG_F=(REG_C>>7);REG_C=(REG_C<<1)|(REG_F);REG_F|=GenZF(REG_C);}//RLC C
-inline void op_code_cb_case0x02(void) { REG_F=(REG_D>>7);REG_D=(REG_D<<1)|(REG_F);REG_F|=GenZF(REG_D);}//RLC D
-inline void op_code_cb_case0x03(void) { REG_F=(REG_E>>7);REG_E=(REG_E<<1)|(REG_F);REG_F|=GenZF(REG_E);}//RLC E
-inline void op_code_cb_case0x04(void) { REG_F=(REG_H>>7);REG_H=(REG_H<<1)|(REG_F);REG_F|=GenZF(REG_H);}//RLC H
-inline void op_code_cb_case0x05(void) { REG_F=(REG_L>>7);REG_L=(REG_L<<1)|(REG_F);REG_F|=GenZF(REG_L);}//RLC L
-inline void op_code_cb_case0x07(void) { REG_F=(REG_A>>7);REG_A=(REG_A<<1)|(REG_F);REG_F|=GenZF(REG_A);}//RLC A
+inline void op_code_cb_case0x00(void) { REG_F=GenZF(REG_B);REG_F|=(REG_B>>7);REG_B=(REG_B<<1)|(REG_B>>7);}//RLC B
+inline void op_code_cb_case0x01(void) { REG_F=GenZF(REG_C);REG_F|=(REG_C>>7);REG_C=(REG_C<<1)|(REG_C>>7);}//RLC C
+inline void op_code_cb_case0x02(void) { REG_F=GenZF(REG_D);REG_F|=(REG_D>>7);REG_D=(REG_D<<1)|(REG_D>>7);}//RLC D
+inline void op_code_cb_case0x03(void) { REG_F=GenZF(REG_E);REG_F|=(REG_E>>7);REG_E=(REG_E<<1)|(REG_E>>7);}//RLC E
+inline void op_code_cb_case0x04(void) { REG_F=GenZF(REG_H);REG_F|=(REG_H>>7);REG_H=(REG_H<<1)|(REG_H>>7);}//RLC H
+inline void op_code_cb_case0x05(void) { REG_F=GenZF(REG_L);REG_F|=(REG_L>>7);REG_L=(REG_L<<1)|(REG_L>>7);}//RLC L
+inline void op_code_cb_case0x07(void) { REG_F=GenZF(REG_A);REG_F|=(REG_A>>7);REG_A=(REG_A<<1)|(REG_A>>7);}//RLC A
 
 inline void op_code_cb_case0x06(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=(tmp.b.l>>7);tmp.b.l=(tmp.b.l<<1)|(REG_F);REG_F|=GenZF(tmp.b.l);cpu_write(REG_HL,tmp.b.l);}//RLC (HL) : state 16
 
 //RRC s : 00 001 r : state 8
-inline void op_code_cb_case0x08(void) { REG_F=(REG_B&0x01);REG_B=(REG_B>>1)|(REG_F<<7);REG_F|=GenZF(REG_B);}//RRC B
-inline void op_code_cb_case0x09(void) { REG_F=(REG_C&0x01);REG_C=(REG_C>>1)|(REG_F<<7);REG_F|=GenZF(REG_C);}//RRC C
-inline void op_code_cb_case0x0A(void) { REG_F=(REG_D&0x01);REG_D=(REG_D>>1)|(REG_F<<7);REG_F|=GenZF(REG_D);}//RRC D
-inline void op_code_cb_case0x0B(void) { REG_F=(REG_E&0x01);REG_E=(REG_E>>1)|(REG_F<<7);REG_F|=GenZF(REG_E);}//RRC E
-inline void op_code_cb_case0x0C(void) { REG_F=(REG_H&0x01);REG_H=(REG_H>>1)|(REG_F<<7);REG_F|=GenZF(REG_H);}//RRC H
-inline void op_code_cb_case0x0D(void) { REG_F=(REG_L&0x01);REG_L=(REG_L>>1)|(REG_F<<7);REG_F|=GenZF(REG_L);}//RRC L
-inline void op_code_cb_case0x0F(void) { REG_F=(REG_A&0x01);REG_A=(REG_A>>1)|(REG_F<<7);REG_F|=GenZF(REG_A);}//RRC A
+inline void op_code_cb_case0x08(void) { REG_F=GenZF(REG_B);REG_F|=(REG_B&0x01);REG_B=(REG_B>>1)|(REG_B<<7);}//RRC B
+inline void op_code_cb_case0x09(void) { REG_F=GenZF(REG_C);REG_F|=(REG_C&0x01);REG_C=(REG_C>>1)|(REG_C<<7);}//RRC C
+inline void op_code_cb_case0x0A(void) { REG_F=GenZF(REG_D);REG_F|=(REG_D&0x01);REG_D=(REG_D>>1)|(REG_D<<7);}//RRC D
+inline void op_code_cb_case0x0B(void) { REG_F=GenZF(REG_E);REG_F|=(REG_E&0x01);REG_E=(REG_E>>1)|(REG_E<<7);}//RRC E
+inline void op_code_cb_case0x0C(void) { REG_F=GenZF(REG_H);REG_F|=(REG_H&0x01);REG_H=(REG_H>>1)|(REG_H<<7);}//RRC H
+inline void op_code_cb_case0x0D(void) { REG_F=GenZF(REG_L);REG_F|=(REG_L&0x01);REG_L=(REG_L>>1)|(REG_L<<7);}//RRC L
+inline void op_code_cb_case0x0F(void) { REG_F=GenZF(REG_A);REG_F|=(REG_A&0x01);REG_A=(REG_A>>1)|(REG_A<<7);}//RRC A
 
 inline void op_code_cb_case0x0E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);REG_F=(tmp.b.l&0x01);tmp.b.l=(tmp.b.l>>1)|(REG_F<<7);REG_F|=GenZF(tmp.b.l);cpu_write(REG_HL,tmp.b.l);}//RRC (HL) :state 16
 
@@ -329,13 +329,13 @@ inline void op_code_cb_case0x3E(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_
 
 //swap opcode
 //SWAP n : 00 110 r :state 8
-inline void op_code_cb_case0x30(void) { REG_B=(REG_B>>4)|(REG_B<<4);REG_F=GenZF(REG_B);}//SWAP B
-inline void op_code_cb_case0x31(void) { REG_C=(REG_C>>4)|(REG_C<<4);REG_F=GenZF(REG_C);}//SWAP C
-inline void op_code_cb_case0x32(void) { REG_D=(REG_D>>4)|(REG_D<<4);REG_F=GenZF(REG_D);}//SWAP D
-inline void op_code_cb_case0x33(void) { REG_E=(REG_E>>4)|(REG_E<<4);REG_F=GenZF(REG_E);}//SWAP E
-inline void op_code_cb_case0x34(void) { REG_H=(REG_H>>4)|(REG_H<<4);REG_F=GenZF(REG_H);}//SWAP H
-inline void op_code_cb_case0x35(void) { REG_L=(REG_L>>4)|(REG_L<<4);REG_F=GenZF(REG_L);}//SWAP L
-inline void op_code_cb_case0x37(void) { REG_A=(REG_A>>4)|(REG_A<<4);REG_F=GenZF(REG_A);}//SWAP A
+inline void op_code_cb_case0x30(void) { REG_F=GenZF(REG_B);REG_B=(REG_B>>4)|(REG_B<<4);}//SWAP B
+inline void op_code_cb_case0x31(void) { REG_F=GenZF(REG_C);REG_C=(REG_C>>4)|(REG_C<<4);}//SWAP C
+inline void op_code_cb_case0x32(void) { REG_F=GenZF(REG_D);REG_D=(REG_D>>4)|(REG_D<<4);}//SWAP D
+inline void op_code_cb_case0x33(void) { REG_F=GenZF(REG_E);REG_E=(REG_E>>4)|(REG_E<<4);}//SWAP E
+inline void op_code_cb_case0x34(void) { REG_F=GenZF(REG_H);REG_H=(REG_H>>4)|(REG_H<<4);}//SWAP H
+inline void op_code_cb_case0x35(void) { REG_F=GenZF(REG_L);REG_L=(REG_L>>4)|(REG_L<<4);}//SWAP L
+inline void op_code_cb_case0x37(void) { REG_F=GenZF(REG_A);REG_A=(REG_A>>4)|(REG_A<<4);}//SWAP A
 
 inline void op_code_cb_case0x36(void) { union pare_reg tmp;tmp.b.l=cpu_read(REG_HL);tmp.b.l=(tmp.b.l>>4)|(tmp.b.l<<4);REG_F=GenZF(tmp.b.l);cpu_write(REG_HL,tmp.b.l);}//SWAP (HL) : state 16
 

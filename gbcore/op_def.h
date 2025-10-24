@@ -60,10 +60,10 @@
 	union pare_reg tmp; \
 	tmp.w=REG_A-arg; \
 	REG_F=N_FLAG|-tmp.b.h|GenZF(tmp.b.l)|((REG_A^arg^tmp.b.l)&H_FLAG)
-#define AND(arg) REG_A&=arg;REG_F=H_FLAG|GenZF(REG_A)
+#define AND(arg) REG_A&=arg;REG_F=H_FLAG|(REG_A == 0 ? Z_FLAG : 0)
 #define OR(arg)  REG_A|=arg;REG_F=GenZF(REG_A)
-#define XOR(arg) REG_A^=arg;REG_F=GenZF(REG_A)
-#define INC(arg) arg++;REG_F=(REG_F&C_FLAG)|GenZF(arg)|((arg&0x0F)?0:H_FLAG)
+#define XOR(arg) REG_A^=arg;REG_F=(REG_A == 0 ? Z_FLAG : 0)
+#define INC(arg) REG_F=(REG_F&C_FLAG)|GenZFIncrementation((int)arg + 1)|((((int)arg + 1)&0x0F)?0:H_FLAG);arg=(int)arg + 1
 #define DEC(arg) arg--;REG_F=N_FLAG|(REG_F&C_FLAG)|GenZF(arg)|(((arg&0x0F)==0x0F)?H_FLAG:0)
 #define ADDW(arg) \
 	union pare_reg tmp; \

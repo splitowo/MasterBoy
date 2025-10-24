@@ -506,44 +506,28 @@ static char cycles_cb[256] =
    8, 8, 8, 8, 8, 8,16, 8, 8, 8, 8, 8, 8, 8,16, 8
 };
 */
-/*
-static const byte ZTable[256] =
-{
-  Z_FLAG,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-};*/
-
 
 //#define Z_FLAG 0x40
 //d==0の時に0x40を返す。それ以外は０を返す。
-static inline uint32_t GenZF(byte d)
+static inline uint32_t GenZF(byte arg)
 {
 	uint32_t ret;
 	asm (
 		"		sltiu	%0,%1,1 "				"\n"
 		"		sll		%0,%0,6 "				"\n"
 			:	"=&r" (ret)		// %0
-			:	"r" (d)			// %1
+			:	"r" (arg)			// %1
 	);
 	return ret;
 }
 
+static inline uint32_t GenZFIncrementation(uint32_t arg)
+{
+	return (arg & 0x100) >> 2;
+}
+
 #define GENERATE_GenZFBitTest_FOR_BIT(n) \
-static inline uint32_t GenZFBit##n##Test(byte value)	\
+static inline uint32_t GenZFBit##n##Test(byte arg)	\
 {	\
 	uint32_t ret;	\
 	asm (	\
@@ -551,7 +535,7 @@ static inline uint32_t GenZFBit##n##Test(byte value)	\
 		"		sll		%0,%0,6 "				"\n"	\
 		"		xori	%0,%0,0x40 "			"\n"	\
 			:	"=&r" (ret)					\
-			:	"r" (value)					\
+			:	"r" (arg)					\
 	);	\
 	return ret;	\
 }
