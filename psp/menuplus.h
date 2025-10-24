@@ -142,7 +142,7 @@ extern void safe_strcat(char *dst, const char *src, u32 maxlen);
 extern int BatteryWarning(const char *message);
 #define MessageBox(texte, titre, type)		MessageBoxEx(texte, titre, type, 200)
 extern void MessageBoxTemp(char *text, char *title, int type, int width, int time);
-extern int menuPlusTerminated;
+extern char menuPlusTerminated;
 extern int menuStatusPosition, menuStatusDrawn;
 void SaveMyPlacesFile();
 enum {MB_NONE=0, MB_OK=1, MB_CANCEL=2, MB_OKCANCEL=3, MB_YESNO=4};
@@ -290,7 +290,7 @@ void StandardSoundProcess();
 int MessageBoxAsync(const char *texte, const char *titre, int type, int width, void (*fctClose)(struct WINDOW*, int), void (*fctHandle)(struct WINDOW*, int));
 extern void SoundPause();
 extern void SoundResume();
-extern int menuDisplaySpecialMessage;
+extern char menuDisplaySpecialMessage;
 extern unsigned char snd_stat_upd;
 
 extern MENUPARAMS *menuConfigDefault;

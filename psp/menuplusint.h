@@ -40,13 +40,14 @@ extern int fadeLevel, fadeDirection, fadeReason, menuAnimateCursor;
 extern SceIoDirent dirEntry;
 extern char menuFileSelectPath[MAX_PATH];
 extern char menuFileSelectFileName[MAX_PATH];
-extern int menuPlusTerminated, menuMainSelectedOption;
+extern int menuMainSelectedOption;
 extern MENUPRESSEDKEYS menuPressedKeys;
 extern int menuPressedKeysAutorepeatInit, menuPressedKeysAutorepeatDelay, menuPressedKeysAutorepeatMask;
 extern char menuStatusMessage[200];
 extern int menuStatusActive;
 extern int menuStatusPosition, menuStatusDrawn;
-extern int menuStickMessageDisplayed;
+extern char menuPlusTerminated;
+extern char menuStickMessageDisplayed;
 extern int gblMenuAlpha, menuFrameNb, frameCount;
 extern int menuIsInGame, menuUpdateRender;
 extern char *menuStatusBarMessage;
@@ -54,7 +55,7 @@ extern char menuStatusBarMessageInd[256];
 extern int gblFlagLoadParams;
 extern u32 gblShortcutKey;
 extern char menuTempMessageText[256];
-extern int menuMusicLocked;
+extern char menuMusicLocked;
 extern int gblConfigAutoShowCrc, gblModeColorIt;
 
 typedef struct		{

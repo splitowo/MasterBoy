@@ -188,9 +188,9 @@ static const unsigned char tbl_bitrev[]={
 #define horizflip(src) (tbl_bitrev[src&0xff]|(tbl_bitrev[(src>>8)&0xff]<<8))
 */
 
-static inline word horizflip(word src)
+static inline dword horizflip(word src)
 {
-	word ret;
+	dword ret;
 	asm volatile(
 		"		bitrev %1, %1"		"\n"
 		"		wsbw %0, %1"		"\n"
@@ -257,7 +257,7 @@ static void draw_pixels_to_frame(word *pal, word *frame, dword src)
 #define trb(ofs,b,c) if ( (!(b))&&(c) ) *(now_pos+ofs)=*(word *)(((char *)cur_p)+(c))
 
 //screenxのtrans maskをztbl1に書き込み。priorityはtrue/falseでtransをマスクしてztbl2に
-void set_ztbl(int screenx, byte mask, byte prio)
+void set_ztbl(int screenx, dword mask, byte prio)
 {
 	// left byte right shift  (8-(screenx&7))
 	// right byte left shift  (screenx&7)
@@ -391,7 +391,7 @@ void lcd_sprite_render(void *buf,byte scanline)
 
 	word *sdat=((word*)buf)+(scanline)*SIZE_LINE+GUARD_LINE,*now_pos;
 	int x,y,tile,atr,i,now;
-	word tmp_dat;
+	dword tmp_dat;
 	word pal[2][4],*cur_p;
 
 	char sp_size=(g_regs.LCDC&0x04)?true:false;
@@ -592,7 +592,7 @@ static void lcd_sprite_render_color(void *buf,byte scanline)
 
 	word *sdat=((word*)buf)+(scanline)*SIZE_LINE+GUARD_LINE,*now_pos;
 	int x,y,tile,atr,i,now;
-	word tmp_dat;
+	dword tmp_dat;
 	word *cur_p;
 
 	char sp_size=(g_regs.LCDC&0x04)?true:false;
@@ -940,7 +940,7 @@ void lcd_sprite_render_colored(void *buf,byte scanline)
 
 	word *sdat=((word*)buf)+(scanline)*SIZE_LINE+GUARD_LINE,*now_pos;
 	int x,y,tile,atr,i,now;
-	word tmp_dat;
+	dword tmp_dat;
 //	word pal[2][4],*cur_p;
 	word cur_p[4];
 
