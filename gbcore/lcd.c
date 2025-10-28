@@ -748,13 +748,15 @@ void sgb_set_color(int color, word value)		{
 }
 
 static void gbc_recreate_colors()		{
-	int i;
+	int i, j;
 	if (col_pal_is_invalidated)				{
-		for (i=0;i<16*4;i++)		{
-			if (inval_col_pal[0][i])		{
-				word col = col_pal[0][i];
-				real_col_pal[0][i] = CONVERT_COLOR15(col);
-				inval_col_pal[0][i] = 0;
+		for (i=0;i<16;i++)		{
+			for (j=0; j < 4; j++) {
+				if (inval_col_pal[i][j])		{
+					word col = col_pal[i][j];
+					real_col_pal[i][j] = CONVERT_COLOR15(col);
+					inval_col_pal[i][j] = 0;
+				}
 			}
 		}
 		col_pal_is_invalidated = 0;
@@ -783,7 +785,7 @@ static void gb_recreate_colors()		{
 		//Palette pour le mode noir & blanc - pas besoin de le faire toujours mais 
 		for (i=0;i<12;i++)		{
 			word col = oslConvertColor(OSL_PF_5551, OSL_PF_8888, currentPalCache[i]);
-			m_pal16[0][0][i] = CONVERT_COLOR15(col);
+			m_pal16[0][i / 4][i % 4] = CONVERT_COLOR15(col);
 		}
 
 		gb_pal_is_invalidated = 0;
@@ -808,14 +810,13 @@ static void sgb_recreate_colors()		{
 
 void gb_invalidate_all_colors()		{
 	int i;
-	for (i=0;i<16*4;i++)
-		gbc_invalidate_color(0, i);
+	memset(inval_col_pal, 1, sizeof(inval_col_pal));
+	col_pal_is_invalidated = 1;
 	for (i=0;i<16*8;i++)
 		sgb_invalidate_color(i);
 	for (i=0;i<NB_PALETTES;i++)
 		gb_invalidate_palette(i);
 }
-
 
 void lcd_bg_render_colored(void *buf,byte scanline)
 {

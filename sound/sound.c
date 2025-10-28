@@ -11,7 +11,7 @@ int *smptab;
 int smptab_len;
 int sound_justChange = 0;
 
-int sound_change()		{
+void sound_change()		{
 	sound_justChange = 1;
 	sound_init();
 	sound_justChange = 0;
@@ -258,7 +258,7 @@ void sound_update_ex(void *outBuffer, int sampleCount)
     if(!snd.enabled)
         return;
 
-	temp_buf = malloc(snd.buffer_size * 2 * 2);
+    temp_buf = malloc(snd.buffer_size * 2 * 2);
 
     /* Do a tiny bit */
 	psg[0] = temp_buf;

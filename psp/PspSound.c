@@ -96,8 +96,8 @@ void SoundResume(void)
 	//sceKernelResumeThread(sndThid);
 }
 
-void SoundResample(sample_t *audioOut, int sample_count)		{
-	int i, j;
+static void SoundResample(sample_t *audioOut, int sample_count)		{
+	int i;
 	u32 *src = (u32*)audioOutTemp, *dst = (u32*)audioOut;
 	switch (snd.sample_rate)
 	{
@@ -123,7 +123,7 @@ void SoundResample(sample_t *audioOut, int sample_count)		{
 }
 
 
-int AudioGet(sample_t *audioOut, int sample_count, int realSampleCount)
+static void AudioGet(sample_t *audioOut, int sample_count, int realSampleCount)
 {
 	if (menuConfig.sound.perfectSynchro)			{
 		if (!soundPause)		{
@@ -213,7 +213,6 @@ int AudioGet(sample_t *audioOut, int sample_count, int realSampleCount)
 
 static int SoundThread()
 {
-	int err=0;
 	int sample_count;
 	int chan;
 	int realSampleCount;
@@ -250,4 +249,5 @@ static int SoundThread()
 
 	soundRunning = -1;
 	sceKernelExitDeleteThread(0);
+	return 0;
 }

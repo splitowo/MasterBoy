@@ -432,7 +432,6 @@ void RecolorPaletteVibrance()		{
 }
 
 void RecolorPaletteGray()		{
-	unsigned h, s, l;
 	uint8 r, g, b;
 	int i;
 	int coeff, value;

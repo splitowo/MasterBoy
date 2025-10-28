@@ -744,7 +744,7 @@ int BatteryWarning(const char *message)		{
 		return 1;
 }
 
-void GetJustFileName(char *dst, char *src)		{
+void GetJustFileName(char *dst, const char *src)		{
 	int i, lastPt = -1;
 	for (i=0;src[i];i++)		{
 		if (src[i] == '.')
@@ -1771,6 +1771,7 @@ int fctMainFileSram(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
 		if (sub->prop1 == 1)
 			machine_manage_sram(SRAM_SAVE, 1);
 	}
+	return 1;
 }
 
 SUBMENUITEM menuMainFileSramItems[]=		{
@@ -1791,6 +1792,7 @@ int fctMainMiscCommands(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
 		OuvreFichierConfig("plugins.ini", sub->name);
 		osl_keys->pressed.circle = 1;
 	}
+	return 1;
 }
 
 SUBMENU menuMainMiscCommands=		{
@@ -1866,6 +1868,7 @@ int fctMainFileMusic(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
 			menuConfig.music.filename[0] = 0;
 		}
 	}
+	return 1;
 }
 
 SUBMENUITEM menuMainFileMusicItems[]=		{
@@ -2377,7 +2380,7 @@ void fctMsgBoxAbout_Handle(WINDOW *w, int event)		{
 
 void menuTakeScreenshot()		{
 	OSL_IMAGE img;
-	int imageNumber, i, f;
+	int imageNumber, f;
 	char path[MAX_PATH * 2], gamename[MAX_PATH], *ptr, *finalptr;
 
 	//Finalptr contiendra juste le nom de fichier
@@ -3440,7 +3443,6 @@ void menuLoadFiles()
 {
 	menuLoadFilesMin();
 	if (!imgIcons)			{
-		OSL_IMAGE *temp;
 		imgBack = loadBackgroundImage("res/back.png");
 		oslSetTransparentColor(RGB(255, 0, 254));
 		imgIcons = oslLoadImageFile("res/icons.png", OSL_IN_RAM, OSL_PF_5551);
@@ -3702,7 +3704,7 @@ void InitConfig()
 
 static int SetSubMenuItemValueByInt(SUBMENUITEM *s, int value)		{
 	SUBMENU *menu = s->link;
-	int i, j, success = 0;
+	int i, success = 0;
 	if (menu)		{
 		for (i=0;i<menu->nbItems;i++)		{
 			if (menu->items[i].prop1 == value)		{
@@ -3719,7 +3721,7 @@ static int SetSubMenuItemValueByInt(SUBMENUITEM *s, int value)		{
 
 int RangeSetSubMenuValueInt(SUBMENUITEM *s, int *value, int set)		{
 	SUBMENU *menu = s->link;
-	int i, j, success = 0;
+	int i, success = 0;
 	if (menu)		{
 		if (menu->type == 3)			{
 			SUBMENUMINMAX *smm = (SUBMENUMINMAX*)menu->items;
@@ -3913,33 +3915,35 @@ void DrawWindow(WINDOW *w)		{
 	oslDrawTextBox(xx0 + 4, yy0 + 18, xx1 - 4, yy1 - 6, w->texte, 0);
 	oslDrawString((xx1 + xx0) / 2 - GetStringWidth(w->titre) / 2, yy0 + 1, w->titre);
 
-	if (w->buttons == MB_OKCANCEL)			{
-		x2 = (5 * xx1 + 11 * xx0) / 16 - GetStringWidth(w->button1) / 2;
-		x3 = (11 * xx1 + 5 * xx0) / 16 - GetStringWidth(w->button2) / 2;
-	}
-	else if (w->buttons == MB_OK || w->buttons == MB_CANCEL)		{
-		x2 = (xx1 + xx0) / 2 - GetStringWidth(w->button1) / 2;
-		x3 = x2;
-	}
-	y2 = yy1 - 16;
+	if (w->buttons) {
+		if (w->buttons == MB_OKCANCEL)			{
+			x2 = (5 * xx1 + 11 * xx0) / 16 - GetStringWidth(w->button1) / 2;
+			x3 = (11 * xx1 + 5 * xx0) / 16 - GetStringWidth(w->button2) / 2;
+		}
+		else {
+			x2 = (xx1 + xx0) / 2 - GetStringWidth(w->button1) / 2;
+			x3 = x2;
+		}
+		y2 = yy1 - 16;
 
-	oslSetFont(ftStandard);
-	oslSetBkColor(RGBA(0, 0, 0, 0));
-	oslSetTextColor(RGB(0, 0, 0));
-	if (w->buttons & MB_OK)
-		oslDrawString(x2 + 1, y2 + 1, w->button1);
-	if (w->buttons & MB_CANCEL)
-		oslDrawString(x3 + 1, y2 + 1, w->button2);
-	oslSetTextColor(RGB(0, 255, 0));
-	if (w->buttons & MB_OK)
-		oslDrawString(x2, y2, w->button1);
-	oslSetTextColor(RGB(255, 0, 0));
-	if (w->buttons & MB_CANCEL)
-		oslDrawString(x3, y2, w->button2);
-	if (w->fctHandle)
-		w->fctHandle(w, EVENT_DRAW);
-	oslResetScreenClipping();
-	oslSetFont(ft);
+		oslSetFont(ftStandard);
+		oslSetBkColor(RGBA(0, 0, 0, 0));
+		oslSetTextColor(RGB(0, 0, 0));
+		if (w->buttons & MB_OK)
+			oslDrawString(x2 + 1, y2 + 1, w->button1);
+		if (w->buttons & MB_CANCEL)
+			oslDrawString(x3 + 1, y2 + 1, w->button2);
+		oslSetTextColor(RGB(0, 255, 0));
+		if (w->buttons & MB_OK)
+			oslDrawString(x2, y2, w->button1);
+		oslSetTextColor(RGB(255, 0, 0));
+		if (w->buttons & MB_CANCEL)
+			oslDrawString(x3, y2, w->button2);
+		if (w->fctHandle)
+			w->fctHandle(w, EVENT_DRAW);
+		oslResetScreenClipping();
+		oslSetFont(ft);
+	}
 }
 
 void CloseWindow(WINDOW *w, int valid)		{
@@ -4035,7 +4039,7 @@ void ShowWindow(WINDOW *w)		{
 	}
 }
 
-int MessageBox_DefineButtons(WINDOW *w, int *type)		{
+static void MessageBox_DefineButtons(WINDOW *w, int *type)		{
 	if (*type == MB_YESNO)		{
 		w->button1 = "X Yes";
 		w->button2 = "O No";
@@ -4229,8 +4233,8 @@ SUBMENUITEM menuMsgBoxReloadConfigItems[]=		{
 void LoadUserDefaultConfig()		{
 	//Recopie la config. par défaut
 	OuvreFichierConfig("default.ini", NULL);
-	memcpy(menuConfigUserDefault, &menuConfig, sizeof(menuConfigUserDefault));
-	memcpy(menuConfigUserMachineDefault, &menuConfig, sizeof(menuConfigUserMachineDefault));
+	memcpy(menuConfigUserDefault, &menuConfig, sizeof(&menuConfigUserDefault));
+	memcpy(menuConfigUserMachineDefault, &menuConfig, sizeof(&menuConfigUserMachineDefault));
 }
 
 void LoadDefaultMachineConfig()		{
@@ -4240,7 +4244,7 @@ void LoadDefaultMachineConfig()		{
 	else if (gblMachineType == EM_GBC)
 		success = OuvreFichierConfig("default_gbc.ini", NULL);
 	if (success)
-		memcpy(menuConfigUserMachineDefault, &menuConfig, sizeof(menuConfigUserMachineDefault));
+		memcpy(menuConfigUserMachineDefault, &menuConfig, sizeof(&menuConfigUserMachineDefault));
 }
 
 void SaveUserDefaultConfigSpecific()		{
@@ -4250,12 +4254,12 @@ void SaveUserDefaultConfigSpecific()		{
 		ScriptSave("default_sms.ini", SAVETYPE_GAME | SAVETYPE_CHANGESONLY);
 	else if (gblMachineType == EM_GBC)
 		ScriptSave("default_gbc.ini", SAVETYPE_GAME | SAVETYPE_CHANGESONLY);
-	memcpy(menuConfigUserMachineDefault, &menuConfig, sizeof(menuConfigUserMachineDefault));
+	memcpy(menuConfigUserMachineDefault, &menuConfig, sizeof(&menuConfigUserMachineDefault));
 }
 
 void SaveUserDefaultConfig()		{
 	ScriptSave("default.ini", SAVETYPE_DEFAULT);
-	memcpy(menuConfigUserDefault, &menuConfig, sizeof(menuConfigUserDefault));
+	memcpy(menuConfigUserDefault, &menuConfig, sizeof(&menuConfigUserDefault));
 }
 
 int fctMsgBoxReloadConfig(SUBMENU *menu, SUBMENUITEM *sub, u32 event)
@@ -4309,12 +4313,10 @@ void fctMsgBoxReloadConfig_Close(WINDOW *w, int valid)		{
 
 void fctMsgBoxReloadConfig_Handle(WINDOW *w, int event)		{
 	if (event == EVENT_DRAW)		{
-		int xx0, xx1, yy0, yy1, lm = LARGEUR_MENU;
+		int xx0, yy0, lm = LARGEUR_MENU;
 		xx0 = (LARG - w->largeur) / 2;
-		xx1 = xx0 + w->largeur;
 		yy0 = (HAUT - w->hauteur) / 2;
-		yy1 = yy0 + w->hauteur;
-		LARGEUR_MENU = xx1 - xx0 - 26;
+		LARGEUR_MENU = w->largeur - 26;
 		DrawSubMenu(&menuMsgBoxReloadConfig, xx0 + 4, yy0 + 37, FALSE);
 		LARGEUR_MENU = lm;
 	}
@@ -4396,12 +4398,10 @@ void fctMsgBoxSaveConfig_Close(WINDOW *w, int valid)		{
 
 void fctMsgBoxSaveConfig_Handle(WINDOW *w, int event)		{
 	if (event == EVENT_DRAW)		{
-		int xx0, xx1, yy0, yy1, lm = LARGEUR_MENU;
+		int xx0, yy0, lm = LARGEUR_MENU;
 		xx0 = (LARG - w->largeur) / 2;
-		xx1 = xx0 + w->largeur;
 		yy0 = (HAUT - w->hauteur) / 2;
-		yy1 = yy0 + w->hauteur;
-		LARGEUR_MENU = xx1 - xx0 - 26;
+		LARGEUR_MENU = w->largeur - 26;
 		DrawSubMenu(&menuMsgBoxSaveConfig, xx0 + 4, yy0 + 37, FALSE);
 		LARGEUR_MENU = lm;
 	}
@@ -4608,7 +4608,7 @@ void menuPlusShowMenu()
 			//Mouvement horizontal
 			if (osl_keys->pressed.left || osl_keys->pressed.right)			{
 				SUBMENU *s, *s2;
-				int moving;
+				int moving = 0;
 				//Stoppe l'animation d'ouverture
 				nRayon = 0;
 				menuFrameNb = oslMax(300, menuFrameNb);

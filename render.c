@@ -284,11 +284,11 @@ void render_line(int line)
     if(line >= vdp.height)
         return;
 
-	if((line < bitmap.viewport.y) ||
-	   (line > (bitmap.viewport.y + bitmap.viewport.h)))
-	{
-		return;
-	}
+    if((line < bitmap.viewport.y) ||
+        (line > (bitmap.viewport.y + bitmap.viewport.h)))
+    {
+        return;
+    }
 
     /* Point to current line in output buffer */
     linebuf = (bitmap.depth == 8) ? &bitmap.data[(line * bitmap.pitch)] : &internal_buffer[0];

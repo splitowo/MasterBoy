@@ -837,12 +837,10 @@ void fctMsgBoxChoice_Close(WINDOW *w, int valid)		{
 
 void fctMsgBoxChoice_Handle(WINDOW *w, int event)		{
 	if (event == EVENT_DRAW)		{
-		int xx0, xx1, yy0, yy1, lm = LARGEUR_MENU;
+		int xx0, yy0, lm = LARGEUR_MENU;
 		xx0 = (LARG - w->largeur) / 2;
-		xx1 = xx0 + w->largeur;
 		yy0 = (HAUT - w->hauteur) / 2;
-		yy1 = yy0 + w->hauteur;
-		LARGEUR_MENU = xx1 - xx0 - 26;
+		LARGEUR_MENU = w->largeur - 26;
 		DrawSubMenu((SUBMENU*)w->userData[0], xx0 + 4, yy0 + 37, w->multiply >= MSGBOX_MAX_MULTIPLY);
 		LARGEUR_MENU = lm;
 	}

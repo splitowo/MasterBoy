@@ -174,6 +174,7 @@ void gb_refresh_pal();
 int gb_run_frame(int skip);
 void gb_fill_vframe(word color);
 void gb_invalidate_all_colors();
+void exiting_lcdc();
 
 extern unsigned char gbc_cram_expand_table[32];
 #define MAKE_COLOR15(r, g, b)				MAKE_COLOR(gbc_cram_expand_table[r], gbc_cram_expand_table[g], gbc_cram_expand_table[b])
@@ -219,6 +220,7 @@ void gbc_invalidate_color(int palno, int color);
 void lcd_set_enable(int layer,char enable);
 char lcd_get_enable(int layer);
 int lcd_get_sprite_count();
+void tilePalReinit();
 
 // mbc.c
 extern void (*mbc_write)(word adr,byte dat);

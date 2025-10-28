@@ -39,7 +39,7 @@ int fmunit_detect_r(void);
 void fmunit_detect_w(int data);
 void fmunit_write(int offset, int data);
 int sound_init(void);
-int sound_change();
+void sound_change();
 void sound_shutdown(void);
 void sound_reset(void);
 void sound_update(int line);
