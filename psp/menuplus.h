@@ -163,20 +163,21 @@ typedef struct		{
 	s16 selection;
 	float selPos;
 	u8 selectionDirect;
+	u8 alphaFleches[2];
 	s16 active;
 	s16 scroll;
 	float scrollPos;
-	u8 alphaFleches[2];
 } SUBMENUSTATE;
 
 typedef struct		{
-	int min, max, width;
-	char value[20];
+	int min, max;
+	char width;
+	char value[14];
 	int flecheX;
 	float flechePosX;
 	s8 flecheAnim;
-	float digitsPos[NB_MAX_DIGITS];
 	s8 digits[NB_MAX_DIGITS];
+	float digitsPos[NB_MAX_DIGITS];
 } SUBMENUMINMAX;
 
 typedef struct SUBMENUITEM 		{
@@ -200,8 +201,8 @@ typedef struct SUBMENU		{
 	//Variable
 	SUBMENUSTATE state;
 	s8 active;
-	float xOffset, xOffset2;
 	u8 close;
+	float xOffset, xOffset2;
 	s16 moving, movingDist, movingArrive, movingAlpha;
 
 	struct SUBMENU *child, *parent;
