@@ -38,7 +38,7 @@ struct apu_que snd_write_que[0x10000];
 int snd_que_count;
 int snd_bef_clock;
 char snd_b_lowpass;
-byte snd_mem[0x100];
+byte snd_mem[0x30];
 char snd_b_enable[4];
 
 static void snd_process(word adr,byte dat);
@@ -146,9 +146,9 @@ void snd_reset()
 	byte gbc_init_wav[]={0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF,0x00,0xFF};
 
 	if (rom_get_info()->gb_type<=2) // 初期型GB & SGB
-		memcpy(snd_mem+20,gb_init_wav,16);
+		memcpy(snd_mem+0x20,gb_init_wav,16);
 	else if (rom_get_info()->gb_type>=3) // GBC
-		memcpy(snd_mem+20,gbc_init_wav,16);
+		memcpy(snd_mem+0x20,gbc_init_wav,16);
 }
 
 void snd_set_enable(int ch,char enable)
